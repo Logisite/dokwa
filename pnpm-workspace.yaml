@@ -2,7 +2,10 @@ packages:
   - apps/*
   - packages/*
 
-# pnpm blocks postinstall scripts by default. esbuild's is how the binary
-# lands; without it Vite cannot start. Nothing else here needs to run one.
+# pnpm blocks postinstall scripts by default. esbuild's places the binary
+# Vite runs; the two Astryx packages print their setup hint from it. Nothing
+# here runs a build step that changes the source tree.
 allowBuilds:
+  '@astryxdesign/cli': true
+  '@astryxdesign/core': true
   esbuild: true
