@@ -18,4 +18,11 @@ export default tseslint.config(
       "@typescript-eslint/no-empty-object-type": "off",
     },
   },
+  {
+    // node scripts, not browser code
+    files: ["tools/**/*.mjs", "*.config.js"],
+    languageOptions: {
+      globals: { console: "readonly", process: "readonly" },
+    },
+  },
 );

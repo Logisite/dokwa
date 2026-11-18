@@ -137,14 +137,16 @@ pnpm add @getalby/sdk @getalby/bitcoin-connect-react
 
 ### 4.3 Headless packages
 
+Each package declares the dependencies it needs and nothing more. The split and the direction an import may point are in `build-structure.md`; `pnpm check:layers` fails the build if an edge goes the wrong way.
+
 ```bash
-pnpm --filter ./packages/mint-core add @noble/curves @noble/hashes
-pnpm --filter ./packages/mint-core add -D vitest fake-indexeddb
-
-pnpm --filter ./packages/wallet-core add @cashu/cashu-ts nostr-tools dexie @noble/hashes
-pnpm --filter ./packages/wallet-core add -D vitest fake-indexeddb
-
-pnpm --filter ./packages/protocol add nostr-tools
+pnpm --filter @dokwa/keys add @noble/curves @noble/hashes dexie
+pnpm --filter @dokwa/mint add @cashu/cashu-ts dexie
+pnpm --filter @dokwa/wallet add @cashu/cashu-ts @noble/hashes dexie
+pnpm --filter @dokwa/records add @noble/curves @noble/hashes
+pnpm --filter @dokwa/chain add @bitcoindevkit/bdk-wallet-web
+pnpm --filter @dokwa/lightning add lightningdevkit dexie
+pnpm --filter @dokwa/wires add nostr-tools dexie
 ```
 
 ### 4.4 Astryx setup

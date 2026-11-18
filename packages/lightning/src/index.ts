@@ -1,0 +1,7 @@
+/**
+ * @lightning — the Lightning node: keys, persistence, channels.
+ *
+ * The public surface is written when there is something to expose.
+ * Until then this package exports nothing.
+ */
+export {};

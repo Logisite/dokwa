@@ -1,6 +1,6 @@
 # dokwa — build timeline
 
-`docs/dokwa-spec.md` says what the product is. `docs/dokwa-stack.md` says what it is built with. This says **in what order**, from the base commit to the last test.
+`docs/dokwa-spec.md` says what the product is. `docs/dokwa-stack.md` says what it is built with. This says **in what order**, from the base commit to the last test. Where the code lives, and which import is allowed: `build-structure.md`.
 
 No phase carries a duration. A phase ends when an artifact exists, not when a calendar says so.
 

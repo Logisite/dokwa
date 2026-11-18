@@ -11,7 +11,9 @@
     "lint": "eslint .",
     "board": "python3 board.py",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "check:layers": "node tools/check-layers.mjs",
+    "check": "pnpm lint && pnpm check:layers"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
