@@ -213,6 +213,12 @@ export class Outbox {
 
   private async attemptWithLock(item: QueueItem): Promise<Sent> {
     const key = item.toKey;
+    // A drain started on this destination between this send's checks and
+    // now. Let it finish; the schedule that follows will pick this item up.
+    // Attempting the same bytes twice is a duplicate the receiver never
+    // asked for, and the contract leaves refusing duplicates to an end that
+    // may not be listening.
+    if (this.busy.has(key)) return { status: "later" };
     this.busy.add(key);
     try {
       return await this.attempt(item);

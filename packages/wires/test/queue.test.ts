@@ -252,4 +252,40 @@ describe("the queue's bookkeeping, unit rigs with an honest stub", () => {
     // The retry is scheduled for later, not run in a tight loop.
     expect(items[0]!.nextAttemptAt).toBeGreaterThan(Date.now());
   });
+
+  it("a send racing a drain on the same destination delivers once", async () => {
+    // The bug this pins: a send and a signal-driven drain can both try the
+    // same head item in the same moment, and the bytes leave twice. The
+    // contract has no idempotency key on purpose, so the queue must not
+    // invent duplicates the receiver has to refuse.
+    const store = new MemoryQueueStore();
+    const calls: string[] = [];
+    let releaseDeliver: () => void = () => {};
+    const gate = new Promise<void>((r) => {
+      releaseDeliver = r;
+    });
+    const outbox = new Outbox({
+      store,
+      deliver: async (to, bytes) => {
+        calls.push(new TextDecoder().decode(bytes));
+        await gate; // hold the attempt open so a drain can race it
+        return { status: "delivered" };
+      },
+      isOnline: () => true,
+    });
+
+    const sending = outbox.send(
+      { kind: "relay", url: "wss://one.relay" },
+      encoder.encode("once"),
+    );
+    // The drain starts while the send's attempt is still in flight. The
+    // send then answers later, because the drain is delivering the same
+    // item; the bytes still leave exactly once.
+    const draining = outbox.drain();
+    releaseDeliver();
+    const [sent] = await Promise.all([sending, draining]);
+    expect(sent).toEqual({ status: "later" });
+    expect(calls).toEqual(["once"]);
+    expect(await outbox.pending()).toEqual([]);
+  });
 });
