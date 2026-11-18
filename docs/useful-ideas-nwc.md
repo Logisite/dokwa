@@ -1,0 +1,100 @@
+- A parental-control allowance app for kids that shows remaining funds as a virtual pet's mood, lets them send keysend treats to friends, and expires the connection automatically at the end of each school term.
+- A privacy-first messaging tool that embeds each message fragment in a make_invoice description and delivers it by keysend, so a corporate relay sees only opaque payment traffic.
+- A museum audio guide that verifies a visitor's ticket through get_info proof-of-possession and unlocks bonus commentary the instant a payment_received notification confirms their donation.
+- A shared-household expense tool that fires rent splits as multi_pay_keysend on the first of each month and resets each roommate's spending kitty on a weekly budget_renewal.
+- An anonymous whistleblower tip line that accepts submissions only as keysend to a rotating pubkey and publishes a zap receipt as a verifiable "received" marker without exposing the sender.
+- A corporate gifting platform that issues each department a daily-budgeted spending key and revokes every one of them at midnight to prevent overnight abuse.
+- An agricultural sensor hub that reallocates its data budget on payment_sent notifications and pays a fresh invoice whenever a wind shift demands higher-resolution forecasts.
+- A children's bedtime app that issues time-limited make_invoice requests and unlocks each successive lullaby verse only when a payment_received notification confirms the purchase.
+- A tournament bracket platform that gives each competitor an isolated sub-wallet and declares the winner by whichever payment_received notification settles first.
+- An encrypted journaling app that signs every entry with the paired NWC key and refuses to decrypt anything unless a get_info probe succeeds.
+- An enterprise onboarding tool that proposes a per-app max_amount ceiling automatically based on how narrowly that app scopes its request_methods.
+- An office fitness incentive platform that awards keysend rewards to a pubkey derived from an employee's score and audits every payout through list_transactions.
+- A timed-release document escrow service that auto-expires a connection at expires_at the moment a zap receipt matching an agreed note confirms the payment milestone.
+- A virtual-tabletop token system that gives each player an isolated sub-wallet and settles only invoices whose descriptions rhyme, using the rhyme as a tamper-evident checksum.
+- A smart doorbell for remote workers that uses get_balance as a presence probe and chimes through a payment_received notification when a delivery deposit lands.
+- A high-availability monitoring stack that, when one dashboard key is revoked, automatically provisions a replacement scoped key with the same budget_renewal to avoid blind spots.
+- A neighborhood café loyalty program that tracks each regular's tab in an isolated sub-wallet and splits a weekly jackpot across customers via multi_pay_invoice.
+- A café's "prove you're subscribed" coffee dispenser that gates access with get_info authentication and keysends a receipt to the customer's npub for expense reports.
+- A modular music-production suite where each plugin runs as a separately budgeted app key and the shared relay acts as the patch cable carrying their events.
+- A grant-disbursement tool that generates labeled make_invoice requests and triggers multi_pay_keysend on a lunar-synchronized cadence for a client that insists on it.
+- A secure request broker for a distributed archive that encrypts every request to the intended wallet pubkey so no intermediary can read it.
+- An IAM policy generator for startups that stitches request_methods into least-privilege roles and validates them with get_info before rollout.
+- A customer-engagement platform that surfaces payment_received events as sales leads and routes bonus keysend rewards from a concealed campaign pubkey.
+- A FinOps incident tool that scans list_transactions to identify the overspending integration and revokes exactly that one key, leaving every other connection intact.
+- A security-training simulator that demonstrates bearer-credential risk by letting trainees "lose" a mock secret and showing the capability cannot be recovered without reauthorization.
+- A subscription-billing heartbeat monitor that ticks on payment_sent notifications and raises an alert when a connection's budget_renewal is misconfigured to never.
+- A developer sandbox that allocates each test app a daily max_amount derived deterministically from its pubkey, keeping test spend reproducible and fair.
+- A logistics platform that gives every shipment its own isolated sub-wallet and uses lookup_invoice as the immutable bill of lading.
+- A high-availability payments SDK that broadcasts each request to multiple relays and accepts the first valid signed response to cut latency.
+- A serialized content platform that unlocks chapter two only when a zap receipt for chapter one settles, gating sequential releases without a paywall server.
+- A personal-finance advisor that tailors recommendations to the wallet's network from get_info and to spending habits from list_transactions.
+- An event-expense splitter that turns one shared invoice into per-attendee keysend slices, each capped by that attendee's authorized budget.
+- A timed-escrow note service that stores a confidential payload in a make_invoice description and reveals it automatically once expires_at has passed.
+- An employee-rewards dashboard that converts payment_sent notifications into points and displays their redeemable value via get_balance.
+- A resilience-testing tool that deliberately revokes one integration key on a fixed monthly schedule and verifies the rest of the stack degrades gracefully.
+- A network-diagnostics tool that benchmarks candidate relays by timing get_info responses and pins the client to the fastest one.
+- A corporate expense platform that gives each cost center an isolated sub-wallet with its own ledger and uses multi_pay_invoice for inter-departmental transfers.
+- An invoice-verification assistant that treats no claim as final until lookup_invoice confirms settlement, protecting users from spoofed payment screenshots.
+- A privacy tool for journalists that rotates relays and connection pubkeys so metadata observers cannot build a stable communication graph.
+- A hardened wallet connector for high-risk users that accepts only self-hosted relays and verifies every response signature against the expected wallet pubkey.
+- A third-party integration sandbox that quarantines untrusted apps with a read-only get_balance key, a tiny max_amount, and a short expires_at.
+- An accessibility tool that reads invoice descriptions aloud for low-vision users and keysends a duplicate receipt on voice command.
+- An IAM lifecycle dashboard that visualizes app keys as a garden, where budget_renewal tops them up and revocation prunes the stale ones.
+- An interactive marketing campaign that hides clue coordinates in payment hashes and uses lookup_invoice to verify each solved stage.
+- A dispute-resolution platform that treats get_info proof-of-possession as testimony and zap receipts as exhibits in a verifiable case file.
+- A fraud-detection rule engine that flags coordinated micro-payment bursts, such as three payment_received events in one second, as a possible attack pattern.
+- A household budget tracker that shows a family's remaining allowance as a plant that wilts with spend and revives on budget_renewal.
+- A community-operated lending circle that grants wider request_methods to members whose npub has a verifiable history of positive zap receipts.
+- An audit-log appliance for compliance teams that records every 23194 and 23195 envelope for metadata and timing while remaining cryptographically blind to amounts.
+- A corporate wellness perk that lets employees pay a small invoice to a mood-derived pubkey and automatically keysends the change back as a savings top-up.
+- An internal micro-market where teams trade unused budget slices via multi_pay_keysend, with get_balance serving as the live price ticker.
+- A backup-and-reconciliation service that mirrors every payment_sent event into a matching invoice within an isolated sub-wallet for double-entry accounting.
+- A parental-control tool that issues a child's game a one-day expires_at key and auto-revokes it when a bedtime payment_received confirms the nightly check-in.
+- A legacy-system integration tester that pings get_info across five relays and deliberately selects the slowest one to exercise timeout handling.
+- A gamified onboarding flow for a developer tool that only answers get_info when the request description passes a haiku check, as a playful anti-bot gate.
+- A multi-team sales contest where each rep holds a distinct app key and a zap receipt is the verifiable baton passed between relay stages.
+- A treasury-rebalancing bot that shifts idle funds between isolated sub-wallets via self-keysend until budget_renewal resets the allocation.
+- A document-timestamping service that embeds a file hash in a make_invoice description and proves the file's existence later with lookup_invoice.
+- A community microgrid dashboard that publishes anonymized get_balance aggregates to a relay so neighbors can see shared energy reserves.
+- An ops training simulator that visualizes each service as a puppet and makes one dramatically "fall over" when its key is revoked, so teams can practice failover.
+- A scheduled-payments service that pre-signs requests for a future expires_at and releases them only when the clock matches, enabling time-locked payroll.
+- A credential-rotation service for enterprises that authorizes a fresh pubkey hourly and revokes the previous one, shrinking the bearer-secret exposure window.
+- A savings-goal app for kids that shows a pet's "hunger" as a dwindling max_amount and lets them "feed" it by paying a designated invoice.
+- A portfolio visualization tool that maps multi_pay_keysend flows across sub-wallets into a constellation, with get_balance setting each node's brightness.
+- An analytics demo that turns list_transactions history into a playful spending forecast, with payment_sent events refining the prediction in real time.
+- An event-hosting tool for pay-what-you-want shows where each keysend from a dancer drives a payment_received-driven light and sound cue.
+- A procurement-approval simulator that models each required sign-off as a scope in request_methods and routes the requester through a pairing deep link with return_to.
+- A secure link-sharing service that issues single-use capability keys which self-destruct at expires_at immediately after first use.
+- A newsroom tip portal that publishes zap receipts as proof of funds received while keeping the source hidden behind get_info proof-of-possession.
+- A brand-engagement vending integration that only accepts pay_invoice for invoices whose make_invoice description includes a punchline, as part of a marketing campaign.
+- A security-awareness museum kiosk that uses get_info proof-of-possession to unlock an exhibit on how instant revocation works.
+- A wagered-chess platform that keysends each move notification to your pubkey and checks list_transactions to confirm the reply stake settled.
+- A migration proxy for wallet apps that upgrades legacy NIP-04 requests to NIP-44 in flight while still verifying the wallet's response signature.
+- A treasury guard for a DAO sub-wallet that only forwards payment_received notifications when predefined policy conditions are met.
+- A bank's change-freeze tool that swaps in a read-only dashboard key overnight and revokes the spending key until morning.
+- A community fundraiser that tracks each backer's pledge in an isolated sub-wallet and treats a shared max_amount as the funding goal.
+- An educational puzzle app that uses payment hashes as answers and lookup_invoice as the checker for each solved stage.
+- A team budget dashboard whose status light is driven by get_balance, turning green when healthy and red as the connection nears its cap.
+- A pen-pal platform for hobbyists that exchanges letters as encrypted 23194 events and waits for signed 23195 replies from the wallet.
+- A royalty-collection service that skims a configured fraction of every keysend into a sub-wallet capped by max_amount.
+- An onboarding walkthrough for an IAM console that presents each app key as a room, with a successful get_info probe acting as the door.
+- A scheduled-gifting service that holds invoices until expires_at and releases them with a payment_received notification.
+- A creator-revenue splitter that triggers multi_pay_keysend to collaborators whenever a zap receipt settles, each capped by an equal budget.
+- A playful financial-wellness newsletter that personalizes spending horoscopes using get_info network data and list_transactions history.
+- A cybersecurity training escape room where each puzzle unlocks the next scoped key and the final key can pay_invoice to "escape."
+- A restaurant supply-chain tool where each recipe is a budgeted app and ingredient orders settle through multi_pay_keysend.
+- A private journaling tool that encrypts each entry to the wallet pubkey so even the relay operator cannot read it.
+- A cloud test-capacity auction where the highest max_amount bidder wins a revocable key for a day.
+- A QA fuzzing tool that keysends tiny random amounts to test pubkeys, confined to a dedicated low-limit sub-wallet.
+- A deploy-status light for a mono-repo that flashes on each payment_received settlement milestone and goes dark when the integration key is revoked.
+- A transparent charity ledger that mirrors payment notifications into public notes, linking npub identity to each payment through zap receipts.
+- A multisig-style grant committee where five sub-wallets each hold a revocable key and funds release only on a majority of votes.
+- A digital red-envelope platform that keysends gifts to recipients' pubkeys, claimable only while expires_at has not passed.
+- A budgeting simulator that replays last month's list_transactions under this month's budget_renewal rules to forecast next month's spend.
+- An office gift exchange that assigns each participant an isolated sub-wallet and reveals the giver only through a zap receipt.
+- A crowdfunding deadline dashboard that tracks whether enough payment_received events arrive before expires_at to meet the campaign goal.
+- A contractor-payments workspace that confines a vendor's app to one isolated sub-wallet so it never sees the company's main balance.
+- An anti-tamper verification flow that gates pay_invoice behind a correct answer checked with lookup_invoice of a pre-made invoice.
+- A relay-benchmarking service that fires identical requests at random relays and records which one returns a valid signed response fastest.
+- A passwordless login flow that turns get_info proof-of-possession into a session and self-revokes the key at logout, like a mayfly.

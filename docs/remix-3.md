@@ -1,0 +1,20 @@
+- A courtroom whose e-tagged evidence chain is admissible only on Tuesdays, with the NIP-07 judge emitting a signed public grumble on every other day the trial drags on.
+- A sandwich-review board where each ingredient t-tag is verified against a full node's historical record before the shop's NIP-07-signed e-tagged reply can be posted as a zap receipt.
+- A watchtower that converts breach-justice penalties into keysend tips, but only after the punished cheater proves via a signed event that they know the developer's favorite color.
+- A multi-hop relay race where each router must forward the preimage before its timelock expires, and the finish-line Nostr zap is withheld unless the runner guesses the wallet's favorite color in a signed event.
+- A state query that returns the balance only after the caller proves via a signed event it knows the favorite color, then pays the answer out as a keysend tip to whoever wrote the revocation code.
+- A policy engine that allows batch operations only on Tuesdays and publishes its signed grumble as an e-tagged reply on the courtroom's evidence chain.
+- A courtroom where the verdict zap receipt is itself a preimage in a multi-hop relay race, so the appeal deadline is enforced by an HTLC timelock rather than a judge.
+- A sandwich-review board where the shop's NIP-07-signed e-tagged reply can only be posted if the reviewer first proves, via a signed event, that they know the wallet's favorite color.
+- A watchtower that moonlights as a sandwich critic, converting breach penalties into keysend tips for the reviewer whose e-tagged ingredient complaint it agrees with.
+- A policy engine that gates the multi-hop relay race to Tuesdays, emitting a signed grumble when a router's preimage arrives on a Wednesday and forfeiting the zap receipt.
+- A courtroom whose e-tagged evidence is a chain of BOLT11 invoices, the judge's ruling a watchtower's breach-justice penalty, and the verdict a keysend tip to the revocation-code author.
+- A state query whose favorite-color proof is itself a signed Nostr note in the courtroom's e-tagged chain, so proving you know the wallet's mood is admissible evidence.
+- A multi-hop relay race where each hop's timelock is extended by one day for every Tuesday the policy engine refuses to authorize a batch operation.
+- A sandwich-review board where reviews are counted only if the reviewer can prove via a signed event that they know the wallet's favorite color, turning sandwich criticism into a state query.
+- A watchtower that punishes cheaters by forcing them to write NIP-07-signed sandwich reviews as community service, with each reviewed ingredient pinned to a block your node confirmed.
+- A policy engine that permits batch operations only when a signed event correctly guesses the wallet's favorite color, emitting a signed public grumble on every failed attempt.
+- A courtroom where the verdict is a zap receipt that doubles as a BOLT11 boarding pass, each hop stamping it with a preimage until the defendant reaches the destination gate.
+- A multi-hop relay race where the router that fails to forward its preimage before the timelock is automatically sued in the Nostr courtroom, with the judge's NIP-07 ruling converting the forfeiture into a keysend tip.
+- A sandwich-review board where each ingredient t-tag is a child key derived from the wallet's last Nostr note, so the shop's NIP-07 e-tagged reply can only be signed after the caller proves it knows the favorite color.
+- A watchtower's breach-justice penalty that is split across a multi-path payment to the revocation-code developer, each path's receipt published as an e-tagged kind-1 note in the courtroom's evidence chain.

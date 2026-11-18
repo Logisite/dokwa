@@ -1,0 +1,100 @@
+- A tamagotchi whose mood is read from get_balance and whose keysend "treats" only work while its connection's expires_at is still in the future.
+- A letter-writing ghost that seals each sentence in a make_invoice description and delivers it by keysend, with the relay none the wiser.
+- A museum audio guide that proves you own a ticket via get_info proof-of-possession and streams payment_received notifications as your "donation" plays.
+- A rent-splitting contract where multi_pay_keysend fires on the first of every month and budget_renewal resets the shared kitty weekly.
+- A confessional booth that accepts only keysend to an anonymous pubkey, then posts a zap receipt as absolution.
+- A capability Santa that grants each app a daily-budgeted gift-giving key and revokes them all at midnight.
+- A weather vane that pivots on payment_sent notifications and pays an invoice whenever the wind direction changes.
+- A lullaby subscription that uses make_invoice with a long expiry and payment_received to unlock each verse.
+- A "who paid first" race where several sub-wallets each get an isolated balance and the winner is the one whose payment_received lands first.
+- A paranoid notebook that signs every entry with the paired key and refuses to open unless a get_info probe succeeds.
+- A budget fairy that negotiates each app's max_amount based on how narrowly it scoped its request_methods.
+- A dartboard where every bullseye triggers pay_keysend to a pubkey derived from the score and is logged via list_transactions.
+- A time-capsule wallet whose connection self-destructs at expires_at the moment a zap receipt with a specific note appears.
+- A roleplaying DM that hands each player an isolated sub-wallet and only pays invoices whose description rhymes.
+- A nosy doorbell that uses get_balance as an "are you home?" probe and payment_received as the doorbell itself.
+- A hydra of dashboards where revoking one key sprouts a fresh scoped key with the same budget_renewal.
+- A café tip jar where each regular has an isolated sub-wallet and multi_pay_invoice splits the weekly jackpot.
+- A "proof of brew" machine that requires get_info authentication before dispensing and keysends a receipt to your npub.
+- A modular synth where each module is a separate app key with its own budget and the patch cable is the relay.
+- A reverse ATM that makes invoices with absurd descriptions and cashes them out via multi_pay_keysend when the moon is full.
+- A library of Babel where every book is an encrypted NWC request only the right wallet pubkey can decrypt.
+- A tailor app that stitches request_methods into a bespoke permission cloak and measures the fit with get_info.
+- A fishing game where you catch payment_received notifications and the rare ones are keysend from a secret pubkey.
+- A post-mortem bot that reads list_transactions to find which app overspent, then revokes exactly that one key.
+- A password piñata where the bearer secret is the candy and losing it means the capability is gone forever.
+- A metronome that ticks on payment_sent and stops dead when budget_renewal is set to never.
+- A capability horoscope that assigns each app a daily max_amount derived from the "stars" of its pubkey.
+- A supply chain where each crate has an isolated sub-wallet and lookup_invoice serves as the bill of lading.
+- A whisper network that fires the same request at five relays and accepts the first signed 23195 that arrives.
+- A ghostwriter that only writes chapter two after a zap receipt for chapter one has settled.
+- A sommelier that recommends a payment using the network from get_info and your last ten list_transactions.
+- A split-the-bill bot that turns one invoice into ten keysend slices, each capped by its recipient's budget.
+- A time lock that hides a secret in a make_invoice description and releases it once expires_at has passed.
+- A karma ledger that awards points for payment_sent notifications and spends them via get_balance queries.
+- A chaos monkey that randomly revokes one app key per full moon and watches the others adapt.
+- A relay sommelier that picks the fastest relay by timing get_info responses across five of them.
+- A miniature economy where each isolated sub-wallet has its own currency symbol and multi_pay_invoice is foreign exchange.
+- A lie detector that claims you paid but makes you confirm with lookup_invoice before it believes you.
+- A privacy kaleidoscope that rotates relays so metadata snoops see a different pubkey pair on every hop.
+- A pocket sanctuary that accepts only a self-hosted relay and verifies that every response sig came from the expected wallet pubkey.
+- A capability quarantine that gives suspicious apps a read-only get_balance key with a tiny max_amount and a short expires_at.
+- A karaoke wallet that sings the description of each invoice and keysends encore notes on request.
+- A garden where each plant is an app key, daily budget_renewal is watering, and revocation is pruning.
+- A treasure hunt where clues hide in payment hashes and lookup_invoice reveals the next coordinate.
+- A courtroom where get_info proof-of-possession is the testimony and zap receipts are the exhibits.
+- A slot machine that pays out via keysend only when three payment_received notifications land in one second.
+- A houseplant that wilts as its max_amount depletes and perks up when budget_renewal hits.
+- A social-credit parody where your npub's zap receipts decide which request_methods you're granted.
+- A black-box flight recorder that logs every 23194 and 23195 but can never read a single encrypted payload.
+- A coffee elixir that requires pay_invoice to a pubkey derived from your mood, then keysends the change back.
+- A capability marketplace where apps trade budget slices via multi_pay_keysend and get_balance is the price ticker.
+- A mirror universe where every payment_sent notification spawns a mirrored invoice inside an isolated sub-wallet.
+- A babysitter that grants a one-day expires_at key to a game and auto-revokes it when a bedtime payment_received fires.
+- A dial-up nostalgist that pings get_info across five relays and deliberately picks the slowest, purely for the aesthetic.
+- A riddle wallet that only answers get_info if your request's description is a correct haiku.
+- A relay race where each runner is a separate app key and the baton is a zap receipt passed over Nostr.
+- A debt spiral bot that keysends to itself across isolated sub-wallets until budget_renewal mercifully resets.
+- A notary that timestamps a hash by embedding it in a make_invoice description and proves it later with lookup_invoice.
+- A weather balloon that publishes get_balance updates to a relay as a public "how rich is the sky today" signal.
+- A puppet theater where each puppet is an app key and revoking one makes it dramatically fall over mid-show.
+- A time traveler that pre-signs requests for a future expires_at and only delivers them when the clock matches.
+- A locksmith that rotates the bearer secret hourly by authorizing a new pubkey and revoking the old one.
+- A pet rock whose "hunger" is a dwindling max_amount and whose "food" is an invoice paid via pay_invoice.
+- A constellation of sub-wallets where multi_pay_keysend draws a star map and get_balance is the brightness.
+- A fortune teller that reads list_transactions like tea leaves and predicts your next payment_sent.
+- A silent disco where dancers pay via keysend and the beat is the payment_received notification stream.
+- A bureaucracy simulator where each stamp is a scope in request_methods and the form is a pairing deep link with return_to.
+- A black market of one-time keys where each capability self-destructs at expires_at right after first use.
+- A whistleblower that posts zap receipts as proof of payment but hides the payer behind get_info proof-of-possession.
+- A candy dispenser that requires pay_invoice but only accepts invoices whose make_invoice description contains a joke.
+- A museum exhibit where visitors prove wallet control via get_info to unlock an audio track about the art of revocation.
+- A chess opponent that keysends a move to your pubkey and checks list_transactions to confirm you replied.
+- A polyglot that re-encodes requests from NIP-04 to NIP-44 mid-flight and still verifies the response sig from the wallet.
+- A garden gnome that guards a sub-wallet and only lets payment_received through when the stars are favorable.
+- A night shift that swaps in a read-only dashboard key at 2am and revokes the spending key until morning.
+- A crowdfunding jar where each backer's share lives in an isolated sub-wallet and the goal is a max_amount.
+- A rebus puzzle whose answer is a payment hash, verified by lookup_invoice against a pre-made invoice.
+- A traffic light that turns green when get_balance is high and red when the budget is nearly exhausted.
+- A pen pal that writes letters as encrypted 23194 events and waits for a signed 23195 reply from your wallet.
+- A slot-machine tax collector that skims a fraction of every keysend into a sub-wallet capped by max_amount.
+- A memory palace where each room is an app key and walking through a door is a successful get_info authentication.
+- A time-capsule post office that holds invoices until expires_at then releases them via payment_received.
+- A royalty system where every zap receipt triggers a multi_pay_keysend split among contributors with equal budgets.
+- A horoscope app that reads your wallet's network from get_info and your spending from list_transactions to write your daily fate.
+- An escape room where solving each puzzle grants the next scoped key and the final key can pay_invoice to "win."
+- A ghost kitchen where each recipe is an app with its own budget and ingredients arrive via multi_pay_keysend.
+- A diary that encrypts each entry to the wallet pubkey so even the relay hosting it cannot read your feelings.
+- A capability auction where the highest max_amount bidder wins the right to hold a revocable key for a day.
+- A prank caller that keysends random pubkeys but only from a dedicated, tightly budgeted sub-wallet.
+- A lighthouse that flashes once per payment_received and goes dark the instant its connection is revoked.
+- A scribe that transcribes every notification into a public note, linking npub identity to payment with zap receipts.
+- A jury of five sub-wallets that votes on releasing funds, each with its own budget and a single revocable key.
+- A red-envelope tradition where gifts are keysent to pubkeys and only claimable while expires_at has not passed.
+- A time machine that replays last month's list_transactions as a simulation running on this month's budget_renewal.
+- A secret Santa that assigns each participant an isolated sub-wallet and reveals the giver only via a zap receipt.
+- A doomsday clock where the apocalypse is averted only if enough payment_received notifications arrive before expires_at.
+- A pocket dimension where an app lives entirely inside one isolated sub-wallet and has never seen the main balance.
+- A riddle master that gates pay_invoice behind a correct answer verified by lookup_invoice of a pre-made invoice.
+- A relay roulette that fires the same request at random relays and records which delivered a signed response fastest.
+- A mirror-mirror login that chains get_info proof-of-possession into passwordless auth, then revokes its own key like a mayfly.

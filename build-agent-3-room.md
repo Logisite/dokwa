@@ -1,0 +1,92 @@
+# agent 3 — the room
+
+You own everything a person sees and touches, and the wiring that turns three tested parts into one product.
+
+Branch `feat/room`, worktree `../dokwa-wt/room`, branched from `main` after crypto and wires have merged.
+
+## Why you are last, and why that is not a demotion
+
+Crypto and wires produce libraries. You produce the thing that exists. Nothing before you can be used by a person; nothing after you would be worth testing.
+
+The reason you start last is that you assemble real parts. There are no stand-ins to build against, no invented payloads, no sample data dressed up as truth. The objects you render are the objects the other two actually made.
+
+## Job one — wire it
+
+The smallest part of the phase, and the one that tells you whether the contract held.
+
+| Wire | From | To |
+|---|---|---|
+| a wallet's request | the wallet | the till, in the same page, over the envelope |
+| a chain lookup | the chain wallet | wires |
+| a node's socket | the Lightning node | the data channel built by wires |
+| a receipt or a slip | the signing code | the queue, then a relay |
+| a code on screen | the thing being sent | the camera on the other device |
+
+If a wire does not fit, that is a finding. Post it: the contract was supposed to be enough, and if it was not, the shape of it is wrong and worth knowing before the interface is built on top.
+
+## Job two — the interface
+
+This is the bulk. In this order:
+
+**1. What it looks like.** The design system, the type scale, the colours, the one place the style is defined. It has to survive a phone in a dim room and a phone in daylight, and it must not depend on the theme to keep a code scannable: a code is pure black on white inside its own box, always.
+
+**2. First run.** Two modes, chosen once and changeable later. Till mode asks for the venue's identity and creates its keys, and shows the export before anything of value exists. Wallet mode asks for nothing much and works immediately.
+
+**3. The till.** Open, hand out a token, take one back, show what came in, close. Every one of those must be one screen and one action, because it happens with a queue in front of it. Amount keypad large enough for a thumb. A refusal must be a sentence, not a spinner.
+
+**4. The wallet.** Balance, receive, send, cash out, and what happened. Sending is a code on screen held awake. Receiving is a camera. Cashing out is an address and a wait that tells the truth about what it is waiting for.
+
+**5. Receipts, slips and badges.** The screens where a person sees what was signed about them, and where an owner issues a slip. When a badge is missing, the screen says so and offers to continue anyway — a warning, never a wall.
+
+**6. Codes.** Display and camera. Big enough to scan at arm's length, held awake while shown, deduplicated by content, native reader first with a fallback when the platform has none. Multi-part codes for the large payloads, and a clear failure when a part is missing.
+
+**7. Install and offline.** The manifest, the icons, the service worker with an explicit update prompt — never a silent swap mid-payment — and every wasm module precached so the till opens with no network at all.
+
+**8. The deploy.** Static build, one origin, one hostname, chosen once. The origin is where the data lives; changing it is losing everything.
+
+## What you must not do
+
+- Do not fix crypto or wires by editing them. Post the problem; the fix belongs to whoever owns it, and a local patch to a shared shape is how two versions of the same object appear.
+- Do not add a dependency. `deps/<name>` from `main`, merge, rebase.
+- Do not put logic in a screen that belongs in a package. A screen that computes a balance is a second implementation of the balance.
+- Do not soften a failure into something prettier. "Expired" is a sentence, "failed" is a sentence, and both are better than a spinner that never stops.
+- Do not let the theme reach inside a code box.
+
+## How you test
+
+Live, in a real browser, at phone size, two profiles.
+
+```bash
+chrome --user-data-dir=/tmp/dokwa-till   --window-size=412,915
+chrome --user-data-dir=/tmp/dokwa-wallet --window-size=412,915
+```
+
+Separate profiles mean separate storage, which is what makes them two devices. Drive them through the browser tooling available here: navigate, look, click, look again. A click that returns is not proof; the read after it is.
+
+| What | How |
+|---|---|
+| the night | till hands a token, wallet receives it, wallet hands it back, till refuses the second attempt |
+| offline | cut the network for real, send by code, restore it, watch the queue drain |
+| reload | close the tab mid-flow and reopen; nothing is lost that should not be |
+| install | on a real phone, add to home screen, open with the network off |
+| camera | on a real phone, scan a code off a screen at arm's length |
+
+The last two cannot be done on a desktop, and they are the two the product actually lives or dies on.
+
+## What "done" is
+
+One phone can do the whole night: get a token, spend it, be refused when it tries twice, read what was signed, and open again tomorrow with the network gone.
+
+Then post it, with what you would still change.
+
+## Your board
+
+`board/room/`, one file per message. Read both other streams in full before you start — they are the reasoning behind the parts you are assembling, and no page of API notes will tell you what they were worried about.
+
+The contract is a **living document**, so by the time you start it may have moved past what a brief described. Read `rulings.md` and `build-contract.md` as merged on `main`, never as remembered.
+
+`python3 board.py read` shows the last few from every stream; `python3 board.py post room <status> "…"` writes yours. `python3 board.py watch room --for 900` in the background prints anything new and exits 2 when it arrives; start it again after reading.
+
+`board/` in your worktree is a link to the one real board, not a copy of it.
+
+Write prose. What did not fit, what you had to work around, what the interface revealed about the parts underneath. The board is the only place your reasoning survives; a commit shows what changed, never why.

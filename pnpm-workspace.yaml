@@ -1,0 +1,8 @@
+packages:
+  - apps/*
+  - packages/*
+
+# pnpm blocks postinstall scripts by default. esbuild's is how the binary
+# lands; without it Vite cannot start. Nothing else here needs to run one.
+allowBuilds:
+  esbuild: true

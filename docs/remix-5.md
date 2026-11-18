@@ -1,0 +1,20 @@
+- A bug-bounty fortune teller that reads `list_transactions` like tea leaves to predict which commit a hacker will exploit next, then pays the finder with a NIP-57 zap receipt attached to a kind-C0 code snippet.
+- A channel-liquidity DJ whose crossfader is wired to `get_balance` mood swings and whose BOLT11 downbeats only land while a connection's `expires_at` still glows green.
+- A stubborn oracle that publishes a signed attestation it has never once trusted an app, then spends a blind-signed bearer token offline to prove it trusted the mint instead.
+- A mint-audit ghost that crossfades inbound and outbound ecash denominations to the beat of mempool fee estimates, emitting a fresh blind signature on every downbeat.
+- A bug-bounty watchtower that punishes cheating channels by day and, at midnight, swaps the recovered sats into blind-signed IOUs a federation of guardians cannot link to the exploit report.
+- A fortune teller whose tea leaves are kind-C0 code snippets and whose prediction of your next `payment_sent` is sealed as NIP-44 ciphertext until a NIP-07 signature reveals the key.
+- A liquidity-DJ bartender who crossfades channel capacity to the rhythm of `budget_renewal` and keysends a compliment to every hop that survived the downbeat.
+- A tamagotchi bug bounty whose mood is read from `get_balance` and whose "treat" is a NIP-57 zap receipt that only counts if the offline bearer token was swapped before the mint's spent-secret check.
+- A stubborn diarist that emits a signed "still thinking" attestation every thirty seconds while deciding whether to melt a bearer token, publishing each hesitation as a public kind-1 note.
+- A fossil-record fortune teller that diffs two relays via negentropy to reveal the erased `payment_sent` a censor tried to hide, then zaps the whistleblower who posted the `list_transactions` clue.
+- A channel-liquidity horoscope that assigns each app a `max_amount` derived from the stars of its pubkey and crossfades capacity whenever a signed attestation of stubbornness is published.
+- A blind-signed bearer token passed hand-to-hand at a festival whose value is confirmed only when a single online swap at the mint also doubles as a bug-bounty payout receipt.
+- A watchtower that guards a channel breach while its operator's offline ecash swap quietly double-checks the spent-secret ledger and publishes the result as a "don't trust, verify" mosaic square.
+- A magician who blinds a secret with random factor r, crossfades it through inbound and outbound capacity as a magic trick, and reveals the key by signing a kind-1 event only after the `payment_sent` prediction lands.
+- A paranoid notebook that stores each entry twice and refuses to reveal its bug-bounty report unless a liquidity-DJ downbeat coincides with a successful offline swap at the mint.
+- A scoped identity projected to a fortune-telling app that can only read `list_transactions` as haikus, revoked the moment it predicts a `payment_sent` the ledger never made.
+- A federation of guardians that crossfades trust between a watchtower and a mint, cross-checking every "never trusted an app" attestation against a nutzap attached to a signed note.
+- A bug-bounty escape room where the puzzle is a PSBT, the prize is an offline bearer token, and the exit invoice is paid by the first node to independently verify the block.
+- A channel-liquidity DJ whose beat is a `since` filter on the planet's noon, emitting BOLT11 invoices as captions for a silent disco where dancers pay via NIP-60 token handoffs.
+- A stubborn key store that derives one child key from the hash of your last Nostr note, encrypts it at rest under a blinding factor, and publishes a signed memorial note when it refuses to swap.

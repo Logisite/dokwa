@@ -1,0 +1,100 @@
+- An audio-guide platform for museums that verifies each artifact's provenance against a full node's historical record before unlocking a BOLT12-subscription narration, so curators can prove authenticity to visitors who pay per track in sats.
+- A developer-training simulator that stages HTLC routing disputes on regtest and uses the Python functional test framework to adjudicate who earns the preimage, teaching Lightning engineers how failure paths really settle.
+- A signet mining pool that distributes rewards via multi-path payments across many small channels, letting small miners receive frequent micropayments instead of waiting for large on-chain payouts.
+- A watchtower operator that routes a share of recovered breach penalties to open-source revocation-code maintainers as keysend tips, aligning security researchers' incentives with the code they audit.
+- A solar-powered, tamagotchi-sized pruned node for off-grid communities that fully validates the chain and pays its own electricity bill through streaming micropayments over NWC.
+- A policy oracle for miners that flags blocks violating a custom OP_RETURN policy such as haiku spam and sends the miner a consolation BOLT11 invoice explaining the rejection, improving filter transparency.
+- An onion-routed payment auditing tool that leaves a Nostr zap receipt at each of seven hops so a payer can reconstruct and verify the exact path its payment took, useful for debugging routing and proving route compliance.
+- A fee-estimation dashboard that celebrates each fully verified UTXO set with a tiny keysend reward to the wallet operator when mempool congestion is low, gamifying routine node maintenance.
+- A multisig coordination tool that requires each co-signer to pay a satoshi via BOLT11 as an attendance proof before signing a PSBT, giving treasury teams an auditable record of who participated.
+- A regtest faucet for Lightning courses that dispenses test coins only after a wallet demonstrates a successful submarine-swap-style channel rebalance, so students practice real liquidity management before moving to signet.
+- A DAO voting system where membership is a recurring BOLT12 offer and each paid preimage doubles as an on-chain-verifiable vote receipt, giving organizations cheap, privacy-preserving quorums.
+- A chess-training service backed by a full node that charges micropayments per move via LNURL and refunds the stake when it detects engine assistance through its RPC, offering verifiable anti-cheat tournaments.
+- A blockchain analytics indexer that tags historical transactions with community Nostr zap counts and sells the resulting attention leaderboard as a BOLT12 subscription to researchers and traders.
+- A privacy gateway that tunnels wallet RPC queries through Tor onion services and pays each exit hop in sats via keysend, letting users avoid leaking queries to third-party servers while compensating relay operators.
+- A liquidity-management daemon that rebalances inbound and outbound channel capacity in response to mempool fee estimates, emitting a BOLT11 cost report on every adjustment so routing operators can audit spend.
+- A signet-based onboarding challenge for new developers that requires composing a valid PSBT, opening a channel, and extracting a preimage before a timeout, with the Python test framework grading progress in real time.
+- A hybrid watchtower and auditing service that verifies client balances from first principles during idle periods and charges a flat LNURL rent, so offline users get both breach protection and balance attestation.
+- A verifiable art-and-donation platform that mints a mosaic square for each independently validated block and auctions squares via micropayments, giving node operators a transparent funding mechanism.
+- A generative-music mining pool that feeds getblocktemplate data into a sequencer and distributes block rewards via multi-path payments to contributing artists, creating a verifiable royalties stream.
+- A lightweight mobile wallet that prunes chain data but retains every payment preimage, letting users produce cryptographic proof of payment long after the underlying block data is gone.
+- A contactless vending machine that accepts keysend from passing Lightning nodes and dispenses printed PSBTs as auditable purchase receipts, useful for cashless event vendors.
+- A regtest training harness that deliberately broadcasts revoked channel states and grades whether a watchtower punishes them, giving Lightning developers a reproducible breach-protection test suite.
+- A "mempool weather" subscription that uses a pruned node's fee estimation to deliver recurring BOLT12-billed congestion forecasts, helping wallets choose confirmation targets.
+- An interop benchmark that runs the same multi-path payment across LDK, LND, and CLN and lets the community zap the most informative failure report, improving cross-client routing reliability.
+- An educational scavenger hunt that hides historical-transaction clues in onion-routed zaps and checks answers against a complete archival node, teaching chain analysis with privacy-preserving hints.
+- A mempool analytics feed that publishes heuristic fee predictions as NIP-57 zaps on Nostr, letting wallet developers consume crowd-verifiable estimates without running their own node.
+- A self-custody inheritance vault that requires a BOLT11 payment, a PSBT signature, and a watchtower's breach check before releasing funds, giving heirs a secure, auditable recovery path.
+- A content-relay testbed that carries short poems instead of transactions but charges forwarding fees via HTLCs, letting researchers stress-test micropayment routing with harmless payloads.
+- A testnet onboarding game where the clue is a BOLT12 offer, the solution is a preimage, and the prize is a descriptor wallet students must verify from genesis, teaching wallet recovery end to end.
+- An autonomous channel-rebalancing bot that pays itself small keysend nudges through NWC whenever it must shift excess inbound liquidity, giving operators a visible log of automated rebalance events.
+- A node-staking protocol that streams micropayments only after a full node validates one thousand consecutive blocks without a reorg, rewarding reliable infrastructure operators.
+- A routing benchmark that races HTLC preimages through multiple hops before their timelocks expire and publishes finish-line receipts as Nostr zaps, measuring real-world route latency.
+- A subscription-billing wallet that derives a fresh watch-only address for each BOLT12 subscriber and invoices them for the monitoring service, giving merchants privacy-preserving recurring payments.
+- A blockchain-forensics visualization tool that renders UTXO histories as "portraits" and sells custom reports via LNURL-pay, helping investigators communicate fund flows.
+- A conformance-testing orchestra that treats each Lightning implementation as an instrument and uses a Python functional test as conductor to enforce BOLT compliance, producing a readable interop report.
+- A generative-art mining dashboard that renders getblocktemplate data as sonnets and pays for printing via streaming micropayments per stanza, giving pool operators a novel block-status display.
+- A channel-insurance cooperative that collects BOLT12 premiums and adjudicates breach claims by a full node's consensus verdict, giving small node operators affordable breach coverage.
+- A wallet-maintenance service that consolidates dust UTXOs during low-fee windows and refunds the savings as a keysend stream, so users keep spendable balances without manual coin control.
+- A merchant tip jar built on a Raspberry Pi pruned node with a Lightning address that validates the chain locally and accepts Nostr zaps, giving small shops a self-sovereign, low-cost payment rail.
+- A travel-payment prototype where a BOLT11 invoice acts as a boarding pass stamped by each routing hop's preimage, giving transit systems an end-to-end payment and route audit trail.
+- An NWC-enabled smart appliance that bills per degree of browning via micropayments and confirms settlement against a local full node before dispensing toast, demonstrating verifiable device-level payments.
+- A signet-based consensus training game that pays correct block-validity predictions via multi-path micropayments, teaching developers how consensus rules reject bad blocks.
+- A privacy-preserving block-data server that serves lightweight clients over onion services and charges a per-session LNURL fee, giving wallet users an alternative to third-party indexers.
+- A verifiable message board where posts are encoded as payment preimages anchored to blocks your own node confirmed, giving communities a censorship-resistant, self-authenticating forum.
+- A documentary funding platform that pays contributors through BOLT12 subscriptions sourced from the film's own zap receipts, giving independent creators a self-sustaining distribution model.
+- A fee-forecasting service that publishes estimates only after a multisig quorum signs off via PSBT, giving exchanges an auditable, multi-party-validated confirmation-target signal.
+- An online dispute-resolution system that uses HTLC timelocks as deliberation deadlines, pays jurors in micropayments, and stores the verdict as a Nostr zap receipt, enabling cheap, binding arbitration.
+- A provably fair raffle platform where tickets are Lightning invoices and the winning preimage is drawn from a block your own node validated, letting organizers prove no foul play.
+- A privacy-preserving donation endpoint hidden behind Tor that accepts keysend and uses a pruned node to attest it never leaked donor IPs, giving activists a verifiable anonymous funding channel.
+- An educational playground that teaches children consensus rules by letting them reject invalid blocks and rewards correct answers via NWC micropayments, making abstract validation concepts tangible.
+- A security-training escape puzzle whose solution is a valid PSBT signature and whose prize is a channel protected by a watchtower you deploy, teaching recovery and breach response.
+- A regtest policy sandbox that tunes mining templates, fee estimates, and channel rebalances with a reinforcement-learning agent paid in test sats, letting researchers model fee-market dynamics safely.
+- A podcast platform that streams per-second micropayments via BOLT12 and ends each episode with a chain-verifiable preimage, giving listeners proof-of-listening and creators granular revenue.
+- A charity-transparency API that publishes payment proofs as Nostr zaps and lets donors audit recipient balances from first principles with a full node, replacing trust with verification.
+- A settlement router that splits a large payment across channels belonging to mutually incompatible node implementations, giving exchanges a way to move size without protocol lock-in.
+- A private messaging service where the route itself carries the message and delivery is proven by a final preimage attached to a NIP-57 zap, giving correspondents deniable, verifiable delivery.
+- A watchtower service funded by BOLT12 subscriptions that donates recovered breach funds to pruned-node operators via LNURL-withdraw, strengthening the network's independent validation base.
+- A testnet monitoring service that mails a "bad block of the day" postcard for every rejected block to subscribers who pay in sats, giving developers a tangible consensus-alert feed.
+- A fee oracle that withholds quotes unless its RPC-connected full node has verified the last ten blocks, guaranteeing exchanges never price against stale chain data.
+- A courier-access doorbell that unlocks only when a payment proof is checked against a block your node confirmed minutes ago, giving remote deliveries verifiable, trustless authorization.
+- A remote PSBT notary that witnesses multisig signing ceremonies over NWC and issues a BOLT11 receipt per signature, giving distributed teams an auditable signing record.
+- An interactive consensus explainer where readers pay per micropayment to unlock story branches, with each rule's behavior verified on regtest, making protocol education self-funding.
+- A privacy-conscious matching service that only connects users whose Lightning addresses can complete an HTLC route within three hops, using payment connectivity as a lightweight trust signal.
+- A chain-analytics time machine that lets auditors query any past balance and bills via streaming micropayments per minute of browsing, replacing expensive archive subscriptions.
+- A pruning-efficiency benchmark where nodes race to validate and discard the most blocks, graded by a Python functional test and paid via keysend, guiding resource-constrained deployments.
+- A liquidity-operations dashboard that visualizes inbound scarcity and successful MPP routes as a "weather balloon" log on Nostr, giving routing nodes an at-a-glance health signal.
+- An IoT telemetry network where sensors pay a pruned node in sats via BOLT11 to anchor their readings as OP_RETURN data, giving researchers tamper-evident environmental records.
+- A cross-client payment bridge that routes an LND-to-Eclair payment through a CLN hop and publishes the preimage as a zap receipt, proving interoperability for multi-vendor deployments.
+- A tabletop training game where the board is a PSBT, the dice are fee estimates, and the "house" runs a watchtower, teaching self-custody and breach response to new users.
+- An audit-print service that turns on-chain transactions your node validated into BOLT11 receipts and sells the bound paper trail via LNURL, giving accountants verifiable hard-copy records.
+- An NWC-powered irrigation controller that waters only after a node confirms the prior micropayment and uses keysend to nudge soil sensors, demonstrating metered, verifiable utility billing.
+- A mining pool that pays rewards as BOLT12 recurring installments so each block becomes a trackable payout episode, giving miners predictable income and transparent history.
+- A blockchain forensics service that traces cold-case fund flows with complete chain data and bills clients per clue via LNURL-pay, giving investigators affordable, itemized analysis.
+- A watchtower redundancy test where two towers race to punish the same breach and the winner claims the penalty, giving users measurable evidence of tower responsiveness.
+- A fee-market podcast that delivers sponsorships as HTLC micropayments and archives transcripts as complete historical records, giving listeners verifiable, ad-light technical content.
+- A children's sleep app that lulls kids with block-validation "lullabies" from a pruned node and charges a BOLT12 subscription, turning node maintenance into a calm bedtime routine.
+- A signet onboarding challenge where participants must craft a consensus-valid PSBT and pay the exit invoice over a multi-hop route, giving trainees hands-on wallet and routing practice.
+- A network-monitoring service where full nodes prove they relayed a transaction by producing its preimage and are paid via NWC zaps, giving senders verifiable propagation evidence.
+- A relay-incentive tool that pays each peer that propagated your transaction a satoshi via keysend after your node verifies the relay on regtest, rewarding good network citizenship.
+- A reminder-and-nudge service for recurring BOLT12 subscriptions whose gentle "you haven't paid" messages are generated by a pruned node that explains why independent verification matters, improving collection rates with an educational twist.
+- A batch channel-opening service that creates hundreds of tiny channels from a single multi-path payment under a watching full node's validation, giving LSPs a fast way to bootstrap liquidity.
+- A provenance-aware wallet that only spends UTXOs whose history has been published as a Nostr zap series and verified from genesis, giving privacy-focused users auditable coin selection.
+- A historical-walking-tour platform where visitors verify "artifact" UTXOs on-chain and pay admission through LNURL, blending local history with verifiable chain data.
+- A routing-policy engine that prefers peers from ideologically compatible implementations and uses HTLC preimages as reputation tokens, giving operators values-aligned routing control.
+- A serialized testnet training drama whose cliffhangers are HTLC timelocks and whose soundtrack is funded by streaming NWC micropayments, teaching timelock mechanics through storytelling.
+- An estate-planning service where a full node continuously audits an executor's bond from first principles for a recurring BOLT12 fee, giving beneficiaries ongoing, trustless oversight.
+- A breach-reporting watchtower that publishes vivid "cheater" reports pinned to blocks your node confirmed and sells them as zaps, deterring bad actors through public, verifiable shaming.
+- A municipal parking meter fed by keysend where enforcement runs on a pruned node that simply refuses to validate unpaid-parking claims, giving cities a low-cost, auditable payment system.
+- A recruiting puzzle for crypto engineers where the BOLT11 invoice is a crossword solvable only by someone who has indexed historical transactions and understands fee estimation, screening for real skills.
+- A signet dispute-resolution arena where a Python functional test judges, full nodes serve as jury, and Lightning preimages are exhibits, giving developers a reproducible consensus-debugging forum.
+- A merchant point-of-sale dashboard that shows a live mempool feed while accepting multi-path payments, letting shoppers adjust tips based on current congestion and giving merchants fee context.
+- A self-custody cooperative where members rotate watchtower duty and pay dues through BOLT12 subscriptions verified on-chain, giving small holders shared breach protection at lower cost.
+- A research visualization that colors historical transactions by the Lightning hop count that settled related payments, funded by LNURL donations, revealing on-chain/off-chain interplay.
+- A low-power node operator's weather-alert subscription that pays itself back in keysend whenever the mempool is calm, tying micropayments to network conditions.
+- A cross-client coding challenge that requires routing a payment through four Lightning implementations and submitting a final preimage that is a PSBT signature your node accepts, testing full-stack interop skills.
+- A hackathon raffle where prizes are tiny channels and winners are chosen by the first node to independently verify a new block, making the draw provably unpredictable and fair.
+- A fee-prediction leaderboard bot that zaps users who nail mempool estimates, funded by a share of mining-template-generated rewards paid over a channel, crowdsourcing better fee data.
+- An alternate-history fiction series that sells BOLT12 subscriptions and fact-checks each "what-if" timeline against the real chain, giving readers verifiably grounded speculative storytelling.
+- A watchtower marketplace where towers bid for clients with BOLT11 coupons and are ranked by a full node's consensus-based reputation score, helping users pick reliable breach protection.
+- A regtest board-game night where every move is a channel update and snacks come from a shared NWC wallet, giving developer meetups a fun, hands-on way to learn channel state transitions.

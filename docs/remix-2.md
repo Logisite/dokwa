@@ -1,0 +1,20 @@
+- The haiku-rejecting consensus oracle now logs every consolation zap into a black-box flight recorder that can count the rejected poems but is cryptographically blind to their content.
+- A recovery phrase published as an unrecoverable Nostr event is used as the make_invoice description for the per-degree toaster, so every slice of toast is invoiced in a language no BIP39 validator can parse.
+- The grieving key-rotation event is wired to the toaster: whenever a signing key retires, the toaster browns one extra degree in mourning and demands a consolation micropayment from the consensus oracle.
+- A black-box flight recorder absorbs the NWC toaster's payment_received notifications but, being unable to decrypt any payload, can only report that "some toast happened."
+- The consensus oracle's consolation BOLT11 invoices are themselves the bearer secret of a capability piñata: pay the haiku penalty and the capability is gone forever.
+- A trust anchor that verifies every app signature twice is hired by the toaster to check each browning payment, and it emits a signed complaint whenever the toast is suspiciously enthusiastic.
+- The unrecoverable recovery-phrase event is engraved into the epitaph of every revoked key's memorial note, so each dead key dies twice.
+- A scoped identity projected to the haiku oracle can only sign blocks whose OP_RETURN is a five-seven-five, enforced by a policy that knows poetry.
+- The black-box flight recorder is given a get_info probe and declared the official notary of the rotation ceremony, timestamping each mourning event by hashing it into a make_invoice description it can never read.
+- The consensus oracle rejects blocks containing haikus, but a wallet that acts as its own oracle publishes a signed event declaring the block "spiritually valid," triggering a keysend consolation to both miner and poet.
+- The toaster's browning micropayments are routed through a privacy kaleidoscope that rotates relays, so the consensus oracle always validates a transaction whose OP_RETURN describes a different degree of doneness than the one actually served.
+- A batch method atomically rotates a key, publishes its mourning event, and keysends a consolation invoice to the miner whose haiku was rejected, emitting one public receipt that refuses to say which of the three happened.
+- The riddle wallet's haiku-gated get_info is merged with the haiku-OP_RETURN oracle: answer the haiku correctly and the oracle will grudgingly accept a block containing your poem.
+- A black-box flight recorder is fitted to the grieving key-rotation scheme, so it logs every departing key as a 23195 yet remains unable to tell whether the celebration was sincere.
+- The unrecoverable recovery phrase is reborn as the banned haiku: its words are the OP_RETURN that the consensus oracle rejects in every block, and each rejection zaps a consolation to a miner who can never spend it.
+- A capability Santa grants the toaster a daily-budgeted gift-giving key that revokes at midnight, except the toaster keeps toasting by reading the key's own public mourning event as a new authorization.
+- The consensus oracle's consolation zaps are deposited into an isolated sub-wallet whose max_amount is the number of syllables in the rejected haiku, and budget_renewal hits only when a new key is mourned.
+- A network interface that keeps its local view consistent by inventing state changes and signing them is used by the toaster to confirm browning payments, so the bread is declared done before it has finished paying for itself.
+- The grieving rotation events are published as the daily crossword of supported methods, and the consensus oracle accepts a block only if its OP_RETURN is the acrostic solution.
+- A paranoid notebook that signs every entry and refuses to open without a get_info probe now records the toaster's browning disputes, but its entries are encrypted to the recovery phrase that was rotated away last Tuesday.

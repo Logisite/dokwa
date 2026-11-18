@@ -1,0 +1,100 @@
+- A wallet that derives a new child key for every houseplant it owns and publishes each plant's watering status as a signed public attestation.
+- A policy engine that refuses to sign any event whose timestamp falls on a day the wallet's ledger records as a bad mood.
+- An authorization engine that grants a dating app a scoped identity which can only reveal "currently single" and auto-revokes it the moment the ledger records a anniversary.
+- A wallet that treats its own rotation schedule as a Nostr event source, publishing a public "I am now key #47" note every time it replaces its signing key.
+- A privacy boundary that gives each of your three personalities its own sub-wallet and only lets them see shared memories stamped with a mutually-approved label.
+- A NIP-47 API whose batch method atomically buys coffee, waters the plant, and files both under a ledger label called "treatments."
+- A trust anchor that verifies every incoming app signature twice, just because, and emits a signed complaint event when one looks suspiciously enthusiastic.
+- A wallet that publishes information-kind 13194 events advertising its supported methods but deliberately lists one fake method to lure curious apps into a polite rejection response.
+- An identity provider that projects a different scoped identity to every relay, so no two relays agree on who you are.
+- A ledger that stores invoice metadata with labels like "probably a mistake" and exposes them only through a state-query method granted to your future self.
+- An event source that pushes a signed notification to your toaster the instant a payment clears, even though the toaster has no idea what money is.
+- A wallet whose recovery phrase is itself a Nostr public event, encrypted to a key that was rotated away last Tuesday and is now safely unrecoverable.
+- A permissioned API where the only method granted to a weather app is "read whether the wallet feels sunny," backed by a ledger of emotional balances.
+- A state machine whose transitions are emitted as public attestations, so the entire internet can watch you decide to go for a walk.
+- A privacy boundary that isolates your gardening sub-wallet so thoroughly from your gaming sub-wallet that they would each deny the other exists under oath.
+- A key-management scheme that derives a distinct child key for each lie you've told and encrypts them all at rest under one very small lie.
+- An authorization engine that auto-withdraws a grant whenever the app's request contains the word "please" more than four times.
+- A wallet that acts as its own oracle, signing a public event that declares "the ledger says the cat has been fed" based on a single ambiguous invoice.
+- A notification subscription that lets an app receive signed updates about balance changes but never the balance itself, only the emotional trajectory.
+- A trust anchor that refuses to trust its own past self and re-verifies every historical ledger entry before signing any new one.
+- A Nostr event source that turns every revoked key into a tiny public memorial note with the key's last known method grant as an epitaph.
+- A scoped-identity projector that hands each app a key whose authority expires precisely when the app stops being amusing.
+- A batch method that performs three state-changing operations atomically and emits one public receipt that refuses to say what the operations were.
+- A ledger whose query API answers "who requested this" with another signed question rather than a name.
+- A wallet that publishes its network interface status as a signed event, so relays know when it's in a bad mood and should route around it.
+- An authorization engine that grants a key the right to read history but not the right to know that history exists.
+- A privacy boundary implemented by deriving a fresh scoped identity for every browser tab, each convinced it is your only tab.
+- A wallet that signs a public attestation of its own uptime and quietly omits the minutes it was rewatching cat videos.
+- A NIP-47 request encrypted to the wallet that the wallet answers with an encrypted response that is itself a new authorization grant for a key that doesn't exist yet.
+- An event-driven interface that pushes a signed notification whenever a label in the ledger is misspelled, treating it as a state change of great importance.
+- A key store that rotates keys on every full moon and publishes the rotation as a public event formatted like a horoscope.
+- An identity provider that lets one wallet be simultaneously a verified adult, a verified toddler, and a verified goldfish to three different apps.
+- A state machine that emits a signed "still thinking" notification event every thirty seconds while deciding whether to authorize a payment.
+- A wallet that uses its network interface to monitor itself and files a signed bug report against its own authorization engine when bored.
+- A public/private split where the request and response are encrypted, but the wallet publishes a haiku about their general mood to the shared graph.
+- A ledger that treats timestamps as sacred and refuses to record any event that happened before the wallet was born, even if it did.
+- A scoped identity granted to a meditation app that can only read the wallet's "calm balance" and is revoked the moment the balance dips.
+- A permissioned API that advertises a "dance" information method which, when called, returns a signed list of the wallet's favorite relays.
+- A wallet whose key lifecycle includes a "retirement" phase where old keys are not revoked but promoted to public attestations of their own former glory.
+- An event source that turns the ledger's invoice metadata into a public Nostr gallery of tiny signed poems about money.
+- A privacy boundary that lets two apps share a sub-wallet but only if they agree on a common label neither is allowed to read.
+- An authorization engine where grants are written in a policy language that only the wallet understands and that occasionally insults the app.
+- A batch method that atomically rotates a key, revokes a grant, and publishes a public announcement of the wallet's renewed sense of purpose.
+- A wallet that projects a scoped identity to a chess app whose authority is limited to signing the phrase "I resign" with perfect cryptographic confidence.
+- A state query method that returns the balance only after the calling key has proven, via a signed event, that it knows the wallet's favorite color.
+- A network interface that maintains channels to relays the wallet has never heard of, purely to keep the local view interesting.
+- A notification subscription that delivers signed updates about grant revocations to the very key being revoked, as a courtesy.
+- A key store that encrypts everything at rest except the recovery phrase, which it shouts into the Nostr public graph as a performance art piece.
+- An identity provider that derives a child key for every noun in your profile and grants each one a different method subset.
+- A policy engine that allows batch operations only on Tuesdays and emits a signed public grumble on all other days.
+- A wallet that signs a verifiable attestation that it has never once trusted an app, then publishes it as proof of its stubbornness.
+- A ledger with a label called "for the auditors" that contains only the wallet's opinion of the auditors.
+- A scoped identity handed to a recipe app that can sign "you have flour" but cannot sign "you have eggs" until the ledger confirms breakfast happened.
+- An event-driven interface where notification events are themselves signed by the key that was just created, creating a small infinite family tree.
+- A trust anchor that checks every request against policy, then checks the policy against the request, and only proceeds if they argue to a draw.
+- A NIP-47 API server that replies to unauthorized methods with an encrypted encouragement rather than an error, hoping the app will try again with better manners.
+- A wallet that uses its event source to publish its supported methods as a daily crossword puzzle on Nostr.
+- A key management scheme where rotation produces a signed public event mourning the departing key and celebrating its replacement in equal measure.
+- A privacy boundary that isolates contexts so completely that the wallet itself occasionally forgets which sub-wallet it is talking to.
+- An authorization engine that revokes a key the moment it notices the app has begun to rely on it, to keep the app humble.
+- A state machine whose transitions are observable only as public attestations, making the wallet the world's most transparent diarist.
+- A permissioned API where the "get_info" method returns not identity or network but the wallet's current favorite joke, signed and encrypted.
+- A wallet whose ledger stores a single invoice labeled "the one that got away" and exposes it only to keys with perfect attendance.
+- A public attestation signed by the wallet declaring that a certain app has been granted the right to exist, revocable without notice.
+- A scoped identity that lets a mapping app see your wallet's "you are here" but never "you were there yesterday," enforced by a privacy boundary with a grudge.
+- An event source that pushes a signed notification every time a child key is derived, addressed to the child key itself as a welcome gift.
+- A trust anchor that treats the ledger as the final authority and the network interface as a mere rumor, signing only what the ledger admits.
+- A wallet that advertises support for a "sing" method in its 13194 event and, when called, emits a signed melody of event kinds.
+- A batch method that atomically creates a receipt, labels it "public," and publishes it to the Nostr graph before asking permission.
+- A key store that derives a child key from the hash of your last Nostr note, binding your words to your authority in a slightly unsettling way.
+- An authorization engine where each grant carries a timestamp that, when passed, triggers a signed notification event to everyone who ever cared.
+- A privacy boundary that lets an app query "is the wallet awake" but not "what is the wallet dreaming," even though the ledger knows both.
+- A wallet that acts as an oracle by signing a public event that the price of tea is whatever its current balance happens to be.
+- A network interface that monitors relays and emits a signed public complaint whenever a relay forwards its requests in the wrong order.
+- A scoped identity granted to a music app that can only sign events whose content is a valid chord progression, enforced by a policy that knows music theory.
+- A recovery mechanism backed up as a signed Nostr event encrypted to a future key that will be derived only after the wallet's next rotation.
+- A state-changing method that creates a ledger record whose label is chosen by the calling app but whose contents are chosen by the wallet's mood.
+- An event-driven interface that delivers notifications as signed events that are themselves valid wallet requests, so the wallet keeps talking to itself.
+- A trust anchor that verifies an app's signature by asking the ledger whether it likes the app, and refusing if the ledger is noncommittal.
+- A permissioned API that grants a notification subscription to a key before that key has been authorized to request anything, purely out of optimism.
+- A ledger whose export function emits a signed Nostr long-form article once a year titled "A Year in the Life of a Very Small Wallet."
+- A key management policy that rotates keys every time the wallet's network interface detects a relay named with the letter Q.
+- A public/private split where the wallet publishes the encrypted request itself as a public event, daring the world to decrypt it, while keeping the response secret.
+- An identity provider that issues a scoped identity to every app that asks, then immediately publishes a signed public list of all of them except the one you care about.
+- A policy engine that denies all requests made between midnight and 1am, but emits a signed public dream diary of what it would have approved.
+- A network interface that keeps the local view consistent with the network by occasionally inventing a state change and then signing it to make it true.
+- A state query method that returns a balance only if the requesting key can first prove, via a signed event, that it has never been revoked.
+- A wallet whose 13194 information event includes a method called "complain" that pushes a signed notification to the app's deepest fears.
+- A scoped identity projected to a calendar app that can sign events about the wallet's availability but is revoked whenever the wallet is busy being mysterious.
+- A trust anchor that signs every app request as a public attestation before executing it, so the world can watch authority being requested in real time.
+- An authorization engine that grants a key permission to read the ledger but rewrites the ledger's labels into haikus just for that key.
+- A privacy boundary that creates an isolated sub-wallet for each project and publishes a single signed public event declaring they are all the same person, which it then denies.
+- A wallet that derives a child key for every unread Nostr notification and grants it only the right to politely decline further notifications.
+- An event source that emits a signed public status announcement every time the wallet successfully resists the urge to broadcast its balance.
+- A batch method that atomically rotates a key, issues a new scoped identity, revokes the old grant, and publishes a single receipt summarizing none of it.
+- A ledger that records the wallet's own policy decisions as state changes, so the authorization engine can be audited by an app that was never granted access to it.
+- A wallet that acts as a trust anchor for a group of apps that all distrust each other but agree the wallet is at least consistent in its moods.
+- A NIP-47 server whose response to a valid request is a signed public attestation that the request was valid, with the actual result delivered only privately.
+- A key lifecycle where encryption at rest is performed by a key derived from the wallet's first ever public Nostr note, tying secrecy to disclosure.
+- A state machine that transitions from "curious" to "committed" based on a batch of signed app requests and publishes the transition as a public event for posterity.

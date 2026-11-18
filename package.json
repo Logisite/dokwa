@@ -1,0 +1,13 @@
+{
+  "name": "dokwa",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.18.0",
+  "scripts": {
+    "dev": "pnpm --filter @dokwa/web dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "board": "python3 board.py"
+  }
+}

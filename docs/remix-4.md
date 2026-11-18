@@ -1,0 +1,20 @@
+- A village mint runs a "who paid first" race where each neighbor's blind-signed token lands as a payment_received in an isolated sub-wallet, and the winner gets their ecash reissued with a fresh blinding factor nobody can link.
+- A protocol-archaeology client diffs two relays via negentropy and renders the erased events as a fossil record whose missing kind-1 notes turn out to be spent-secret ledgers from a village mint that quietly defaulted.
+- A stranger's-baggage claim where each suitcase is a NIP-19 note ID and the combination rides in a NIP-17 message that only unlocks when a read-only dashboard key proves the spending key was revoked at 2am.
+- A night-shift wallet that swaps in a read-only key at 2am discovers its revoked spending key is actually a blind-signed bearer token, so the mint can't tell which shift redeemed it.
+- A "who paid first" race judged not by payment_received but by which isolated sub-wallet's blind signature unblinds first, with the loser's tokens melted into a fossil-record event on a censoring relay.
+- A baggage-claim museum where each lost suitcase is a kind-0 profile and the claim combination is revealed only after a negentropy diff proves the relay deleted the original NIP-17 note.
+- A village that accepts its local mint's solvency risk enforces it with a night shift: when the mint's reserve note vanishes from a relay via negentropy, all spending keys auto-revoke until a zap receipt restores them.
+- A paranoid notebook stores each fossil-record entry twice, once as a NIP-44 ciphertext and once as a blind-signed IOU, so a censor erasing one relay still can't erase the debt.
+- A doomsday-prepper ledger where each barter offer is an e-tagged kind-1 note and the "combination" to the bunker is a NIP-17 message that self-destructs when a sub-wallet wins the who-paid-first race.
+- A watchtower that sleeps by day wakes at midnight to guard a channel whose funds are simultaneously being raced between isolated sub-wallets, each capped by a max_amount that renews only at 2am.
+- A stranger's-baggage claim where the suitcase is a NIP-19 ID, the combination a NIP-44 ciphertext, and the claimant must win a keysend race against five sub-wallets before the read-only key revokes at dawn.
+- A protocol archaeologist whose negentropy diff finds a missing event reconstructs it as a blind-signed token whose Y equals hash of x, then melts it into a BOLT11 the censor never saw.
+- A "who paid first" race where the winner's prize is a scoped capability key that can only read get_balance, while every loser gets a fresh powers-of-two token from the village mint.
+- A museum audio guide that proves ticket ownership via get_info and plays a fossil-record narration of the events a censor erased, with the curator tipped in blind-signed ecash.
+- A night-shift doorbell uses get_balance as an "are you home" probe and, when the spending key is revoked at 2am, publishes the visitor as a p-tagged kind-1 note encrypted under NIP-17.
+- A lost-umbrella network where each umbrella is a NIP-19 note ID and the claim is a NIP-17 message with the combination, but the umbrella only travels when a relay's negentropy diff confirms nobody's sub-wallet already paid for it.
+- A capability quarantine gives suspicious relays a read-only filter with a tiny since window, and a fossil diff that detects erasure instantly revokes their spending key until morning.
+- A ghostwriter that publishes drafts as NIP-17 ciphertext reveals chapter two only after a NIP-46 bunker co-signs a race result proving which isolated sub-wallet's blind signature settled chapter one first.
+- A village mint whose blind signatures hide spenders publishes its solvency proof as a signed kind-0 profile, and a negentropy diff across three relays detects the moment the guardian federation quietly edits it.
+- A "who paid first" slot machine where three payment_received notifications in one second fire a multi_pay_keysend to sub-wallets whose keys are all revoked at 2am, leaving the winnings as an unlinkable bearer token in a stranger's NIP-17 baggage claim.

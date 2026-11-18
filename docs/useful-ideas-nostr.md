@@ -1,0 +1,100 @@
+- A media-forensics dashboard that uses negentropy reconciliation to diff two relays and surface exactly which events one retained and the other dropped, giving archivists a verifiable record of censorship or data loss.
+- A musician's tip jar that ties each NIP-57 zap receipt to the specific kind-A0 voice clip of the request it paid for, giving artists an attributable, independently verifiable record of audience support.
+- An estate-planning tool that stores your nsec as an offline NIP-19 bech32 QR backup and encodes beneficiary instructions in a kind-3 follows list replicated across a NIP-65 relay list so heirs can recover and verify your wishes.
+- A developer tool that uses NIP-07 window.nostr to sign each commit message as a kind-C0 code snippet, giving open-source contributors a verifiable authorship trail that survives platform migrations.
+- A community weather network where each station publishes signed kind-1 readings tagged `["t","forecast"]` and clients cross-check multiple relays to detect tampered or withheld data.
+- An investigative audit tool that lets investigators use an `authors` + `since` + `kinds:[3]` filter to establish a timestamped, cryptographically signed record of when a contact relationship changed.
+- A spam-resistant relay that accepts EVENT messages only when every `p` tag targets a pubkey in the author's kind-3 follows, giving private groups a lightweight anti-harassment filter.
+- A podcast client that models each NIP-F4 episode as a replaceable kind-0 profile and uses NIP-19 note IDs as portable chapter bookmarks that follow the listener across apps.
+- A time-capsule service that encrypts a diary with NIP-44 and releases the key only when a `since` filter on a future date is satisfied, giving users a trustless, verifiable delayed reveal.
+- An investigative-graph tool that renders `e`-tag reply chains and NIP-19 note identifiers as a single queryable evidence graph, letting journalists trace how a claim propagated.
+- A museum audio-guide platform that delivers NIP-A0 voice tracks `p`-tagged to each curator's pubkey and lets visitors tip them with zaps without disclosing their IP to a central server.
+- A structured recipe app where ingredients are `t` tags and steps are `e`-linked kind-1 notes, letting cooks filter by what's in their pantry and reassemble any dish from signed fragments.
+- A governance tool that tallies kind-7 reactions as ballots and verifies each voter's signature against a NIP-65 relay list to prevent double-voting while keeping the tally portable.
+- A whistleblower's notebook that stores each entry as NIP-17 ciphertext alongside a public sha256 hash in the `content` field, letting a source prove authorship and timestamp without revealing the text.
+- A tournament archive that records each move as a kind-1 note `e`-tagged to the game root and `t`-tagged with the opening, producing a signed move tree that no organizer can rewrite.
+- A ride-dispatch system that publishes requests as kind-1 notes with a `p` tag to the nearest driver and a `since` filter that automatically expires stale fares.
+- A document-notary relay that stores only events with valid BIP-340 signatures and hashes uploaded files into the `content` field, giving legal teams a tamper-evident timestamping service.
+- A neighborhood tool-sharing cooperative where each asset is a kind-0 profile and each checkout a zap receipt, letting members audit usage and resolve disputes without a central inventory database.
+- A daily-briefing publisher that tags each kind-1 forecast with a zodiac `t` tag and uses kind-7 reactions as a cheap, privacy-preserving reader signal for ranking.
+- A community radio archive that uploads NIP-A0 voice segments and replicates them across three relays so no single station owner can censor the broadcast log.
+- A presence service that emits a signed kind-1 heartbeat per user and renders an `authors` filter as a live availability matrix for distributed teams.
+- A coding-bootcamp app that stores lessons as kind-C0 snippets, tracks streaks as kind-7 reactions, and keeps progress in a single portable kind-3 event.
+- A secure tip line that encrypts submissions with NIP-44 `p`-tagged to a newsroom's pubkey and uses the recipient's NIP-07 signer to verify authorship before decryption.
+- A city-data experiment where residents post tagged kind-1 photos (`["t","hat"]`) and analysts rank neighborhoods by how many independent relays hold each dataset, measuring both participation and redundancy.
+- A grant platform where backers zap a kind-1 proposal and grantees close the loop by publishing a NIP-57 receipt `e`-tagged to the original proposal as verifiable proof of delivery.
+- A municipal lost-and-found board where each item is a kind-1 note with a city `t` tag and a `p` tag for the finder, making recovery a federated query across shelters.
+- A concert archive that chains a band's setlist as `e`-linked kind-1 notes and lets fans unlock a NIP-A0 soundcheck by reacting kind-7, giving the band an engaged, verifiable fan signal.
+- A multi-channel audio platform where each station is a relay and tuning is a REQ/CLOSE subscription, letting listeners switch streams with a single filter change.
+- A compliance workflow engine where each form is a kind-0 profile, each approval a NIP-07 signature, and a single canonical event shape per process keeps audits unambiguous.
+- A collaborative drafting tool that keeps drafts as NIP-17 ciphertext and releases them only when a NIP-46 bunker co-signs a kind-1 publish event, giving editors a verifiable handoff.
+- An atmospheric research network that signs altitude readings as kind-1 notes and publishes to three institutions so no single party can delete a measurement that drifted into sensitive airspace.
+- A customer-advocacy portal where each grievance is an `e`-tagged reply to a company's kind-0 profile and only NIP-07-signed responses count as official, giving both sides a verifiable record.
+- An auction platform where each bid is a kind-7 reaction to a NIP-19 lot ID and the settlement is a zap receipt, letting buyers verify final prices without a central ledger.
+- A distributed time-signal service that publishes one signed kind-1 tick per timezone and lets clients filter `authors` + `t` to build a coherent global clock.
+- A shelter network where each animal is a kind-0 profile, each application an `e`-tagged kind-1 note, and each adoption a NIP-57 zap, giving adopters a portable, verifiable record.
+- A cooking-verification app that reconstructs a recipe from a kind-1 note's `content` and `t` tags and only marks it tried when an `e`-tagged NIP-A0 voice memo confirms the result.
+- An ebook platform that encrypts chapters with NIP-44 and sells per-chapter decryption keys through NIP-47 wallet connect, giving authors direct, verifiable micropayments.
+- A federation-monitoring dashboard that pings every relay in a NIP-65 list, colors them by EOSE latency, and publishes the health report as a signed kind-1 note for operators.
+- A tournament match system where players sign kind-1 moves `e`-tagged to the previous move and a NIP-46 bunker holds the decisive commitment until both are connected.
+- A moderation tool that flags events failing BIP-340 verification and records the offending pubkey in a `["t","liar"]` kind-1 note, giving communities a shared, tamper-evident abuse log.
+- A dispute-resolution platform where each NIP-F4 episode opens a case, complaints are `e`-tagged replies, and a zap receipt records the accepted ruling for both parties.
+- A digital-nomad credential that models declared residences as a kind-3 follows list and trusted relays as a NIP-65 list so verifiers can confirm affiliation with one filter.
+- A location-based audio-tour product where each NIP-A0 story is `p`-tagged to a storyteller's pubkey and tips flow to their estate via zaps, giving families a verifiable attribution trail.
+- A craft-pattern cooperative that tracks stitch progress as kind-7 reactions to a kind-1 pattern and `t`-tags yarn types so members can filter projects by material.
+- A gift-exchange organizer that derives pairs from a kind-3 follows graph, excludes self-matches, and delivers assignments as NIP-17 messages signed via NIP-07.
+- A transit-status feed that signs delay notices as kind-1 notes tagged with a line number and lets commuters subscribe with `authors` + `t` + `since` to a single route.
+- A developer-reference library that documents deprecated specs like NIP-04 and NIP-28 as kind-1 notes `t`-tagged with their successors, helping implementers avoid obsolete approaches.
+- An offline-verifiable raffle tool that assigns each participant a NIP-19 token and uses signed kind-7 reactions as the random draw, letting everyone audit the results afterward.
+- A lost-pet alert network that republishes a kind-1 notice to every relay in a NIP-65 list so no single shelter can suppress the alert.
+- A consultant's booking page that publishes availability in the `content` of a kind-0 profile and sells NIP-A0 voice answers via zaps, letting clients schedule and pay in one flow.
+- A security-reporting ledger that files each finding as a kind-C0 snippet `e`-tagged to the vulnerable commit and records bounties as NIP-57 receipts for verifiable disclosure.
+- A venue queue app where singers join by reacting kind-7 to a host note and the host publishes the next act in an `e`-tagged kind-1 update, giving the room a transparent lineup.
+- A key-backup service that stores an nsec as a NIP-19 bech32 QR and publishes only its sha256 id as a kind-1 note, letting users verify a backup exists without exposing the secret.
+- A civic-budget portal that publishes each line item as a `t`-tagged kind-1 note and ranks citizen `e`-tagged objections by zap amount, giving councils a verifiable signal of public priorities.
+- A municipal vendor-permitting system that models stalls as kind-0 profiles and sales as NIP-57 zaps, letting inspectors audit hygiene compliance without a central database.
+- A sports-officiating archive that logs each goal as a kind-1 note with a `p` tag for the scorer and an NIP-A0 voice replay verified across four relays.
+- A moderated correspondence program that matches volunteers by overlapping kind-3 follows and delivers NIP-17 letters that only the recipient's NIP-07 key can open.
+- A federation-health monitor that runs the same filter across many relays and flags any whose EOSE returns suspiciously few events, alerting users to censorship.
+- A fermentation-tracking app that logs each feeding as an `e`-tagged kind-1 note and computes starter age from a `since` filter on the first feed.
+- An accessibility overlay that pulls NIP-F4 transcripts as structured `content` and renders captions signed by the translator's NIP-07 key.
+- A campus lost-and-found network that tags items by color with `t` tags and owners with `p` tags, using a NIP-65 relay list so searches work across every branch.
+- A regional alert service that broadcasts NIP-A0 voice bulletins `t`-tagged by region and lets listeners zap forecasters whose warnings proved accurate.
+- A tournament record system where a player signs each move with a NIP-46 bunker key and publishes to three country-spanning relays so organizers cannot rewrite the result.
+- A family allowance app that records completed chores as kind-7 reactions and pays out through NIP-47 wallet connect to a child's nsec-controlled wallet.
+- A civic mood dashboard that maps kind-7 reactions on a city's kind-1 notes into a signed heatmap published as a kind-0 profile.
+- A dialect-preservation archive that publishes each slang term as a kind-1 note `t`-tagged with its neighborhood and lets elders confirm usage with kind-7 reactions.
+- An arbitration platform where evidence is an `e`-tagged chain of kind-1 notes, the ruling a NIP-07-signed kind-0 profile, and the settlement a zap receipt.
+- A daily-briefing audio product that publishes one NIP-A0 message per day and uses a `since` + `limit` filter to give new subscribers a greatest-hits replay.
+- A luggage-claim system where each bag is identified by a NIP-19 note ID and the claim is a NIP-17 encrypted message carrying the combination.
+- An online board-game platform that models pieces as kind-0 profiles, moves as `e`-tagged kind-1 notes, and captures as zap receipts to the winner.
+- A maritime log that signs nightly light readings as kind-1 notes and publishes to three shore relays so regulators cannot alter the historical record.
+- A civic-services feedback channel that files gripes as `t`-tagged kind-1 notes and pays micro-bounties via zap to the report with the most kind-7 endorsements.
+- A public-art archive where each contribution is an `e`-tagged reply to a wall's kind-0 profile and cleanup is a NIP-07-signed deletion by the wall's owner.
+- A rail-enthusiast log that records sightings as kind-1 notes `t`-tagged by train model and syncs through a NIP-65 list of hobby relays.
+- A bakery's daily menu that posts specials as kind-1 notes with a `since` filter that hides yesterday's, so night-shift customers only receive fresh listings.
+- An audition platform where each performance is a NIP-A0 voice clip and audience kind-7 reactions aggregate into a kind-0 leaderboard profile.
+- A personal vault that stores each credential as NIP-44 ciphertext in the `content` of a kind-1 note and scopes access with an `authors` filter to your own key.
+- A neighborhood marketplace where each listing is a kind-1 note with a category `t` tag and a seller `p` tag, letting buyers filter locally and reserve with a zap.
+- A relay-ranking service that scores relays by the volume of valid signatures they store and publishes the winner as a NIP-19 note ID across all contenders.
+- A code-forensics tool that rewinds a `since`/`until` filter across a negentropy-synced relay to replay a repository's history as signed kind-C0 commits.
+- A volunteer-coordination app that logs shifts as kind-7 reactions to a host note and keeps pantry inventory in a replaceable kind-0 profile.
+- An air-gapped messaging tool that prints NIP-19 note IDs on paper and reveals the `content` only when the recipient submits a NIP-07 signature.
+- An event-permitting platform that publishes march routes as kind-1 notes tagged by city and date and pays fees through NIP-47 straight from the organizer's nsec.
+- A pet-care marketplace that logs each walk as an `e`-tagged kind-1 note with a NIP-A0 voice confirmation and pays walkers via zaps.
+- A private reading group that meets in a NIP-46 bunker where member notes are NIP-17 encrypted and the public summary is a kind-1 note signed by the host.
+- A smart-city audit tool that publishes signal timing as structured `content` in kind-1 notes and lets drivers verify with a `since` filter that the city didn't silently change the lights.
+- A key-recovery service that sends a `p`-tagged NIP-17 hint to trusted friends and reveals the location only when three co-sign a kind-1 recovery event.
+- An estate-auction platform where each lot description is a NIP-A0 voice clip, each bid a zap receipt, and the winning bidder an `e`-tagged kind-1 record.
+- A food-review platform where each review is a kind-1 note `t`-tagged by ingredients and the merchant's response is a NIP-07-signed `e`-tagged reply.
+- A hospital-status board that publishes wait times in kind-0 profiles updated via NIP-07 and lets patients zap the ER to move up a signed queue.
+- A preservation relay that stores only events with valid signatures and publishes a daily kind-1 integrity report comparing its holdings against a censoring peer.
+- A sealed-bid commitment tool that publishes a prediction as NIP-44 ciphertext and reveals the key by signing a kind-1 event after the outcome.
+- A community-safety log that records sightings as kind-1 notes `t`-tagged by street and uses NIP-65 relay lists to keep the record federated across blocks.
+- An escape-room platform where each clue is a NIP-19 note ID, each answer an `e`-tagged kind-1 note, and the prize unlocks via a NIP-47 wallet payout.
+- A daily-reading service that publishes one kind-1 aphorism `t`-tagged by school of thought and uses kind-7 reactions to surface the most contested ideas.
+- A loyalty program that logs each thirteen-item batch as a `["t","baker13"]` kind-1 note and lets customers zap the complimentary extra.
+- An identity-verification app that stores a portrait as structured `content` in a kind-0 profile and lets verifiers check the NIP-07 signature without ever seeing the nsec.
+- An ephemeral messaging service that sends NIP-17 ciphertext to a `p`-tagged contact and uses a `since` filter to drop messages older than a year.
+- A music-education tool that logs each note as a kind-1 note `t`-tagged by pitch so composers can replay a piece by filtering `authors` + `since`.
+- A mutual-aid inventory system that tracks supplies in kind-0 profiles, barter offers as `e`-tagged kind-1 notes, and trades as NIP-57 zaps across a NIP-65 relay list.

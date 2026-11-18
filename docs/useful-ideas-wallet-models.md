@@ -1,0 +1,100 @@
+- An offline-first reading-group payments kit lets disconnected members mint blind-signed IOUs at a local community mint, swap them into fresh denominations as they circulate, and settle without anyone running a Lightning node.
+- A cross-model custody monitor pairs watchtower breach detection for channel funds with federation-backed melting of the same wallet's ecash, so a treasury operator gets one alert surface whether risk comes from a channel breach or a mint default.
+- A nutzap inbox guard for creators automatically swaps incoming bearer tips at the mint the instant they arrive, confirming against the spent-secret database that none was already double-spent before crediting the contributor.
+- A local exchange token system for community events issues blind-signed power-of-two denominations so vendors can make exact change for small purchases without any mint interface beyond initial issuance.
+- A NIP-47 backend failover layer silently swaps a wallet from LDK to Cashu when a node goes offline, keeping the app's permissioned API identical so the user never sees the trust model change.
+- A privacy-testing toolkit for mint audits generates many blinded secrets with random factors and verifies that the issuer cannot link any issuance to its eventual redemption.
+- An offline courier settlement tool lets field agents carry bearer ecash across connectivity gaps and melt it into a Lightning invoice the instant they reconnect, so cross-border expenses reconcile without roaming.
+- A community custody federation replaces a single mint with guardian-run signing so neighbors collectively hold solvency trust while still receiving unlinkable blind-signed tokens.
+- A bridge service between ecash and channel networks auto-melts a holder's tokens into an invoice and pays it through a multi-hop HTLC route, so offline earners can pay online merchants without a channel of their own.
+- A unified creator-tipping inbox normalizes keysend payments secured by channel state and nutzaps secured by a mint's promise into one ledger, so recipients don't manage two trust models.
+- A dual-layer wallet safety dashboard shows watchtower-monitored channel funds alongside ecash whose blind signature kept the token hidden from the issuer, giving one view of two distinct privacy guarantees.
+- A neighborhood market token kit lets a local mint issue power-of-two denominations so vendors make exact change entirely offline, never touching the global Lightning network.
+- An infrastructure-level wallet router chooses between ecash swap-refresh and channel rebalancing per payment while the NIP-47 app stays oblivious to which primitive ran.
+- A donor-privacy toolkit for nonprofits accepts private nutzap tips and melts them into BOLT12 offers, giving accountants clean invoices while keeping donor identities unlinked.
+- A tiered personal wallet allocates long-term savings to trust-minimized channel custody and daily spending to issuer-unlinkable ecash, all exposed through one NWC interface.
+- A blind-signature debugging and education tool walks users through Y equals hash of x, the blinding factor r, and the unblinded C-prime so they can verify the mint never saw the token it signed before spending it offline.
+- A hybrid risk monitor combines a watchtower watching for on-chain channel breaches with a mint watching its spent-secret ledger for double-spends, giving operators one fraud-detection surface.
+- A creator discovery plugin reads NIP-61 mint-recommendation events of kind 10019 and auto-swaps recommended mint tokens into change for frictionless keysend tips.
+- A market-day settlement tool collects offline bearer tokens whose possession is ownership and has one online mint melt the aggregate into a single routed Lightning payout.
+- A dual-model balance sheet presents self-custodied channel state and mint-backed blind-signed IOUs side by side so users can see how much of their balance relies on cryptography versus mint solvency.
+- A festival payment network lets attendees transfer ecash locally with no channel lookup or liquidity management, then melts the day's volume through a single LSP-provisioned inbound channel.
+- A privacy-preserving change-making service relies on blind signatures at issuance and periodic swaps that refresh anonymity while returning exactly the change owed.
+- A Nostr tipping client signs notes and attaches nutzaps using relays purely as transport, so value moves as offline bearer data and never touches a public payment rail.
+- A federated mint deployment splits signing across guardians so no single party can link a signature to a redemption or abscond with the float.
+- A privacy-preserving rebate system issues blind-signed tokens as receipts that are unlinkable to the purchase yet melt into a BOLT11 invoice the merchant can verify.
+- A self-custody routing wallet moves payments across the network through channels with strong counterparty privacy, keeping funds as protocol-held state rather than a mint's IOU.
+- A small-club ecash protocol lets a community mint issue divisible tokens and prompts holders to swap after each transfer so recipients confirm no double-spend before accepting.
+- A backend-agnostic payment API answers a NIP-47 pay-invoice call with either an HTLC route or a mint melt depending on the infrastructure layer's chosen model.
+- A zero-infrastructure tipping tool uses private, offline nutzaps so a sender with no Lightning node or channel can still tip a signed Nostr note.
+- A bearer-token verifier implements the unblinding step (subtract r times G to reveal k times hash of x) so two devices can hand a token offline and confirm it is valid.
+- A guardian-comparison dashboard models watchtowers and federated mints as two flavors of last-resort custodian so teams can choose the right one for channel breaches versus mint default.
+- A coin-change wallet splits ecash into powers of two and swaps leftovers so the mint reissues fresh signatures that even the original issuer cannot recognize.
+- A multi-backend hub exposing LDK, LND, Phoenixd, Cashu, CLN, and Bark lets one app switch from trust-minimized channels to IOU ecash with zero code changes.
+- A bearer-transfer protocol passes identity-free tokens between strangers who trust only the mint, with a mandatory swap to confirm the token was not already spent.
+- A community treasury policy keeps everyday money in a local mint but routes savings through channels so no single custodian holds the bulk of funds.
+- A source-protection wallet keeps whistleblower funds in offline blind-signed tokens whose issuer cannot link them and melts only through a fresh invoice.
+- A merchant fallback rail switches to offline ecash when Lightning routing fails, so local transfers need no pathfinding and sales continue.
+- A receive-side liquidity workaround lets inbound-starved nodes accept nutzaps that need only a mint interaction at the boundary rather than a receiver channel.
+- A mint lifecycle selector distinguishes swap from melt so one action refreshes unlinkable tokens while the other destroys them to settle an invoice.
+- A precision-tipping client reads kind-9321 nutzaps whose power-of-two denominations let any tip amount be assembled exactly.
+- A unified transfer SDK abstracts whether instant transfer was an off-chain state update or a local bearer-token handoff so apps need not distinguish them.
+- A double-spend defense module supports both a mint's centralized spent-secret database and a channel's decentralized revocation keys so a hybrid wallet covers both models.
+- An anonymous keysend tool blinds a secret before minting and melts the unblinded token into a keysend payment so the issuer learns nothing about the payer.
+- A village privacy cooperative accepts a small local mint's solvency risk in exchange for blind-signature privacy that no global operator would provide.
+- A dual-mode safety wallet runs a watchtower over channel funds while letting the same owner spend ecash offline, where possession is ownership and no watchtower is needed.
+- A Nostr-native wallet client reads NIP-60 wallet events to store tokens and NIP-61 nutzaps to attach private tips on the same signed-event network.
+- A federated mint removes any single trusted party by distributing the signing key across guardians while preserving issuer-unlinkable blind signatures.
+- A dual-tip notice system shows a keysend payment private by onion-routed HTLCs and an ecash tip private as bearer data, so recipients understand two distinct privacy guarantees.
+- A change-making checkout forces a swap for exact change and uses that same swap to refresh the privacy the blind signature originally provided.
+- A merchant onboarding flow provisions just-in-time inbound liquidity through an LSP while customers pay in ecash that never touched the LSP.
+- A bearer-asset valuation tool explains that a blind-signed IOU's value rests on mint solvency while possession of the data constitutes ownership.
+- A mint discovery service reads kind-38172 announcements so a community can find a new local mint and issue offline tokens before market day.
+- A custody-policy router lets infrastructure choose trust-minimized or IOU custody per account while the app keeps one permissioned NWC API.
+- A deferred-redemption tipping tool builds a nutzap whose blind signatures give privacy and whose bearer form allows offline handoff, letting a tip be redeemed days later.
+- A cross-model amount translator melts denomination-based ecash change into an amount-based channel payment to settle an arbitrary invoice exactly.
+- A hybrid defense wallet pairs channel revocation against counterparty theft with ecash spent-secret checks against double-spending.
+- An anonymous invoice payer melts tokens whose issuer never linked the signature to redemption, settling a BOLT11 invoice without exposing the payer.
+- A trust-isolation architecture keeps a mint's spent-secret ledger separate from a watchtower's breach monitor so neither sees the other's secrets.
+- A mint-recommendation client reads kind-38000 notes, swaps the recommended mint's blind-signed tokens into change, and spends them offline so relays see no transaction.
+- A disaster-preparedness wallet stores offline ecash on a USB stick and channel state on a locked laptop, splitting trust between blind-signed IOUs and cryptographic revocation.
+- An offline-first settlement flow completes bearer transfers with no network and runs one online mint swap to confirm no token was double-spent.
+- A local-first mint backs tokens with Bitcoin and chooses trust within the community, touching the global Lightning network only when tokens are melted.
+- A backend-switching NWC client lets an app pay for API calls from Cashu on Monday and LND on Tuesday without any code change.
+- A blinding-factor safety library treats the random factor r as the sole barrier preventing the mint from linking issuance to redemption and hardens its generation.
+- A nutzap explainer for developers shows how one tip is simultaneously private, offline, channel-free, and mint-trusting so teams can weigh that trade-off explicitly.
+- A privacy-and-custody checklist pairs channel routing that protects funds from untrusted routers with ecash that protects identity from the issuer.
+- A refresh-on-change service bundles swap so that invalidating old tokens and reissuing fresh ones gives exact change and renewed privacy in one call.
+- A reference wallet configuration mixing Bark, Phoenixd, and Cashu demonstrates channel state and blind-signed tokens behind one interface.
+- A school cafeteria token system uses a local mint's small divisible denominations so students transfer lunch credits fast without channel lookups.
+- A model-selection assistant recommends channels for routing needs and ecash for operator-privacy needs, with NIP-47 enabling a daily switch.
+- An offline gifting tool minted via Lightning produces a blind-signed bearer gift the recipient swaps on receipt before federated redemption.
+- A bearer-wallet recovery aid explains that with no per-holder key derivation or account, only the secret x and its hash Y connect a holder to their funds.
+- A two-front custody monitor runs a watchtower against stale channel states and an ecash watcher against mint redemption refusal.
+- A tipping recommender follows NIP-61 mint recommendations so a tipper routes bearer-data tokens onto a signed note through a trusted mint.
+- A dual-tip reader lets one note accept public Lightning zaps and private offline nutzaps, capturing both kinds of appreciation.
+- A coin-assembly wallet builds any payment amount from blind-signed power-of-two tokens as easily as making change from pocket coins.
+- A unified balance view combines trust-minimized channel funds and mint-backed IOUs into one number while NWC hides the custody seam.
+- A blind-signature verifier confirms the mint signed C equals k times the blinded value without seeing the unblinded token, so its spent-secret ledger cannot correlate the request.
+- A community financial stack runs a local mint for daily ecash and a routing node for long-distance payments, localizing trust while globalizing reach.
+- A risk-disclosure pane surfaces both channel-breach risk and mint-default risk so hybrid-wallet users understand the two failure modes behind their balance.
+- A sender-light tipping path attaches a nutzap offline from a node-less sender while the receiver melts through an invoice settled by a channel-holding node.
+- A single swap operation both refreshes privacy by returning tokens to the mint and uses divisibility to supply change, handling bookkeeping and anonymity together.
+- A sealed-bid auction tool uses identity-free blind-signed bearer tokens so bids stay as notes and settlement is an unlinkable nutzap.
+- A config-driven NWC wallet switches from channel state to blind-signed IOUs overnight via a single flag, with the permissioned API unchanged.
+- A federated mint removes the single-party trust of a lone mint while blind signatures still hide spenders from the guardians themselves.
+- A merchant checkout accepts a keysend routed through private HTLCs from one customer and offline ecash from a channel-less tourist.
+- An activist split-wallet keeps mint-unlinkable funds for privacy against issuers and channel funds for custody against network adversaries.
+- A relay-backup wallet stores kind-7375 Cashu tokens on relays for recovery while noting the value itself could have traveled offline.
+- An offline-token risk checker warns bearers that the mint's spent-secret database is consulted only at redemption, so a double-spent secret may surface late.
+- A micro-tipping tool uses a powers-of-two ladder plus swap to carve even a one-satoshi tip out of a large blind-signed token.
+- A per-payment router across LDK, LND, and Cashu labels each instant transfer as either a state update or a local token handoff for auditing.
+- A layered privacy-and-trust framework documents blind signatures hiding tokens from issuers, watchtowers hiding risk from channel owners, and federation hiding trust from users.
+- A silent-tips inbox accepts invoice-less keysends secured by protocol and channel-less nutzaps secured by a mint promise.
+- A connectivity-light payment tool uses ecash so only mint interactions need a network, letting disconnected crews such as submariners pay.
+- A key-hygiene guide treats revocation keys and blinding factors as two secret scalars that respectively protect funds from counterparties and issuers.
+- A neighborhood settlement network uses a Bitcoin-backed local mint so neighbors transfer tokens offline faster than any channel route.
+- A backend-blind NIP-47 client pays a BOLT11 invoice from an ecash melt one day and an HTLC route the next without knowing the difference.
+- A federation-aware tipping flow follows a mint recommendation event, swaps the federation's blind-signed tokens into change, and attaches them as a private nutzap.
+- A bearer-asset security brief explains that possession-is-ownership makes a stolen USB as good as a stolen wallet, leaving mint-side double-spend control as the only recourse.
+- A hybrid balance sheet reports self-custodied channel state and federation-backed minted IOUs as one balance, disclosing that one rests on cryptography and the other on guardians.

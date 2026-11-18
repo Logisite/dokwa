@@ -1,0 +1,100 @@
+- A plant-care service that derives a unique signing key per houseplant and publishes signed watering-status attestations so a plant-sitting cooperative can verify care without ever touching your wallet.
+- A personal-brand safety layer whose policy engine declines to sign scheduled posts on days the user's mood ledger flags as reactive, protecting an audience from impulsive publishing.
+- A privacy-first dating verification tool that grants each app a scoped identity revealing only a "single" flag, automatically revoked the moment the user's ledger records an anniversary.
+- A key-rotation transparency service that publishes a signed "now signing with key #N" event on every rotation so counterparties always know which key is current.
+- A household wallet that gives each of three members an isolated sub-wallet, allowing shared expenses only under a jointly-approved label so personal spending stays private.
+- A NIP-47 automation endpoint whose batch method atomically settles a coffee purchase, triggers a plant-watering action, and files both under a "treatments" ledger label for daily micro-routines.
+- A fraud-detection trust anchor that double-verifies every incoming app signature and emits a signed alert when a request pattern looks anomalous, giving security teams an audit trail.
+- A capability-discovery event that advertises a decoy method alongside real ones so operators can fingerprint and politely reject apps probing beyond their grant.
+- An anti-correlation identity layer that projects a distinct scoped identity to each relay, so no relay can link a user's activity across networks.
+- A financial-review ledger that flags questionable invoices with labels like "probably a mistake" and exposes them through a time-locked state-query method so the user revisits them with fresh eyes.
+- An appliance-integration event source that pushes a signed "payment cleared" notification to a smart toaster, letting kitchen devices react to billing events with no money logic of their own.
+- A dead-man recovery scheme that publishes an encrypted backup as a public Nostr event addressed to a rotating key, so a lost device is recoverable while you hold that key and the backup self-destructs after rotation.
+- A mood-tracking wallet that exposes to a wellness app a single derived "sentiment" flag backed by an emotional-balance ledger, so the app gets insight without raw transaction data.
+- A step-by-step approval workflow that emits a signed public attestation at each state transition, giving a distributed team a tamper-evident audit trail of decisions.
+- A context-separation wallet that keeps a household's gardening budget and gaming budget in fully isolated sub-wallets, so each activity's history is invisible to the other.
+- A secure-notes system that derives a separate child key per sensitive secret and encrypts them all under one master passphrase, so compromising one reveals nothing about the others.
+- An abuse-detection authorization engine that withdraws a key's grant when it detects repeated pleading or prompt-injection patterns, protecting users from coercive apps.
+- A pet-care oracle that signs a public "the cat has been fed" attestation derived from a single caregiver invoice, giving a pet-sitting group verifiable proof of care.
+- A wellbeing integration that receives signed notifications about the trend of a user's balance without the amount itself, supporting financial-stress insights without exposing sensitive figures.
+- A self-auditing trust anchor that re-verifies its entire historical ledger before signing anything new, so a corrupted past state can't silently contaminate fresh attestations.
+- A key-lifecycle audit log that publishes a signed revocation notice recording each retired key's final method grant as its epitaph, giving compliance teams a permanent access record.
+- A subscription-aware identity layer that issues app keys whose authority lapses when usage drops below a threshold, so abandoned apps silently lose access.
+- A NIP-47 batch method that bundles three state changes into one atomic operation and emits a single opaque public receipt, preserving operational privacy while proving execution.
+- A zero-knowledge-style audit API that answers "who approved this" with a verifiable signed challenge instead of a name, letting auditors confirm provenance without exposing identities.
+- A network-status broadcast that publishes a signed health event so relays can route around a degraded wallet, improving reliability for every dependent app.
+- A stealth read grant that lets an app query historical records without revealing which records exist, enabling compliance checks that don't leak the existence of sensitive data.
+- A tab-isolation privacy layer that derives a fresh scoped identity for each browser session, so a website can't correlate activity across tabs.
+- An SLA attestation service that signs a verifiable uptime report counting only active service hours, so brief maintenance windows don't distort a wallet's reliability score.
+- A just-in-time delegation API where the wallet's encrypted response to a request is itself a fresh grant for a newly derived key, enabling ephemeral single-use app credentials.
+- A data-quality monitor that emits a signed alert whenever a ledger label fails validation, so bookkeeping errors are caught as first-class state changes.
+- A scheduled-rotation policy that rotates signing keys on a published lunar cadence and broadcasts the event like a horoscope-style bulletin, making key hygiene observable to partners.
+- A selective-disclosure identity provider that projects age-appropriate verified personas to different apps, so each service learns only the attribute it genuinely needs.
+- A long-running approval workflow that emits signed "still processing" heartbeats every thirty seconds while a decision is pending, so watching clients never time out.
+- A self-monitoring wallet that uses its network interface to watch its own policy engine and files a signed diagnostic event when it detects misbehavior, giving operators observability into authorization.
+- A privacy-preserving integration that keeps request and response payloads encrypted while publishing only a signed aggregate "sentiment" summary, letting researchers study usage trends without reading content.
+- A chronology guard that rejects ledger entries with timestamps before the wallet's creation, preventing backdated records from corrupting the audit trail.
+- A mindfulness integration that grants an app read access to a derived "calm score" from the ledger, automatically revoking it if the score dips below a threshold to protect the user during stressful periods.
+- A whimsically named "dance" discovery method that returns a signed list of the wallet's preferred relays so apps can connect to the right infrastructure out of the box.
+- A key-retirement policy where decommissioned keys are preserved as signed attestations of their former authority rather than deleted, giving auditors a verifiable lineage of every key used.
+- An expense-reporting tool that turns ledger invoice metadata into signed, human-readable public receipts, giving small teams a transparent and rather charming audit trail.
+- A shared sub-wallet for two collaborating apps that requires a mutually agreed opaque label for joint operations, so neither app reads the other's data but both can coordinate.
+- A policy engine that compiles grants into a wallet-private policy DSL, so applications can't introspect or tamper with the rules that govern them.
+- An incident-response batch operation that atomically rotates a key, revokes a suspect grant, and publishes a signed security notice so a compromise is contained in one step.
+- A game-integration identity that grants a chess app authority only to sign a verifiable "I resign" statement, so it can record match outcomes without touching funds.
+- A knowledge-based access check that releases a balance only after the requesting key proves a shared secret such as a favorite color via signed event, adding a factor to sensitive reads.
+- A resilient network interface that maintains channels to newly discovered relays, so the wallet keeps a fresh local view even if its primary relay goes down.
+- A revocation-notice event that notifies the affected key when its grant is withdrawn, so developers get a clean signal to stop retrying.
+- A backup scheme that encrypts wallet data at rest while publishing a recovery blob as a public Nostr event that only a future derived key can decrypt.
+- A granular identity provider that derives a distinct child key for each attribute in a user profile, granting each a minimal method set so apps see only the field they need.
+- A maintenance-window policy that confines batch operations to a designated day and publishes a signed service notice outside that window, so users know when bulk actions are allowed.
+- A zero-trust attestation where the wallet signs a verifiable statement that it trusts no app by default, giving partners confidence that every request is policy-checked.
+- A compliance ledger section labeled "for the auditors" that records the wallet's own policy decisions and rationale, giving reviewers insight into why access was granted or denied.
+- A pantry-integration identity that lets a recipe app attest you have flour but withholds eggs until your ledger records a purchase, so it never assumes what's in your kitchen.
+- A provisioning event source where each new key's welcome notification is signed by that key itself, creating a verifiable chain of key lineage from birth.
+- A dual-validation trust anchor that checks each request against policy and the policy against the request, proceeding only when both agree to catch contradictions before execution.
+- A developer-friendly NIP-47 server that replies to unauthorized calls with a signed encrypted hint rather than an opaque error, helping authors correct their grant scope.
+- A capability-discovery feed that publishes supported methods as a daily signed puzzle on Nostr, turning API documentation into an engaging way for developers to learn what's available.
+- A key-lifecycle service that publishes a signed transition notice at each rotation—acknowledging the old key and introducing the new one—so partners can update their records.
+- A strict context-isolation boundary that prevents any cross-talk between sub-wallets, so a compromise in one context cannot leak into another.
+- An anti-lock-in authorization engine that expires grants once an app's usage crosses a threshold, forcing periodic re-consent so users stay in control of long-lived integrations.
+- A fully auditable approval state machine that publishes each transition as a signed public attestation, giving stakeholders a tamper-evident real-time log of every decision.
+- A personality layer for the NIP-47 "get_info" method that returns a signed, encrypted favorite joke alongside technical metadata, making wallet connections feel more human.
+- A collections ledger that flags a long-outstanding invoice as "the one that got away" and exposes it only to auditors with a flawless access record, so sensitive history stays controlled.
+- A signed app-allowlist attestation that publicly declares a connected service has been granted the right to exist and can be revoked instantly when the user withdraws trust.
+- A location-sharing identity that lets a maps app attest to your current area without revealing historical whereabouts, enforced by a privacy boundary with a strict no-history rule.
+- A key-provisioning event source that sends a signed welcome notification to each newly derived key, giving device-enrollment flows a verifiable activation signal.
+- A conservative trust anchor that signs only what the local ledger confirms and treats network observations as untrusted hints, preventing relay data from driving state changes.
+- A diagnostic "sing" method that returns a signed sequence of event kinds representing the wallet's health, giving operators a playful but verifiable heartbeat signal.
+- An auto-disclosure batch method that atomically creates a receipt, marks it public, and publishes it to the shared graph as one operation for teams that pre-authorize transparency.
+- A key-derivation scheme that binds a child key to the hash of the user's latest signed note, so identity and public statements are cryptographically linked for provenance.
+- A time-bounded grant system where each permission carries an expiry that emits a signed expiration event to stakeholders, giving admins automatic auditable access reviews.
+- A status API that exposes only an "is the wallet awake" availability flag to apps, withholding internal ledger details even though the wallet tracks them, minimizing data leakage.
+- A playful oracle that signs a public "price of tea" value derived from the wallet's balance, demonstrating how a wallet can serve as a verifiable data source for lighthearted apps.
+- A relay-monitoring service that emits a signed alert when a relay mishandles request ordering, giving network operators evidence to diagnose misbehaving infrastructure.
+- A music-app identity whose policy permits signing only well-formed chord progressions, so the app can verify musical content without any authority over wallet state.
+- A forward-only recovery mechanism that backs up the wallet as a signed Nostr event encrypted to a key derived only after the next rotation, so recovery requires both possession and a future state.
+- A co-authored record method where the calling app supplies the label while the wallet supplies the content, so untrusted apps can't write arbitrary data into the ledger.
+- A self-referential event bus where notification events are themselves valid signed requests, enabling the wallet to autonomously follow up on its own state changes.
+- A ledger-backed trust check that consults recorded history before honoring an app's signature, so past behavior informs present authorization and unknown apps are denied by default.
+- An optimistic onboarding flow that grants a new key notification access before full request rights, letting apps subscribe early while their permissions are still being provisioned.
+- An annual reporting tool that exports the ledger as a signed long-form Nostr article, giving users a portable verifiable year-in-review of their activity.
+- A rotation trigger tied to network events such as connecting to a newly discovered relay, so keys are refreshed whenever the wallet's connectivity materially changes.
+- A verifiable-compute pattern where the encrypted request is published to the public graph while the response stays private, letting third parties confirm a request was made without reading it.
+- An app-registry service that issues scoped identities on demand and publishes a signed public directory of connected services, with a private mode that hides one chosen app from the list.
+- A quiet-hours policy that blocks automated requests overnight and publishes a signed summary of what would have run, giving users a restful window with full visibility.
+- A synthetic-monitoring feature that injects a signed tentative state when the network goes dark, so dependent apps see a consistent view instead of stale data.
+- A revocation-aware read gate that releases a balance only after the caller proves via signed event that its key is still active, closing the door on stale credentials.
+- A developer-feedback method named "complain" that pushes a signed diagnostic event to an app's error channel when it repeatedly misuses capabilities, helping teams fix integration bugs.
+- A calendar integration that grants an app access to a derived "availability" flag, automatically revoked during private or focus-blocked periods to protect the user's time.
+- A transparency layer that signs a public attestation of each incoming request before executing it, giving observers a real-time verifiable log of authority being invoked.
+- A privacy-preserving ledger view that rewrites labels into poetic pseudonyms for a given key, so an app can audit records without learning their real meaning.
+- A multi-project wallet that isolates each project's sub-wallet while publishing a single signed statement of common ownership, then allowing that link to be retracted for privacy.
+- A notification-management system that derives a disposable key per incoming alert, granting it only the ability to dismiss that alert so apps can't spam beyond one interaction.
+- A discretion-audit event source that emits a signed "no balance disclosed" status whenever the wallet declines a disclosure request, giving privacy-conscious users proof of restraint.
+- A credential-refresh batch operation that atomically rotates a key, issues a replacement scoped identity, and revokes the old grant, emitting a single opaque receipt.
+- An auditable policy ledger that records each authorization decision as a state change, so even an app with no ledger access can verify that decisions were made consistently.
+- A neutral trust-anchor service for a federation of mutually distrusting apps, giving them a single consistent authority to verify every request against.
+- A receipt-first NIP-47 server that returns a signed public attestation that a request was valid while delivering the actual result only over the private encrypted channel.
+- A key-derivation scheme where at-rest encryption uses a key derived from the wallet's first public note, binding long-term secrecy to an identity you publicly control.
+- An approval state machine that moves from "evaluating" to "committed" based on a batch of signed signals and publishes the final transition as a verifiable public event.
