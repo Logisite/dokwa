@@ -32,14 +32,14 @@ export function lockName(role: Role): string {
 export function withLock<T>(name: string, fn: () => Promise<T>): Promise<T> {
   if (typeof navigator === "undefined" || !navigator.locks) {
     return Promise.reject(
-      new Error("dokwa: Web Locks is unavailable; refusing to share a database"),
+      new Error(
+        "dokwa: Web Locks is unavailable; refusing to share a database",
+      ),
     );
   }
   // the DOM lib's generic and ours collide; the runtime contract is exact
-  return navigator.locks.request(
-    name,
-    { mode: "exclusive" },
-    () => fn(),
+  return navigator.locks.request(name, { mode: "exclusive" }, () =>
+    fn(),
   ) as Promise<T>;
 }
 
@@ -53,7 +53,8 @@ export function withRoleLock<T>(role: Role, fn: () => Promise<T>): Promise<T> {
  * till's ledger loses every token it ever signed.
  */
 export async function requestPersistence(): Promise<boolean> {
-  if (typeof navigator === "undefined" || !navigator.storage?.persist) return false;
+  if (typeof navigator === "undefined" || !navigator.storage?.persist)
+    return false;
   if (await navigator.storage.persisted?.()) return true;
   return navigator.storage.persist();
 }

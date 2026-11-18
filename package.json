@@ -8,6 +8,15 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
-    "board": "python3 board.py"
+    "lint": "eslint .",
+    "board": "python3 board.py",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "prettier": "^3.10.1",
+    "typescript-eslint": "^8.73.0"
   }
 }

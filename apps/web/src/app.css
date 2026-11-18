@@ -4,7 +4,12 @@
   --paper: #faf7f2;
   --muted: #6b6560;
   --rule: #ddd6cc;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
   line-height: 1.5;
 }
 

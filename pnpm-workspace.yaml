@@ -6,6 +6,6 @@ packages:
 # Vite runs; the two Astryx packages print their setup hint from it. Nothing
 # here runs a build step that changes the source tree.
 allowBuilds:
-  '@astryxdesign/cli': true
-  '@astryxdesign/core': true
+  "@astryxdesign/cli": true
+  "@astryxdesign/core": true
   esbuild: true

@@ -1,0 +1,5 @@
+node_modules
+dist
+board
+pnpm-lock.yaml
+*.md

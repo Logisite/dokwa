@@ -32,14 +32,17 @@ export function qrModules(text: string, options: QrOptions = {}): boolean[][] {
 function toBase64Url(bytes: Uint8Array): string {
   let binary = "";
   for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
 }
 
 function fromBase64Url(text: string): Uint8Array {
-  const padded = text.replace(/-/g, "+").replace(/_/g, "/").padEnd(
-    text.length + ((4 - (text.length % 4)) % 4),
-    "=",
-  );
+  const padded = text
+    .replace(/-/g, "+")
+    .replace(/_/g, "/")
+    .padEnd(text.length + ((4 - (text.length % 4)) % 4), "=");
   const binary = atob(padded);
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
@@ -51,21 +54,27 @@ const kinds = new Set(["token", "slip", "peer"]);
 function isCode(value: unknown): value is Code {
   if (typeof value !== "object" || value === null) return false;
   const candidate = value as Record<string, unknown>;
-  if (typeof candidate["kind"] !== "string" || !kinds.has(candidate["kind"])) return false;
+  if (typeof candidate["kind"] !== "string" || !kinds.has(candidate["kind"]))
+    return false;
   switch (candidate["kind"]) {
     case "token":
       return typeof candidate["token"] === "string";
     case "slip":
       return typeof candidate["event"] === "string";
     case "peer":
-      return typeof candidate["id"] === "string" && typeof candidate["signal"] === "string";
+      return (
+        typeof candidate["id"] === "string" &&
+        typeof candidate["signal"] === "string"
+      );
     default:
       return false;
   }
 }
 
 export function encodeCode(code: Code): string {
-  return CODE_PREFIX + toBase64Url(new TextEncoder().encode(JSON.stringify(code)));
+  return (
+    CODE_PREFIX + toBase64Url(new TextEncoder().encode(JSON.stringify(code)))
+  );
 }
 
 /** Returns null for anything that is not a code of ours. */
