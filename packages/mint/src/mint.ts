@@ -109,6 +109,8 @@ export interface Mint {
   info(): MintInfoResponse;
   keys(id?: string): MintKeysResponse;
   keysets(): MintKeysetsResponse;
+  /** how the till names itself in a token a wallet makes */
+  describe(): { pubkey: string; url: string };
 
   createQuote(input: {
     amount: number;
@@ -246,6 +248,10 @@ export function openMint(options: MintOptions): Mint {
       return {
         keysets: [{ id: keyset.id, unit: keyset.unit, active: true }],
       };
+    },
+
+    describe(): { pubkey: string; url: string } {
+      return { pubkey: identity.pubkey, url };
     },
 
     async createQuote(input): Promise<MintQuote> {
