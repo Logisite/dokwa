@@ -150,13 +150,24 @@ pnpm --filter ./packages/protocol add nostr-tools
 ### 4.4 Astryx setup
 
 ```bash
-pnpm dlx @astryxdesign/cli --help
-pnpm dlx @astryxdesign/cli init
+pnpm exec astryx init --all
 ```
 
-The CLI scaffolds the StyleX configuration and a theme. `@astryxdesign/build` provides the Vite integration; if the StyleX transform needs explicit wiring it goes through `@vitejs/plugin-react`'s babel options with `@stylexjs/babel-plugin`.
+`init` writes a managed block into `AGENTS.md` (and a one-line import into `GEMINI.md`), and copies `theme.template.ts`, which is a commented map of every theme field rather than a theme in use. It does not scaffold StyleX: the plain path loads prebuilt stylesheets and needs no compiler.
+
+Three imports, in the app entry, in this order:
+
+```ts
+import "@astryxdesign/core/reset.css";
+import "@astryxdesign/core/astryx.css";
+import "@astryxdesign/theme-neutral/theme.css";
+```
+
+Components then work with `className`, `xstyle` overrides, and theme tokens. `@stylexjs/stylex` stays installed because it is a peer of `@astryxdesign/core`, and the StyleX path is only needed if the project writes its own `stylex.create()` or swizzles a component. `@astryxdesign/build` remains available for that case.
 
 StyleX compiles to plain CSS, so the service worker caches CSS and nothing runs as runtime CSS-in-JS.
+
+`pnpm exec astryx doctor` reads the source and `astryx doctor --built dist` reads the bundle; both should be clean before a build is called done.
 
 ---
 

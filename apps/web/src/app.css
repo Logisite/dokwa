@@ -1,106 +1,15 @@
+/*
+ * Astryx brings its own reset and tokens; this file holds only what belongs
+ * to the document rather than to a component. Everything else is a component
+ * prop or a theme token, never a rule invented here.
+ */
 :root {
   color-scheme: light dark;
-  --ink: #1b1b1b;
-  --paper: #faf7f2;
-  --muted: #6b6560;
-  --rule: #ddd6cc;
-  font-family:
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    "Segoe UI",
-    sans-serif;
-  line-height: 1.5;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ink: #f2ece4;
-    --paper: #141312;
-    --muted: #a49c93;
-    --rule: #2e2b28;
-  }
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html,
 body {
   margin: 0;
-  min-height: 100%;
-  background: var(--paper);
-  color: var(--ink);
-}
-
-body {
-  /* phone first: 412×915 is the test viewport */
-  padding: max(1.5rem, env(safe-area-inset-top)) 1.25rem
-    max(1.5rem, env(safe-area-inset-bottom));
+  /* the till is installed to a home screen; keep clear of the notch */
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
   -webkit-text-size-adjust: 100%;
-}
-
-.shell {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  max-width: 34rem;
-  margin: 0 auto;
-  min-height: 100dvh;
-}
-
-h1 {
-  margin: 0;
-  font-size: clamp(2.5rem, 12vw, 3.5rem);
-  letter-spacing: -0.03em;
-  font-weight: 650;
-}
-
-.lede {
-  margin: 0.5rem 0 0;
-  color: var(--muted);
-  font-size: 1.0625rem;
-  text-wrap: balance;
-}
-
-.facts {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  border-top: 1px solid var(--rule);
-}
-
-.fact {
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid var(--rule);
-}
-
-.fact dt {
-  color: var(--muted);
-  font-size: 0.875rem;
-  flex: none;
-}
-
-.fact dd {
-  margin: 0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.8125rem;
-  text-align: right;
-  overflow-wrap: anywhere;
-}
-
-footer {
-  margin-top: auto;
-  color: var(--muted);
-  font-size: 0.875rem;
-}
-
-footer p {
-  margin: 0;
 }
