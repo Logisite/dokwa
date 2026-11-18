@@ -38,14 +38,18 @@ describe("identity", () => {
   it("refuses a digest that changed", () => {
     const identity = createIdentity();
     const sig = identity.signDigest(sha256(utf8ToBytes("a receipt")));
-    expect(verifyDigest(sha256(utf8ToBytes("a refund")), sig, identity.pubkey)).toBe(false);
+    expect(
+      verifyDigest(sha256(utf8ToBytes("a refund")), sig, identity.pubkey),
+    ).toBe(false);
   });
 
   it("refuses a signature from another key", () => {
     const signer = createIdentity();
     const other = createIdentity();
     const sig = signer.signDigest(sha256(utf8ToBytes("a receipt")));
-    expect(verifyDigest(sha256(utf8ToBytes("a receipt")), sig, other.pubkey)).toBe(false);
+    expect(
+      verifyDigest(sha256(utf8ToBytes("a receipt")), sig, other.pubkey),
+    ).toBe(false);
   });
 
   it("signs a message and verifyMessage accepts the message form", () => {
@@ -57,18 +61,34 @@ describe("identity", () => {
     const digestSig = identity.signDigest(sha256(message));
     const messageSig = identity.signMessage(message);
     expect(messageSig).not.toBe(digestSig);
-    expect(verifyDigest(sha256(message), messageSig, identity.pubkey)).toBe(true);
+    expect(verifyDigest(sha256(message), messageSig, identity.pubkey)).toBe(
+      true,
+    );
     expect(verifyMessage(message, messageSig, identity.pubkey)).toBe(true);
   });
 
   it("verifies a message with verifyMessage", () => {
     const identity = createIdentity();
-    expect(verifyMessage(utf8ToBytes("dokwa"), identity.signMessage(utf8ToBytes("dokwa")), identity.pubkey)).toBe(true);
-    expect(verifyMessage(utf8ToBytes("dokwo"), identity.signMessage(utf8ToBytes("dokwa")), identity.pubkey)).toBe(false);
+    expect(
+      verifyMessage(
+        utf8ToBytes("dokwa"),
+        identity.signMessage(utf8ToBytes("dokwa")),
+        identity.pubkey,
+      ),
+    ).toBe(true);
+    expect(
+      verifyMessage(
+        utf8ToBytes("dokwo"),
+        identity.signMessage(utf8ToBytes("dokwa")),
+        identity.pubkey,
+      ),
+    ).toBe(false);
   });
 
   it("gives a different key for a different seed", () => {
-    expect(identityFromSeed(seed).pubkey).not.toBe(identityFromSeed(randomSeed()).pubkey);
+    expect(identityFromSeed(seed).pubkey).not.toBe(
+      identityFromSeed(randomSeed()).pubkey,
+    );
   });
 });
 
@@ -78,7 +98,10 @@ describe("events", () => {
     const template = {
       kind: 7001,
       created_at: 1764499200,
-      tags: [["u", "sat"], ["amount", "21"]],
+      tags: [
+        ["u", "sat"],
+        ["amount", "21"],
+      ],
       content: "21 sats for the door",
     };
     // the standard serialisation, written out here rather than imported
@@ -127,7 +150,9 @@ describe("events", () => {
       tags: [],
       content: "21 sats",
     });
-    const flipped = event.sig.startsWith("0") ? "1" + event.sig.slice(1) : "0" + event.sig.slice(1);
+    const flipped = event.sig.startsWith("0")
+      ? "1" + event.sig.slice(1)
+      : "0" + event.sig.slice(1);
     expect(verifyEvent({ ...event, sig: flipped })).toBe(false);
   });
 

@@ -48,7 +48,11 @@ function toProof(
   secret: string,
   blinded: { r: bigint; B_: string },
 ) {
-  const sig = signBlinded(keyset, { amount, B_: blinded.B_, id: keyset.id }, { dleq: true });
+  const sig = signBlinded(
+    keyset,
+    { amount, B_: blinded.B_, id: keyset.id },
+    { dleq: true },
+  );
   const C = unblind(sig.C_, blinded.r, keyset.keys[String(amount)]!);
   return {
     sig,
@@ -85,7 +89,8 @@ describe("keysets", () => {
       .sort(([a], [b]) => Number(a) - Number(b))
       .map(([amount, key]) => `${amount}:${key}`)
       .join(",");
-    const expected = "01" + bytesToHex(sha256(utf8ToBytes(`${preimage}|unit:${keyset.unit}`)));
+    const expected =
+      "01" + bytesToHex(sha256(utf8ToBytes(`${preimage}|unit:${keyset.unit}`)));
     expect(keyset.id).toBe(expected);
     expect(keysetId(keyset.keys, "sat")).toBe(expected);
   });
@@ -144,7 +149,9 @@ describe("blind signing", () => {
   });
 
   it("a proof the mint did not make is refused", () => {
-    const other = deriveMintKeyset(utf8ToBytes("another till's seed, long enough"));
+    const other = deriveMintKeyset(
+      utf8ToBytes("another till's seed, long enough"),
+    );
     const secret = "a real secret";
     const blinded = blind(secret);
     const { proof } = toProof(other, 4, secret, blinded);
@@ -154,7 +161,9 @@ describe("blind signing", () => {
   it("a changed secret does not verify", () => {
     const blinded = blind("the original secret");
     const { proof } = toProof(keyset, 1, "the original secret", blinded);
-    expect(verifyProof(keyset, { ...proof, secret: "the original secres" })).toBe(false);
+    expect(
+      verifyProof(keyset, { ...proof, secret: "the original secres" }),
+    ).toBe(false);
   });
 
   it("refuses to sign for the wrong keyset or an unknown amount", () => {
@@ -172,19 +181,35 @@ describe("blind signing", () => {
       validateBlindedMessage(keyset, { amount: 1, B_: "zz", id: keyset.id }),
     ).toThrow();
     expect(() =>
-      validateBlindedMessage(keyset, { amount: 1, B_: "02" + "0".repeat(64), id: keyset.id }),
+      validateBlindedMessage(keyset, {
+        amount: 1,
+        B_: "02" + "0".repeat(64),
+        id: keyset.id,
+      }),
     ).toThrow();
     expect(() =>
-      validateBlindedMessage(keyset, { amount: 7, B_: blind("x").B_, id: keyset.id }),
+      validateBlindedMessage(keyset, {
+        amount: 7,
+        B_: blind("x").B_,
+        id: keyset.id,
+      }),
     ).toThrow();
     expect(() =>
-      validateBlindedMessage(keyset, { amount: 1, B_: blind("x").B_, id: keyset.id }),
+      validateBlindedMessage(keyset, {
+        amount: 1,
+        B_: blind("x").B_,
+        id: keyset.id,
+      }),
     ).not.toThrow();
   });
 
   it("the denomination ladder is powers of two", () => {
-    const keyset = deriveMintKeyset(utf8ToBytes("dokwa: the till's seed"), { denominations: 5 });
-    expect(Object.keys(keyset.keys).sort((a, b) => Number(a) - Number(b))).toEqual(["1", "2", "4", "8", "16"]);
+    const keyset = deriveMintKeyset(utf8ToBytes("dokwa: the till's seed"), {
+      denominations: 5,
+    });
+    expect(
+      Object.keys(keyset.keys).sort((a, b) => Number(a) - Number(b)),
+    ).toEqual(["1", "2", "4", "8", "16"]);
   });
 });
 
@@ -202,23 +227,32 @@ describe("DLEQ, NUT-12", () => {
     const secret = "a checked coin";
     const blinded = blind(secret);
     const { proof } = toProof(keyset, 4, secret, blinded);
-    expect(verifyDleq(keyset, { ...proof, dleq: { e: proof.dleq!.e, s: proof.dleq!.s } })).toBe(false);
     expect(
       verifyDleq(keyset, {
         ...proof,
-        dleq: { e: proof.dleq!.e, s: proof.dleq!.s, r: (blinded.r + 1n).toString() },
+        dleq: { e: proof.dleq!.e, s: proof.dleq!.s },
+      }),
+    ).toBe(false);
+    expect(
+      verifyDleq(keyset, {
+        ...proof,
+        dleq: {
+          e: proof.dleq!.e,
+          s: proof.dleq!.s,
+          r: (blinded.r + 1n).toString(),
+        },
       }),
     ).toBe(false);
   });
 
   it("refuses a dleq from another keyset's signature", () => {
-    const other = deriveMintKeyset(utf8ToBytes("another till's seed, long enough"));
+    const other = deriveMintKeyset(
+      utf8ToBytes("another till's seed, long enough"),
+    );
     const secret = "borrowed dleq";
     const blinded = blind(secret);
     const { proof } = toProof(other, 2, secret, blinded);
-    expect(
-      verifyDleq(keyset, { ...proof, id: keyset.id }),
-    ).toBe(false);
+    expect(verifyDleq(keyset, { ...proof, id: keyset.id })).toBe(false);
   });
 });
 
@@ -241,7 +275,11 @@ describe("BIP32 shape", () => {
     const pub = secp256k1.getPublicKey(master.key, true);
     expect(pub.length).toBe(33);
     // hardened: 0x00 || key || index(4, big endian) = 37 bytes of HMAC input
-    const data = concatBytes(new Uint8Array([0]), master.key, new Uint8Array([0x80, 0, 0, 0]));
+    const data = concatBytes(
+      new Uint8Array([0]),
+      master.key,
+      new Uint8Array([0x80, 0, 0, 0]),
+    );
     expect(data.length).toBe(37);
     expect(hmac(sha512, master.chain, data).length).toBe(64);
   });

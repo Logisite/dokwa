@@ -102,9 +102,7 @@ export interface SignedEvent extends EventTemplate {
 }
 
 /** sha256 of the canonical serialisation, as nostr defines it. */
-export function eventId(
-  event: EventTemplate & { pubkey: PublicKey },
-): string {
+export function eventId(event: EventTemplate & { pubkey: PublicKey }): string {
   const serialized = JSON.stringify([
     0,
     event.pubkey,

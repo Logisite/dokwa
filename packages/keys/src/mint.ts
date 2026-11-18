@@ -139,7 +139,10 @@ export function deriveMintKeyset(
     throw new Error("dokwa: a keyset has at least one denomination");
 
   const root = masterNode(seed);
-  const first = childNode(childNode(childNode(root, 0x80000000), 0x80000000), 0x80000000);
+  const first = childNode(
+    childNode(childNode(root, 0x80000000), 0x80000000),
+    0x80000000,
+  );
   const keys: Record<string, string> = {};
   const secretKeys: Record<string, Uint8Array> = {};
   for (let i = 0; i < denominations; i += 1) {
@@ -162,8 +165,7 @@ export function publicKeyset(
 
 /** NUT-00 hash-to-curve: a tagged hash and a little-endian counter. */
 export function hashToCurve(secret: string | Uint8Array): typeof Point.BASE {
-  const secretBytes =
-    typeof secret === "string" ? utf8ToBytes(secret) : secret;
+  const secretBytes = typeof secret === "string" ? utf8ToBytes(secret) : secret;
   const msgToHash = sha256(concatBytes(HASH_TO_CURVE_TAG, secretBytes));
   const counter = new Uint8Array(4);
   const view = new DataView(counter.buffer);
@@ -189,7 +191,9 @@ export function secretToY(secret: string): string {
 // ---------------------------------------------------------------- NUT-12 ---
 
 function hashE(points: Array<typeof Point.BASE>): Uint8Array {
-  return sha256(utf8ToBytes(points.map((point) => point.toHex(false)).join("")));
+  return sha256(
+    utf8ToBytes(points.map((point) => point.toHex(false)).join("")),
+  );
 }
 
 function dleqNonce(
@@ -246,7 +250,9 @@ export function signBlinded(
   options: { dleq?: boolean } = {},
 ): BlindedSignature {
   if (message.id !== keyset.id)
-    throw new Error(`dokwa: output is for keyset ${message.id}, not ${keyset.id}`);
+    throw new Error(
+      `dokwa: output is for keyset ${message.id}, not ${keyset.id}`,
+    );
   const secretKey = signingKey(keyset, message.amount);
   const B_ = Point.fromHex(message.B_);
   const a = Fn.fromBytes(secretKey);
@@ -273,9 +279,7 @@ export function validateBlindedMessage(
       `dokwa: output is for keyset ${message.id}, not ${keyset.id}`,
     );
   if (!keyset.keys[String(message.amount)])
-    throw new Error(
-      `dokwa: the keyset has no denomination ${message.amount}`,
-    );
+    throw new Error(`dokwa: the keyset has no denomination ${message.amount}`);
   Point.fromHex(message.B_);
 }
 
