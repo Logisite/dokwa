@@ -1,7 +1,15 @@
 /**
- * @chain — the bitcoin wallet: descriptor, address, deposit, payout.
+ * @dokwa/chain. The bitcoin wallet: descriptor, address, deposit, payout.
  *
- * The public surface is written when there is something to expose.
- * Until then this package exports nothing.
+ * The public surface is this file. Everything else in the package is internal.
  */
-export {};
+
+export {
+  chainDescriptors,
+  createChainWallet,
+  type ChainDescriptors,
+  type ChainNetwork,
+  type ChainWallet,
+  type ChainWalletOptions,
+  type DepositAddress,
+} from "./wallet.ts";
