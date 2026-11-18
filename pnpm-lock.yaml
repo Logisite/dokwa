@@ -193,9 +193,30 @@ importers:
       '@cashu/cashu-ts':
         specifier: ^4.13.1
         version: 4.13.1
+      '@dokwa/chain':
+        specifier: workspace:*
+        version: link:../../packages/chain
       '@dokwa/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@dokwa/keys':
+        specifier: workspace:*
+        version: link:../../packages/keys
+      '@dokwa/lightning':
+        specifier: workspace:*
+        version: link:../../packages/lightning
+      '@dokwa/mint':
+        specifier: workspace:*
+        version: link:../../packages/mint
+      '@dokwa/records':
+        specifier: workspace:*
+        version: link:../../packages/records
+      '@dokwa/wallet':
+        specifier: workspace:*
+        version: link:../../packages/wallet
+      '@dokwa/wires':
+        specifier: workspace:*
+        version: link:../../packages/wires
       '@ngraveio/bc-ur':
         specifier: ^1.1.13
         version: 1.1.13
