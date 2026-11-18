@@ -38,6 +38,23 @@ function parseFrame(text: string): Frame | null {
   }
 }
 
+/**
+ * A relay that answers OK false is refusing these bytes, but not every no is
+ * a final one. strfry answers "not acceptable at this point" when it is
+ * throttling writes: the destination is real, the socket is open, the event
+ * is fine, and the same bytes will be accepted in a minute. Calling that
+ * `rejected` would make the queue drop a receipt over a thirty second
+ * window, so a throttle is `unreachable`: worth another honest try.
+ * Everything else, a policy no like "restricted" or a malformed event, is
+ * `rejected` and the queue is right to give up on it.
+ */
+const THROTTLE_RE =
+  /not acceptable at this point|rate.?limit|slow down|too many requests/i;
+
+export function classifyRefusal(message: string): "rejected" | "unreachable" {
+  return THROTTLE_RE.test(message) ? "unreachable" : "rejected";
+}
+
 function cloneBytes(bytes: Uint8Array): Uint8Array {
   return new Uint8Array(bytes);
 }
@@ -148,8 +165,20 @@ class Connection {
         if (url !== this.url) return;
         const frame = parseFrame(decoder.decode(bytes));
         if (!frame || frame[0] !== "EVENT") return;
-        const event = frame[1] as { id?: unknown } | undefined;
-        if (event?.id === eventId) finish({ status: "delivered" });
+        // A NIP-01 EVENT answer is ["EVENT", <sub id>, <event>]. The event
+        // carries the id we asked for; do not assume which slot on relays
+        // that answer the shape loosely, so scan the frame for it.
+        for (const slot of frame) {
+          const event = slot as { id?: unknown } | null;
+          if (
+            event &&
+            typeof event === "object" &&
+            event.id === eventId
+          ) {
+            finish({ status: "delivered" });
+            return;
+          }
+        }
       };
       this.onFrameHook(listener);
       const timer = setTimeout(
@@ -285,11 +314,15 @@ class Connection {
           const id = frame[1];
           const accepted = frame[2];
           if (typeof id === "string" && typeof accepted === "boolean") {
+            const message = typeof frame[3] === "string" ? frame[3] : "";
+            if (!accepted && message) {
+              console.warn(`relay ${this.url} refused ${id.slice(0, 16)}: ${message}`);
+            }
             this.resolvePending(
               id,
               accepted
                 ? { status: "delivered" }
-                : { status: "failed", reason: "rejected" },
+                : { status: "failed", reason: classifyRefusal(message) },
             );
           }
         }
