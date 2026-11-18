@@ -116,7 +116,7 @@ describe("the signal's answer and its change", () => {
   }, 30_000);
 
   it("a stopped signal stops probing and keeps its last answer", async () => {
-    let reachable = false;
+    const reachable = false;
     let probes = 0;
     const signal = createSignal({
       probe: async () => {
