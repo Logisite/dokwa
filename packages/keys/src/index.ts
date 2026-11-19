@@ -1,7 +1,38 @@
 /**
- * @keys — one identity, one signer, one place secrets live.
+ * @dokwa/keys. One identity, one signer, the ecash signing maths, seal and open.
  *
- * The public surface is written when there is something to expose.
- * Until then this package exports nothing.
+ * The public surface is this file. Everything else in the package is internal.
  */
-export {};
+
+export {
+  createIdentity,
+  eventId,
+  identityFromSeed,
+  pubkeyFromSecretKey,
+  randomSeed,
+  signEvent,
+  verifyDigest,
+  verifyEvent,
+  verifyMessage,
+  type EventTemplate,
+  type Identity,
+  type SignedEvent,
+} from "./identity.ts";
+
+export {
+  deriveMintKeyset,
+  hashToCurve,
+  keysetId,
+  publicKeyset,
+  secretToY,
+  serialisePublicKeyset,
+  signBlinded,
+  validateBlindedMessage,
+  verifyDleq,
+  verifyProof,
+  type BlindedMessage,
+  type BlindedSignature,
+  type MintKeyset,
+  type MintKeysetOptions,
+  type Proof,
+} from "./mint.ts";

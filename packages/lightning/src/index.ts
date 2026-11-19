@@ -1,7 +1,18 @@
 /**
- * @lightning — the Lightning node: keys, persistence, channels.
+ * @dokwa/lightning. The Lightning node: keys, persistence, and the byte pipe
+ * that waits for wires.
  *
- * The public surface is written when there is something to expose.
- * Until then this package exports nothing.
+ * The public surface is this file. Everything else in the package is internal.
  */
-export {};
+
+export {
+  openLightning,
+  type LightningNetwork,
+  type LightningNode,
+  type LightningOptions,
+} from "./node.ts";
+export {
+  openLightningStore,
+  type DexieLightningStore,
+  type LightningStore,
+} from "./store.ts";

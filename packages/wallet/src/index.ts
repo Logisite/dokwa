@@ -1,7 +1,15 @@
 /**
- * @wallet — holding, sending, receiving and verifying ecash.
+ * @dokwa/wallet. Holding, sending, receiving, verifying ecash.
  *
- * The public surface is written when there is something to expose.
- * Until then this package exports nothing.
+ * The public surface is this file. Everything else in the package is internal.
  */
-export {};
+
+export { openWallet } from "./wallet.ts";
+export { openWalletStore, type DexieWalletStore } from "./store.ts";
+export type {
+  MintLink,
+  MintLinkCheckState,
+  MintLinkKeys,
+} from "./mint-link.ts";
+export type { StoredProof, WalletStore } from "./types.ts";
+export type { TokenCheck, Wallet, WalletOptions } from "./wallet.ts";
