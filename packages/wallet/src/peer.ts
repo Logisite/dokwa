@@ -67,9 +67,21 @@ export interface PeerMintLinkOptions {
   timeoutMs?: number;
 }
 
+/** A random start for the per-link request id: never 1 on purpose. */
+function randomStartId(): number {
+  const bytes = new Uint8Array(4);
+  globalThis.crypto.getRandomValues(bytes);
+  const value = new DataView(bytes.buffer).getUint32(0, false);
+  return Math.max(1, value);
+}
+
 /**
  * A MintLink that speaks frames to a till reachable as a peer. Open a wallet
  * over it exactly as over an in-process mint.
+ *
+ * Request ids are random per link, not 1: with the second belt, a stale
+ * answer can never match even if routing were confused, and two links in
+ * play never collide on their first call.
  */
 export function openPeerMintLink(options: PeerMintLinkOptions): MintLink {
   const { wire, peerId } = options;
@@ -83,7 +95,7 @@ export function openPeerMintLink(options: PeerMintLinkOptions): MintLink {
       timer: ReturnType<typeof setTimeout>;
     }
   >();
-  let nextId = 1;
+  let nextId = randomStartId();
 
   // the listener lives as long as the link; a wallet that closes its store
   // simply stops calling it
