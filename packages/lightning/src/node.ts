@@ -49,6 +49,21 @@ function hex(bytes: Uint8Array): string {
   return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+function hexBytes(text: string): Uint8Array {
+  const bytes = new Uint8Array(text.length / 2);
+  for (let i = 0; i < bytes.length; i += 1)
+    bytes[i] = Number.parseInt(text.slice(i * 2, i * 2 + 2), 16);
+  return bytes;
+}
+
+/** A stable 32-bit hash of a peer's wire id, for LDK's descriptor equality. */
+function peerHash(peerId: string): bigint {
+  let h = 2166136261n;
+  for (const byte of new TextEncoder().encode(peerId))
+    h = ((h ^ BigInt(byte)) * 16777619n) & 0xffffffffn;
+  return h;
+}
+
 export type LightningNetwork = "signet";
 
 export interface LightningOptions {
@@ -67,6 +82,8 @@ export interface LightningNode {
   readonly nodeId: PublicKey;
   /** how many channels the manager currently knows */
   channels(): number;
+  /** how many peers LDK considers connected */
+  peers(): number;
   /**
    * Write the node's state in one transaction: the channel manager and the
    * network graph together. Call before the page dies.
@@ -76,6 +93,24 @@ export interface LightningNode {
   close(): Promise<void>;
   /** whether a channel monitor is on file under this key */
   hasMonitor(hash: number): Promise<boolean>;
+  /**
+   * Dial a peer over the Wire. `peerId` is the wire's own address for it,
+   * `peerNodeId` is LDK's: the compressed public key hex the peer's code
+   * handshake named. The Init bytes LDK hands back are sent as the first
+   * message; every later message leaves through the descriptor this call
+   * registers.
+   */
+  connectPeer(peerId: string, peerNodeId: string): void;
+  /**
+   * Register a peer that arrived over the Wire, before its first bytes are
+   * read. The data channel belongs to wires; this is only LDK's end of it.
+   */
+  acceptPeer(peerId: string): void;
+  /**
+   * Bytes that arrived from a peer, in arrival order, unframed. LDK's own
+   * buffering keeps any remainder, so a message split across sends is fine.
+   */
+  receiveBytes(peerId: string, bytes: Uint8Array): void;
 }
 
 let wasmReady = false;
@@ -262,13 +297,132 @@ export async function openLightning(
     logger,
     keys.as_NodeSigner(),
   );
-  void peerManager; // its bytes ride the Wire; the data channel is wires' job
+
+  // The peers this node has a connection with, keyed by the wire's id for
+  // them. LDK produces outbound bytes by calling send_data on the right
+  // descriptor, which is where the Wire takes them; inbound bytes are fed
+  // to read_event. Nothing here frames anything: LDK does, and the carrier
+  // stays byte-exact.
+  //
+  // Outbound bytes are copied and queued, then flushed after the current
+  // wasm call returns. Delivering synchronously from inside send_data would
+  // re-enter wasm (the peer's read_event, then its process_events, then back
+  // into this node) and the bindings corrupt under that nesting.
+  const descriptors = new Map<string, ldk.SocketDescriptor>();
+  const outbox: Array<{ peerId: string; bytes: Uint8Array }> = [];
+
+  function flushOutbox(): void {
+    while (outbox.length > 0) {
+      const item = outbox.shift()!;
+      const wire = options.wire;
+      if (!wire) continue;
+      queueMicrotask(() => {
+        void wire.send({ kind: "peer", id: item.peerId }, item.bytes);
+      });
+    }
+  }
+
+  function descriptorFor(peerId: string): ldk.SocketDescriptor {
+    const existing = descriptors.get(peerId);
+    if (existing) return existing;
+    const descriptor = ldk.SocketDescriptor.new_impl({
+      send_data(data: Uint8Array): number {
+        if (!options.wire) {
+          console.error(
+            "ldk: outbound peer bytes ready and no Wire is injected",
+          );
+          return 0;
+        }
+        // copy: the wasm buffer may be reused once this callback returns
+        outbox.push({ peerId, bytes: Uint8Array.from(data) });
+        return data.length;
+      },
+      disconnect_socket() {
+        descriptors.delete(peerId);
+      },
+      // LDK compares descriptors through hash(), and `this` here is the
+      // implementation object, never the wrapper, so equality has to be
+      // derived from the peer id and not from object identity
+      eq(other: ldk.SocketDescriptor) {
+        return other.hash() === peerHash(peerId);
+      },
+      hash() {
+        return peerHash(peerId);
+      },
+    });
+    descriptors.set(peerId, descriptor);
+    return descriptor;
+  }
 
   return {
     nodeId,
 
     channels(): number {
       return manager.list_channels().length;
+    },
+
+    peers(): number {
+      return peerManager.list_peers().length;
+    },
+
+    connectPeer(peerId: string, peerNodeId: string): void {
+      if (!/^[0-9a-f]{66}$/i.test(peerNodeId))
+        throw new Error(
+          "ldk: a peer node id is 66 hex characters, the compressed key from its handshake",
+        );
+      const descriptor = descriptorFor(peerId);
+      const init = peerManager.new_outbound_connection(
+        hexBytes(peerNodeId.toLowerCase()),
+        descriptor,
+        ldk.Option_SocketAddressZ.constructor_none(),
+      );
+      if (!init.is_ok())
+        throw new Error(`ldk: the connection to ${peerId} was refused by LDK`);
+      const bytes = (init as unknown as { res: Uint8Array }).res;
+      if (!options.wire) {
+        console.error("ldk: the Init message is ready and no Wire is injected");
+        return;
+      }
+      outbox.push({ peerId, bytes: Uint8Array.from(bytes) });
+      flushOutbox();
+    },
+
+    acceptPeer(peerId: string): void {
+      const descriptor = descriptorFor(peerId);
+      const result = peerManager.new_inbound_connection(
+        descriptor,
+        ldk.Option_SocketAddressZ.constructor_none(),
+      );
+      if (!result.is_ok())
+        throw new Error(
+          `ldk: the inbound connection from ${peerId} was refused by LDK`,
+        );
+    },
+
+    receiveBytes(peerId: string, bytes: Uint8Array): void {
+      const descriptor = descriptors.get(peerId);
+      if (!descriptor)
+        throw new Error(
+          `ldk: no peer is registered for ${peerId}; call acceptPeer or connectPeer first`,
+        );
+      const result = peerManager.read_event(descriptor, bytes);
+      if (!result.is_ok()) {
+        const failure = (
+          result as unknown as { err?: { to_str?: () => string } }
+        ).err;
+        const reason =
+          typeof failure?.to_str === "function"
+            ? failure.to_str()
+            : String(failure);
+        throw new Error(
+          `ldk: ${peerId} sent bytes that LDK could not frame: ${reason}`,
+        );
+      }
+      // anything LDK wants to answer leaves through the descriptor's
+      // send_data, which queues it; the flush hands it to the Wire after
+      // this wasm call has returned
+      peerManager.process_events();
+      flushOutbox();
     },
 
     async persist(): Promise<void> {
