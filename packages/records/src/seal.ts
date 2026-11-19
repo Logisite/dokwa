@@ -20,6 +20,7 @@ import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { hkdf } from "@noble/hashes/hkdf.js";
 import { sha256 } from "@noble/hashes/sha2.js";
 import { concatBytes, hexToBytes, utf8ToBytes } from "@noble/hashes/utils.js";
+import { secretFromSeed } from "@dokwa/keys";
 
 const SEAL_INFO = utf8ToBytes("dokwa:seal:v1");
 const EPHEMERAL_LENGTH = 33;
@@ -72,8 +73,7 @@ export function seal(recipientPubkey: string, plaintext: string): string {
 /**
  * Open a sealed payload with the recipient's secret key. A wrong key or a
  * changed byte returns null: the tag refuses before anything is decrypted.
- */
-export function open(
+ */ export function open(
   sealed: string,
   recipientSecret: Uint8Array,
 ): string | null {
@@ -98,4 +98,12 @@ export function open(
   } catch {
     return null;
   }
+}
+
+/**
+ * Open a sealed payload with the recipient's seed, the one secret the owner
+ * keeps. The derivation is the identity's own, not a second copy of it.
+ */
+export function openWithSeed(seed: Uint8Array, sealed: string): string | null {
+  return open(sealed, secretFromSeed(seed));
 }

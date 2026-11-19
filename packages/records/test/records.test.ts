@@ -13,6 +13,7 @@ import {
   SLIP_KIND,
   open,
   openGate,
+  openWithSeed,
   readBadge,
   readReceipt,
   readSlip,
@@ -156,6 +157,30 @@ describe("permission slips", () => {
     ).toBeNull();
   });
 
+  it("a slip sealed to a subject opens from that subject's seed, and not another's", () => {
+    // the subject's device holds a seed, as the room's does; the identity
+    // derives from it, and the seed alone must open the envelope
+    const subjectSeed = utf8ToBytes(
+      "dokwa: the subject's device seed, sixteen+",
+    );
+    const subject = identityFromSeed(subjectSeed);
+    const otherSeed = utf8ToBytes("dokwa: somebody else's seed, sixteen bytes");
+    const sealed = seal(subject.pubkey, "the private half of the permission");
+    const event = signSlip(ISSUER, {
+      capability: "till.open",
+      subject: subject.pubkey,
+      expires: Math.floor(Date.now() / 1000) + 3600,
+      sealed,
+    });
+    expect(readSlip(event).ok).toBe(true);
+    expect(openWithSeed(subjectSeed, sealed)).toBe(
+      "the private half of the permission",
+    );
+    // a different seed gets nothing, not garbage
+    expect(openWithSeed(otherSeed, sealed)).toBeNull();
+    expect(identityFromSeed(otherSeed).pubkey).not.toBe(subject.pubkey);
+  });
+
   it("round trips for every subject, whatever the parity of their key", () => {
     // The even-y trap: a recipient whose dG has odd y negates the shared
     // point the sender computes from the x-only key. One trial catches it
@@ -275,6 +300,27 @@ describe("the covered lesson gate", () => {
     expect(result.warning!.requires).toBe("the door");
     // the slip exists: a missing badge is never a reason for absence
     expect(readSlip(result.event).ok).toBe(true);
+    // and the record carries the warning itself, so replication keeps it
+    expect(result.event.tags).toContainEqual(["badge-missing", "the door"]);
+    const read = readSlip(result.event);
+    expect(read.ok && read.badgeMissing).toBe("the door");
+  });
+
+  it("a covered slip carries no badge-missing tag", async () => {
+    const gate = openGate(rules);
+    const result = await gate.makeSlip(
+      ISSUER,
+      {
+        capability: "till.open",
+        subject: student.pubkey,
+        expires: Math.floor(Date.now() / 1000) + 3600,
+      },
+      [badgeFor(student.pubkey)],
+    );
+    expect(result.warning).toBeUndefined();
+    expect(result.event.tags).not.toContainEqual(["badge-missing", "the door"]);
+    const read = readSlip(result.event);
+    expect(read.ok && read.badgeMissing).toBeUndefined();
   });
 
   it("the owner's refusal is loud, not silent", async () => {
