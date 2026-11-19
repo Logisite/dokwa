@@ -330,6 +330,12 @@ function readChannelManager(
     ldkBindings.encodeUint8Array(bytes),
     (args as unknown as { ptr: bigint }).ptr,
   );
+  // Rust's read consumes ChannelManagerReadArgs by value. The JS wrapper
+  // still owns the pointer and its finalizer would free it a second time,
+  // which is the "null function or function signature mismatch" the room
+  // saw at suite teardown. Detaching the wrapper is what the generated
+  // wrappers do after a consuming call.
+  detachConsumed(args);
   const result = (
     ldk as unknown as {
       Result_C2Tuple_ThirtyTwoBytesChannelManagerZDecodeErrorZ: {
@@ -359,4 +365,17 @@ function readNetworkGraph(
     return ok.res;
   }
   return null;
+}
+
+/**
+ * Mark a wrapper whose Rust value was consumed by a by-value call so its
+ * finalizer does not free the pointer again. The static lives on CommonBase
+ * and every generated wrapper inherits it through its constructor.
+ */
+function detachConsumed(consumed: object): void {
+  const ctor = (consumed as { constructor?: unknown }).constructor as
+    { set_null_skip_free?: (o: unknown) => void } | undefined;
+  if (typeof ctor?.set_null_skip_free !== "function")
+    throw new Error("ldk: the bindings do not expose set_null_skip_free");
+  ctor.set_null_skip_free(consumed);
 }

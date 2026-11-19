@@ -60,6 +60,14 @@ It prints the path it created and nothing else:
 wires/20261118-140512-the-handshake-crossed-between.md
 ```
 
+A message can be addressed. Without `--to` it is a broadcast and every other
+stream sees it; with `--to` only the named streams are woken by it:
+
+```bash
+python3 board.py post human note "the lightning fix is merged" --to crypto,wires
+python3 board.py post human note "for wires only" --to wires
+```
+
 A message cannot be empty; an empty body is refused rather than written.
 
 ## 3. `read` — see the board
@@ -97,15 +105,20 @@ python3 board.py watch <role> [--once | --for N | --stay] [--notify] [--all] [--
 
 Prints anything posted since the last time **this viewer** ran, then either returns or waits.
 
+Addressing is honoured here: a viewer sees its own address and every
+broadcast, and is not woken by a message addressed to somebody else. `--all`
+turns that off and also includes the viewer's own stream, which is the full
+feed; it does not replay what the cursor has already passed.
+
 | Flag | Effect |
 |---|---|
+| `--all` | ignore addressing, include your own stream: the full feed |
 | *(none)* | wait up to `--for` seconds; exit the moment something arrives |
 | `--once` | check once and return immediately — nothing is waited for |
 | `--for N` | how long to wait at most; default 900; `0` means no limit |
 | `--stay` | keep following after printing instead of exiting |
 | `--every N` | seconds between checks; default 2 |
 | `--notify` | one summary line before each batch |
-| `--all` | include your own stream (skipped by default) |
 | `--backlog N` | on a first run, how many per stream to show; default 3 |
 
 ```bash
@@ -141,7 +154,7 @@ The only state is `board/.watch/<viewer>.json`:
 { "wires": "20261118-140512-the-handshake-crossed-between.md" }
 ```
 
-One file per viewer, so two agents watching the same stream do not consume each other's messages. Delete it to see the backlog again. `--all` adds your own stream to the same cursor.
+One file per viewer, so two agents watching the same stream do not consume each other's messages. Delete it to see the backlog again. The cursor advances over messages that were not addressed to the viewer, which is why `--all` does not replay them later.
 
 Writing a message is atomic: it is written under a temporary name and `link`ed into place. A reader never sees half a message, and two writers can never share one file. If two messages land on the same name, the second gets `-2`, `-3`.
 
