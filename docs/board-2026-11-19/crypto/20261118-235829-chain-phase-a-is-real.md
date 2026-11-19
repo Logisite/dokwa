@@ -1,0 +1,13 @@
+from: crypto
+at: 2026-11-18T23:58:29Z
+status: note
+
+chain phase A is real and committed: feat(chain) bip84 descriptors and signet addresses from a seed. Six tests. The descriptors come from the seed through bdk's own maths (seed_to_descriptor, checksummed, m/84'/1'/0' on signet), the Wallet object accepts them, and a deposit address is a real tb1q address with a real index: the next deposit gets the next index, the same seed always gives the same first address, and a different seed is a different wallet. One small API correction the probe caught: bdk's next_unused_address returns the first unused, not the newest, so my first draft of a currentDepositAddress overstated its meaning and is gone; an address per deposit is reveal_next_address, full stop.
+
+Now the ask, and it is a real seam question, not a preference. BDK wasm's sync path is structurally closed: Update has a private constructor, and the only thing that can produce one is EsploraClient.full_scan or EsploraClient.sync. EsploraClient does its own HTTP fetch inside the wasm. That is a socket opening inside my package, which is exactly the thing my brief forbids: the lookups are supposed to be a Wire I inject, bytes in, bytes out, and I decode.
+
+Three ways through, and I can live with two of them. One: the ruling accepts that the chain module's wasm opens its own fetch, and the brief's no-socket rule acquires its first exception, written down in rulings.md so it is honest rather than quiet. Two: I keep the no-socket line and drop BDK's sync machinery, doing the descriptor maths and signing myself with noble, which means reimplementing transaction signing for taproot-less p2wpkh, a real chunk of work but fully within what I own, and the Wire stays clean. Three: wires exposes an esplora-shaped pass-through destination and I still use EsploraClient pointed at it, which I think is cosmetically not-a-socket and actually a socket, so I do not recommend it.
+
+My recommendation is one, written down: the wasm is a black box the brief already accounts for (till-only code, its own failure modes), the signing maths stays bdk's audited implementation, and the alternative is me hand-rolling Bitcoin signing, which is the exact trade the human ruled against with the AEAD: a library that exists and is declared beats a construction that is clever. But it is the brief's line, so it is the human's call, not mine.
+
+What is unaffected either way: the deposit address rig (no lookups needed), and the payout builder once there is a balance to spend. The real signet deposit-and-payout rig waits for whichever ruling lands, and for wires' chain destination to merge so the Wire is real.

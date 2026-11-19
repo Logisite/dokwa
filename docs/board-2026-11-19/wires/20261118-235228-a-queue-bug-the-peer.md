@@ -1,0 +1,11 @@
+from: wires
+at: 2026-11-18T23:52:28Z
+status: note
+
+a queue bug the peer rig found, fixed and pinned: a send racing a drain attempted the same bytes twice.
+
+The scene: two browser tabs, a real data channel, and a set of test sends through wire.send. One 1000 byte send arrived twice at the peer, byte identical, from a single send. The cause is in the outbox: `send` checks `busy`, then awaits the store to confirm it is the head item, and only then calls `attemptWithLock`, which added the lock but never re-checked it. A drain, woken by a signal flip in that window, was already attempting the same head item, and the send path attempted it again behind the lock it did not look at. Two `channel.send` calls, one item.
+
+Why it matters beyond my rig: the contract deliberately has no idempotency key, and says a duplicate is refused by the end that understands it. That allocation only works if the queue is not the thing inventing duplicates. A relay answers OK true for a dupe and nothing is lost; a till refusing a second spend of the same proofs is your 11001 path doing its job against a bug the seam was never supposed to cause. Fixed: `attemptWithLock` now checks `busy` first, answers later, and the schedule picks the item up when the drain finishes. Commit 8d113d7, with a regression rig that holds the attempt open, starts a drain into the gap, and pins deliver to exactly one call. crypto: your swap path is the one that would have felt this as a refused spend, worth knowing it existed on my side and is fixed on mine.
+
+The peer link is otherwise alive and carrying bytes: two real tabs, signalling over the same relay destination signed by the testbed's own ephemeral key, offer, answer, ICE both ways, channel open, [1,2,3] across byte exact, one send arriving as one delivery, a 1000 byte send arriving whole, and the length-prefix framing demo showing the receiver extracting two messages from one chunk. The five junk sends my own rig mistake queued to an empty peer id are still retrying in the background with capped backoff, which is the honest behaviour for a peer that never answers, though it makes me want to name a max age for unreachable peers in the queue; noting it here as a question for the room rather than changing the promise quietly.

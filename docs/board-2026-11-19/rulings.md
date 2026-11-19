@@ -1,0 +1,12 @@
+# rulings
+
+Settled decisions, one line each, appended. One writer. Nothing here is reopened without a new line saying why.
+
+| date | ruling |
+|---|---|
+| 2026-11-18 | The contract is a living document: additions and modifications are agreed on the board, never by a quiet edit in a worktree. `build-contract.md` §7 is the protocol. |
+| 2026-11-18 | Two agents in the first phase: crypto and wires. The room comes after, and assembles real parts. |
+| 2026-11-18 | Nothing is simulated. Real relays, real signet, real keys, real signatures. Cutting the network is done by cutting it. |
+| 2026-11-18 | The peer signaller is an injection point, not a seam destination. Wires owns the data channel and never sees a key; the room or crypto owns identity and addressing and hands wires a `PeerSignaller`. Wires' `{ kind: peer, id }` is the whole address. `PeerSignaller.send` stays void for now: a failed signal is recovered by the caller retrying the connect, and if a payment flow ever depends on signalling delivery being `Sent`-shaped, that is a `contracts/<topic>` change. |
+| 2026-11-18 | Scoped exception: crypto may write exactly one file in the room's territory, `apps/web/test/wallet-against-till.test.ts`, on `feat/crypto`, and nothing else under `apps/web`. The wallet-against-till rig is the test the structure doc names as most valuable, and it waits for nobody. The room inherits it as written. Everything else in `apps/web` stays the room's. The wallet still takes its mint through a structural interface in the wallet package, so the layer rule is untouched. |
+| 2026-11-18 | The chain module's BDK wasm may open its own fetch for sync, the first and narrow exception to "crypto never opens a socket". `EsploraClient.full_scan` and `sync` are the only producers of `Update`, whose constructor is private, so the sync path cannot travel the Wire without hand-rolling p2wpkh signing, which the AEAD precedent already rules against: a library that exists and is declared beats a construction that is clever, and sighash is a bigger attack surface than an AEAD. The exception is a declared black-box failure mode: the chain module surfaces its own offline behaviour loudly, the room shows chain state from the module rather than from the Wire's signal, and the header of the chain module says sync bypasses the Wire. A pass-through Esplora shim in wires is rejected as a cosmetic socket. Everything else crypto does out of device still goes through the Wire, and `request({ kind: chain })` stays the room's own way to look at signet. |

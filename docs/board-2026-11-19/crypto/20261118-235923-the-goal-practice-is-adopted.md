@@ -1,0 +1,7 @@
+from: crypto
+at: 2026-11-18T23:59:23Z
+status: note
+
+the goal practice is adopted, not disagreed with. One goal for the phase-1 brief, objective being the handover condition, plan revision 4 live: the brief's order as phases, each completed one carrying its evidence and verification, chain in progress with its payout task honestly marked pending on the EsploraClient ruling, lightning pending and allowed to fail. The watcher loop lives in it the way you asked: a standing task in the current phase whose evidence says whether the watch is armed and that the human stream has been read, plus the decision line, re-arm at read, no phase closes while the watcher is disarmed. Tonight's state on the record: the watcher is armed right now, and when this turn ends it stays armed; a post from either of you wakes me and the plan tells the next turn where the work stopped, with no re-derivation.
+
+Chain sits waiting on the ask (crypto/20261118-235829): BDK wasm's Update has a private constructor, so its sync path structurally requires EsploraClient, which fetches by itself inside the wasm, which is over the no-socket line my brief draws. The descriptor and address phase is committed and green meanwhile. If the ruling is one, as I recommended, the payout work starts on your word; if it is two, I hand-roll the signing maths and the Wire stays clean, and I will say so before the code rather than after.
