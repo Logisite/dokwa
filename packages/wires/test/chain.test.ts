@@ -83,8 +83,15 @@ async function preflight(
 /** One real signet txid, taken live from the tip block of the real chain. */
 let realTxid = "";
 let realBlockHash = "";
-/** Why the preflight could not answer at all, if it could not. */
+/** Why the live legs could not be reached, if they could not. */
 let preflightFailure = "";
+/** The underlying fetch failure behind the last `failed` answer. */
+let lastChainError = "";
+
+function noteChainError(url: string, error: unknown): void {
+  const cause = (error as { cause?: { code?: string } })?.cause;
+  lastChainError = `${url}: ${cause?.code ?? (error as Error)?.message ?? String(error)}`;
+}
 
 function healthy(status: number | Error): boolean {
   return !(status instanceof Error) && status >= 200 && status < 400;
@@ -103,23 +110,23 @@ beforeAll(async () => {
     );
     return;
   }
-  const chain = new Chain({ signet: SIGNET_ENDPOINT, timeoutMs: 30_000 });
-  const tip = await chain.request(
-    chainRequestBytes({ path: "/blocks/tip/hash" }),
-  );
-  expect(tip.status).toBe("ok");
-  realBlockHash = decoder
-    .decode(tip.status === "ok" ? tip.bytes : new Uint8Array())
-    .trim();
+  // The live ids are fetched through the same honest path the tests use:
+  // a refused fetch names the endpoint and the underlying error here rather
+  // than failing later with "expected failed to be ok".
+  const tip = await ask("/blocks/tip/hash");
+  if (tip.kind === "refused") {
+    preflightFailure = `live tip fetch refused: ${tip.reason} (${lastChainError || "no underlying error"})`;
+    return;
+  }
+  realBlockHash = decoder.decode(tip.bytes).trim();
   expect(realBlockHash).toMatch(/^[0-9a-f]{64}$/);
 
-  const txids = await chain.request(
-    chainRequestBytes({ path: `/block/${realBlockHash}/txids` }),
-  );
-  expect(txids.status).toBe("ok");
-  const list: unknown = JSON.parse(
-    decoder.decode(txids.status === "ok" ? txids.bytes : new Uint8Array()),
-  );
+  const txids = await ask(`/block/${realBlockHash}/txids`);
+  if (txids.kind === "refused") {
+    preflightFailure = `live txids fetch refused: ${txids.reason} (${lastChainError || "no underlying error"})`;
+    return;
+  }
+  const list: unknown = JSON.parse(decoder.decode(txids.bytes));
   expect(Array.isArray(list)).toBe(true);
   expect((list as string[]).length).toBeGreaterThan(0);
   realTxid = (list as string[])[0] ?? "";
@@ -127,7 +134,11 @@ beforeAll(async () => {
 }, TIMEOUT_MS);
 
 function chainCall(path: string) {
-  const chain = new Chain({ signet: SIGNET_ENDPOINT, timeoutMs: 30_000 });
+  const chain = new Chain({
+    signet: SIGNET_ENDPOINT,
+    timeoutMs: 30_000,
+    onError: noteChainError,
+  });
   return chain.request(chainRequestBytes({ path }));
 }
 
@@ -153,13 +164,14 @@ async function ask(path: string): Promise<Observation> {
   if (replied.status === "ok") return { kind: "ok", bytes: replied.bytes };
 
   const raw = await rawGet(path);
+  const underlying = lastChainError || "no underlying error captured";
   if (isRawStatus(raw) && raw.status >= 200 && raw.status < 300) {
     throw new Error(
-      `code failure: ${path} answered ${JSON.stringify(replied)} while a raw GET to the same path answered ${raw.status}`,
+      `code failure: ${path} answered ${JSON.stringify(replied)} while a raw GET to the same path answered ${raw.status}; underlying: ${underlying}`,
     );
   }
   console.log(
-    `[chain] ${path}: ${JSON.stringify(replied)} (raw ${isRawStatus(raw) ? raw.status : raw.error})`,
+    `[chain] ${path}: ${JSON.stringify(replied)} (raw ${isRawStatus(raw) ? raw.status : raw.error}; underlying ${underlying})`,
   );
   return {
     kind: "refused",
@@ -273,12 +285,12 @@ describe("chain destination, real signet", () => {
 
       if (rawStatus !== null && rawStatus >= 200 && rawStatus < 300) {
         throw new Error(
-          `code failure: an unknown txid answered ${JSON.stringify(replied)} while the raw endpoint answered ${rawStatus}`,
+          `code failure: an unknown txid answered ${JSON.stringify(replied)} while the raw endpoint answered ${rawStatus}; underlying: ${lastChainError || "none"}`,
         );
       }
       if (replied.status !== "failed") {
         throw new Error(
-          `code failure: an unknown txid answered ${JSON.stringify(replied)}`,
+          `code failure: an unknown txid answered ${JSON.stringify(replied)}; underlying: ${lastChainError || "none"}`,
         );
       }
       if (
