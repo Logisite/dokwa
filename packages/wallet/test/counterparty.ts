@@ -11,9 +11,11 @@ import {
   type Proof,
 } from "@dokwa/keys";
 import type {
+  MeltTo,
   MintLink,
   MintLinkCheckState,
   MintLinkKeys,
+  MintLinkMeltResult,
   MintLinkQuote,
 } from "../src/mint-link.ts";
 
@@ -25,17 +27,23 @@ import type {
  * object joins the wallet in the apps/web rigs. Everything cryptographic
  * here is real; the bookkeeping is deliberately minimal and honest about it.
  */
-export function counterparty(seed: Uint8Array): MintLink & {
+export function counterparty(
+  seed: Uint8Array,
+  pay?: (to: MeltTo) => Promise<string>,
+): MintLink & {
   keyset: MintKeyset;
   /** the venue hands out coins directly, for token-shaped tests */
   issue(outputs: BlindedMessage[]): BlindedSignature[];
   /** the operator confirms the cash is in the box */
   settle(quoteId: string): MintLinkQuote;
+  /** the address and sats of the last real payout the fake payer saw */
+  lastPayout: () => MeltTo | null;
 } {
   const keyset = deriveMintKeyset(seed);
   const identity = createIdentity(seed);
   const spent = new Set<string>();
   const quotes = new Map<string, MintLinkQuote>();
+  let lastPayout: MeltTo | null = null;
   const keysResponse: MintLinkKeys = {
     keysets: [
       {
@@ -48,7 +56,7 @@ export function counterparty(seed: Uint8Array): MintLink & {
   };
 
   function signOutputs(outputs: BlindedMessage[]): BlindedSignature[] {
-    if (outputs.length === 0) throw new Error("cp: no outputs");
+    // a full melt has no change outputs; that is a valid answer, not a fault
     return outputs.map((output) => {
       validateBlindedMessage(keyset, output);
       return signBlinded(keyset, output, { dleq: true });
@@ -57,6 +65,7 @@ export function counterparty(seed: Uint8Array): MintLink & {
 
   return {
     keyset,
+    lastPayout: () => lastPayout,
 
     issue(outputs: BlindedMessage[]): BlindedSignature[] {
       return signOutputs(outputs);
@@ -150,6 +159,33 @@ export function counterparty(seed: Uint8Array): MintLink & {
         state: spent.has(Y) ? "SPENT" : "UNSPENT",
         witness: null,
       }));
+    },
+
+    async melt(
+      inputs: Proof[],
+      outputs: BlindedMessage[],
+      to: MeltTo,
+    ): Promise<MintLinkMeltResult> {
+      if (!pay) throw new Error("cp: this till cannot melt: no payer injected");
+      const reserve = to.feeReserve ?? 250;
+      const inputSum = inputs.reduce((sum, input) => sum + input.amount, 0);
+      if (inputSum < to.amountSat + reserve)
+        throw new Error(
+          "cp: the coins do not cover the payout and the reserve",
+        );
+      const ys: string[] = [];
+      for (const input of inputs) {
+        if (input.id !== keyset.id || !verifyProof(keyset, input))
+          throw new Error("cp: proof does not verify");
+        ys.push(secretToY(input.secret));
+      }
+      const existing = ys.filter((y) => spent.has(y));
+      if (existing.length > 0) throw new Error("cp: token already spent");
+      for (const y of ys) spent.add(y);
+      // record before pay, as the real till does
+      lastPayout = to;
+      const txid = await pay(to);
+      return { txid, signatures: signOutputs(outputs) };
     },
   };
 }

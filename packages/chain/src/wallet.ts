@@ -89,11 +89,8 @@ export interface ChainWallet {
   syncLight(): Promise<ChainBalance>;
   /** what the last sync saw, without asking the chain again */
   balance(): ChainBalance;
-  /** sign a payout; no bytes leave the device here */
-  preparePayout(
-    to: { address: string; amountSat: number },
-    feeSatPerVb?: number,
-  ): Payout;
+  /** pay an address on signet through the Wire, returning the broadcast txid */
+  payOnchain(address: string, sats: number): Promise<string>;
   /** sign a payout; no bytes leave the device here */
   preparePayout(
     to: { address: string; amountSat: number },
@@ -226,6 +223,11 @@ export function createChainWallet(options: ChainWalletOptions): ChainWallet {
 
     balance(): ChainBalance {
       return syncBalance();
+    },
+
+    async payOnchain(address: string, sats: number): Promise<string> {
+      const { payout } = await this.sendPayout({ address, amountSat: sats }, 1);
+      return payout.txid;
     },
 
     preparePayout(to, feeSatPerVb = 1): Payout {
