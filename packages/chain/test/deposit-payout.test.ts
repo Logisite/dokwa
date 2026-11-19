@@ -159,7 +159,7 @@ describe("a deposit and a payout, real signet", () => {
     expect(receiver.hasTransaction(payout.txid)).toBe(true);
 
     // and the payer's graph holds it too, minus the fee
-    await payer.sync();
+    await syncResilient(payer, "the payer after the payout");
     expect(payer.hasTransaction(payout.txid)).toBe(true);
   }, 420_000);
 });
