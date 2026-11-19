@@ -16,6 +16,14 @@ export async function endpointStatus(url: string): Promise<number> {
   }
 }
 
+/** True only for a named network failure, never for a code failure. */
+export function isEndpointFailure(error: unknown): boolean {
+  const text = error instanceof Error ? error.message : String(error);
+  return /could not reach|429|fetch failed|timeout|unreachable|too many requests/i.test(
+    text,
+  );
+}
+
 /** True when the endpoint is refusing work right now. */
 export function refusing(status: number): boolean {
   return status === 429 || status >= 500;

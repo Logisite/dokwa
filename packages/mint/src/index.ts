@@ -14,4 +14,15 @@ export {
   type MintOptions,
 } from "./mint.ts";
 export { openMintStore, type DexieStore } from "./store.ts";
-export type { MintQuote, MintStore, QuoteState, SpendResult } from "./types.ts";
+export type {
+  MeltOptions,
+  MeltPayer,
+  MeltPayout,
+  MeltResult,
+  MeltTo,
+  MintQuote,
+  MintStore,
+  QuoteState,
+  SpendResult,
+} from "./types.ts";
+export { DEFAULT_FEE_RESERVE } from "./types.ts";

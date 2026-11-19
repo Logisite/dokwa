@@ -24,6 +24,18 @@ export interface MintLinkCheckState {
   witness: null;
 }
 
+/** What the till answers to a melt: the txid and the signed change. */
+export interface MintLinkMeltResult {
+  txid: string;
+  signatures: BlindedSignature[];
+}
+
+export interface MeltTo {
+  address: string;
+  amountSat: number;
+  feeReserve?: number;
+}
+
 /**
  * A NUT-04 quote as the wallet sees it. `request` is what the payer is shown:
  * a payment instruction for cash at the till, or a lightning request later.
@@ -60,6 +72,12 @@ export interface MintLink {
   mint(quoteId: string, outputs: BlindedMessage[]): Promise<BlindedSignature[]>;
   /** spend proofs and get fresh ones back, same total */
   swap(inputs: Proof[], outputs: BlindedMessage[]): Promise<BlindedSignature[]>;
+  /** NUT-05 cash out: inputs spent, payer paid, change signed by the till */
+  melt(
+    inputs: Proof[],
+    outputs: BlindedMessage[],
+    to: MeltTo,
+  ): Promise<MintLinkMeltResult>;
   /** whether a Y has been spent, read without spending */
   checkstate(ys: string[]): Promise<MintLinkCheckState[]>;
   /** how the till names itself in a token; optional */

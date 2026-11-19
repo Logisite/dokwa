@@ -9,7 +9,7 @@
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { MemoryQueueStore } from "../src/queue.ts";
-import { Peers } from "../src/peer.ts";
+import { Peers, type PeerSignal } from "../src/peer.ts";
 import { createWire } from "../src/wire.ts";
 
 const encoder = new TextEncoder();
@@ -39,6 +39,7 @@ class FakeChannel {
 
 class FakePeerConnection {
   localDescription: { type: string; sdp: string } | null = null;
+  remoteDescription: { type: string; sdp: string } | null = null;
   connectionState = "new";
   iceGatheringState = "complete";
   onicecandidate: ((event: { candidate: unknown }) => void) | null = null;
@@ -57,16 +58,35 @@ class FakePeerConnection {
     return { type: "offer", sdp: "v=0\r\no=- 0 0 IN IP4 127.0.0.1\r\n" };
   }
 
+  async createAnswer(): Promise<{ type: string; sdp: string }> {
+    return { type: "answer", sdp: "v=0\r\no=- 1 0 IN IP4 127.0.0.1\r\n" };
+  }
+
+  async setRemoteDescription(description: {
+    type: string;
+    sdp: string;
+  }): Promise<void> {
+    this.remoteDescription = description;
+  }
+
   async setLocalDescription(description: {
     type: string;
     sdp: string;
   }): Promise<void> {
     this.localDescription = description;
-    // The platform opens the channel just after the description lands.
+    // The platform brings the channel up just after the description lands:
+    // the offerer opens the one it created, the answerer receives one.
     setTimeout(() => {
-      if (!this.channel) return;
-      this.channel.readyState = "open";
-      this.channel.onopen?.();
+      if (description.type === "offer") {
+        if (!this.channel) return;
+        this.channel.readyState = "open";
+        this.channel.onopen?.();
+        return;
+      }
+      const channel = new FakeChannel();
+      this.ondatachannel?.({ channel });
+      channel.readyState = "open";
+      channel.onopen?.();
     }, 0);
   }
 
@@ -135,6 +155,52 @@ describe("the peer link's state, on a stubbed platform", () => {
       const sent = await peers.send("till", encoder.encode("handshake"));
       expect(sent).toEqual({ status: "delivered" });
       expect(states).toEqual(["connecting", "open"]);
+    } finally {
+      peers.close();
+    }
+  });
+
+  it("a repeated offer does not tear down an open link", async () => {
+    vi.stubGlobal("RTCPeerConnection", FakePeerConnection);
+    let deliver: ((from: string, signal: PeerSignal) => void) | null = null;
+    const answers: PeerSignal[] = [];
+    const states: string[] = [];
+    const peers = new Peers(
+      {
+        signaller: {
+          async send(_to, signal) {
+            answers.push(signal);
+          },
+          onSignal(handler) {
+            deliver = handler;
+            return () => {
+              deliver = null;
+            };
+          },
+        },
+      },
+      () => {},
+    );
+    peers.onState((_id, state) => states.push(state));
+    try {
+      const offer: PeerSignal = {
+        type: "offer",
+        sdp: "v=0\r\no=- 0 0 IN IP4 127.0.0.1\r\n",
+      };
+      deliver!("wallet", offer);
+      await new Promise((r) => setTimeout(r, 20));
+      expect(states).toEqual(["connecting", "open"]);
+      expect(answers.filter((signal) => signal.type === "answer")).toHaveLength(
+        1,
+      );
+
+      // The relay or a retry replays the same offer: ignore it, do not destroy.
+      deliver!("wallet", offer);
+      await new Promise((r) => setTimeout(r, 20));
+      expect(states).not.toContain("closed");
+      expect(answers.filter((signal) => signal.type === "answer")).toHaveLength(
+        1,
+      );
     } finally {
       peers.close();
     }

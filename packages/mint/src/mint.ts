@@ -24,7 +24,14 @@ import {
   type Proof,
 } from "@dokwa/keys";
 import { MintOperationError } from "@cashu/cashu-ts";
-import type { MintQuote, MintStore } from "./types.ts";
+import { DEFAULT_FEE_RESERVE } from "./types.ts";
+import type {
+  MeltOptions,
+  MeltResult,
+  MeltTo,
+  MintQuote,
+  MintStore,
+} from "./types.ts";
 
 /** NUT error codes, from the standard list. */
 const ERR_KEYSET_UNKNOWN = 10002;
@@ -36,7 +43,7 @@ const ERR_OUTPUTS_INVALID = 20006;
 const ERR_INPUTS_INVALID = 20007;
 const ERR_TOKEN_SPENT = 11001;
 
-export interface MintOptions {
+export interface MintOptions extends MeltOptions {
   keyset: MintKeyset;
   /** the till's identity; its pubkey names the mint in `/v1/info` */
   identity: Identity;
@@ -86,7 +93,15 @@ export interface MintInfoResponse {
       }>;
       disabled: boolean;
     };
-    "5": { methods: never[]; disabled: boolean };
+    "5": {
+      methods: Array<{
+        method: string;
+        unit: string;
+        min_amount: number;
+        max_amount: number;
+      }>;
+      disabled: boolean;
+    };
     "7": { supported: boolean };
     "8": { supported: boolean };
     "9": { supported: boolean };
@@ -124,6 +139,15 @@ export interface Mint {
 
   mint(quoteId: string, outputs: BlindedMessage[]): Promise<BlindedSignature[]>;
   swap(inputs: Proof[], outputs: BlindedMessage[]): Promise<BlindedSignature[]>;
+  /**
+   * NUT-05 cash out: spend the inputs, pay onchain through the injected
+   * payer, then sign the change outputs. Record before pay, always.
+   */
+  melt(
+    inputs: Proof[],
+    outputs: BlindedMessage[],
+    to: MeltTo,
+  ): Promise<MeltResult>;
   checkstate(ys: string[]): Promise<CheckState[]>;
 }
 
@@ -217,7 +241,21 @@ export function openMint(options: MintOptions): Mint {
             ],
             disabled: false,
           },
-          "5": { methods: [], disabled: true },
+          "5": {
+            // NUT-05 is real only when a payer was injected. A till that
+            // cannot melt advertises that, instead of a button that lies.
+            methods: options.payer
+              ? [
+                  {
+                    method: "onchain",
+                    unit: keyset.unit,
+                    min_amount: 1,
+                    max_amount: maxAmount,
+                  },
+                ]
+              : [],
+            disabled: !options.payer,
+          },
           "7": { supported: true },
           "8": { supported: false },
           "9": { supported: true },
@@ -367,6 +405,69 @@ export function openMint(options: MintOptions): Mint {
         throw new MintOperationError(ERR_TOKEN_SPENT, "token already spent");
 
       return outputs.map((output) => signBlinded(keyset, output));
+    },
+
+    async melt(
+      inputs: Proof[],
+      outputs: BlindedMessage[],
+      to: MeltTo,
+    ): Promise<MeltResult> {
+      const payer = options.payer;
+      if (!payer)
+        throw new Error(
+          "dokwa: this till cannot melt yet: no payer has been injected",
+        );
+      if (inputs.length === 0)
+        throw new Error("dokwa: a melt needs coins to spend");
+      if (!to.address || typeof to.address !== "string")
+        throw new Error("dokwa: a payout needs a bitcoin address to go to");
+      if (!validAmount(to.amountSat))
+        throw new Error(
+          "dokwa: the payout amount must be a positive whole number of sats",
+        );
+
+      // The fee reserve is the ceiling the inputs must cover. The chain
+      // wallet pays the real broadcast fee from its own funds, so the ecash
+      // change is inputs minus payout: no fee is silently taken here.
+      const reserve = to.feeReserve ?? DEFAULT_FEE_RESERVE;
+      if (!validAmount(reserve))
+        throw new Error(
+          "dokwa: the fee reserve must be a positive whole number",
+        );
+      const inputSum = sum(inputs.map((input) => input.amount));
+      const needed = to.amountSat + reserve;
+      if (inputSum < needed)
+        throw new Error(
+          `dokwa: the coins cover ${inputSum} sats, but a ${to.amountSat} sat payout plus a ${reserve} sat fee reserve needs ${needed}; this till refuses to pay what it cannot cover`,
+        );
+
+      validateInputs(inputs);
+      const expectedChange = inputSum - to.amountSat;
+      const changeSum = sum(outputs.map((o) => o.amount));
+      if (changeSum !== expectedChange)
+        throw new Error(
+          `dokwa: the change outputs are ${changeSum} sats and should be ${expectedChange}; the payout and the change must account for every input`,
+        );
+      if (outputs.length > 0) validateOutputs(outputs);
+
+      const ys = inputs.map((input) => secretToY(input.secret));
+      if (new Set(ys).size !== ys.length)
+        throw new Error("dokwa: the melt has a duplicate input");
+
+      // Record before pay: a crash may lose a coin, it may never pay twice.
+      const spent = await store.spend(ys);
+      if (!spent.ok) throw new Error("dokwa: token already spent");
+
+      const txid = await payer.pay({
+        address: to.address,
+        amountSat: to.amountSat,
+        feeReserve: reserve,
+      });
+      // the change is signed only after the money has actually moved
+      return {
+        txid,
+        signatures: outputs.map((output) => signBlinded(keyset, output)),
+      };
     },
 
     async checkstate(ys: string[]): Promise<CheckState[]> {

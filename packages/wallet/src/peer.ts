@@ -9,9 +9,11 @@
 
 import type { Wire } from "@dokwa/core";
 import type {
+  MeltTo,
   MintLink,
   MintLinkCheckState,
   MintLinkKeys,
+  MintLinkMeltResult,
   MintLinkQuote,
 } from "./mint-link.ts";
 import { encodeFrame, FrameReader } from "./frame.ts";
@@ -46,7 +48,13 @@ async function sendFramed(
 }
 
 type Operation =
-  "keys" | "quote.create" | "quote.read" | "mint" | "swap" | "checkstate";
+  | "keys"
+  | "quote.create"
+  | "quote.read"
+  | "mint"
+  | "swap"
+  | "checkstate"
+  | "melt";
 
 interface RequestMessage {
   op: Operation;
@@ -152,6 +160,8 @@ export function openPeerMintLink(options: PeerMintLinkOptions): MintLink {
       call<BlindedSignature[]>("mint", { quoteId, outputs }),
     swap: (inputs, outputs) =>
       call<BlindedSignature[]>("swap", { inputs, outputs }),
+    melt: (inputs, outputs, to) =>
+      call<MintLinkMeltResult>("melt", { inputs, outputs, to }),
     checkstate: (ys) => call<MintLinkCheckState[]>("checkstate", { ys }),
   };
 }
@@ -227,6 +237,18 @@ export function serveMintLink(options: ServeMintLinkOptions): () => void {
             body: await mint.checkstate((message.body as { ys: string[] }).ys),
           };
           break;
+        case "melt": {
+          const body = message.body as {
+            inputs: Proof[];
+            outputs: BlindedMessage[];
+            to: MeltTo;
+          };
+          response = {
+            ok: true,
+            body: await mint.melt(body.inputs, body.outputs, body.to),
+          };
+          break;
+        }
         default:
           response = {
             ok: false,

@@ -20,7 +20,53 @@ export interface MintQuote {
   issuedAt?: number;
 }
 
+import type { BlindedSignature } from "@dokwa/keys";
+
 export type SpendResult = { ok: true } | { ok: false; spent: string[] };
+
+// ------------------------------------------------------------------- melt ---
+
+/**
+ * The payer of a payout, injected because mint may not import chain. The
+ * chain wallet of the till pays; a rig may stand in with the same shape.
+ */
+export interface MeltPayer {
+  /** pay the amount to the address; returns the broadcast txid */
+  pay(to: MeltPayout): Promise<string>;
+}
+
+export interface MeltPayout {
+  address: string;
+  /** the amount the wallet named, without the fee */
+  amountSat: number;
+  /**
+   * Margin above the payout the inputs must cover. The chain wallet pays
+   * the real broadcast fee; this reserves a ceiling for it. Inputs that
+   * cannot cover payout plus reserve are refused loudly.
+   */
+  feeReserve?: number;
+}
+
+export interface MeltOptions {
+  /** what the payout pays; without one, melt is disabled and says so */
+  payer?: MeltPayer;
+}
+
+/** NUT-05's input/output form: inputs to spend, outputs for the change. */
+export interface MeltTo {
+  address: string;
+  amountSat: number;
+  feeReserve?: number;
+}
+
+export interface MeltResult {
+  txid: string;
+  /** signed change outputs; the wallet unblinds them with its own blinds */
+  signatures: BlindedSignature[];
+}
+
+/** A real signet payout broadcast fits under this margin. */
+export const DEFAULT_FEE_RESERVE = 250;
 
 /**
  * The one thing that makes double-spending impossible.
