@@ -32,7 +32,11 @@ export interface PeerSignaller {
 export interface PeerOptions {
   signaller?: PeerSignaller;
   iceServers?: RTCIceServer[];
-  /** How long a data channel may take to open. */
+  /**
+   * How long a data channel may take to open. In the code path the clock runs
+   * from the offer being generated to the answer being applied, so a code
+   * carried by hand needs minutes, not the relay default of seconds.
+   */
   connectTimeoutMs?: number;
   /**
    * How ICE candidates reach the peer.
