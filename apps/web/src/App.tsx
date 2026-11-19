@@ -114,10 +114,7 @@ export default function App() {
     if (!till) return;
     setFailure(null);
     try {
-      const handed = await till.float.send(
-        HAND_OUT,
-        "one token from the till",
-      );
+      const handed = await till.float.send(HAND_OUT, "one token from the till");
       setToken(handed.token);
       setFloatBalance(await till.float.balance());
       setNote(
@@ -168,7 +165,7 @@ export default function App() {
           <Text type="supporting" textWrap="pretty">
             The room's first flow: one origin, a real till and a real wallet.
             The mint is in this page, so the wallet calls it in process; the
-            code below is drawn from the same `dokwa:` text a camera reads.
+            code below is drawn from the same dokwa: text a camera reads.
           </Text>
         </VStack>
 
@@ -185,9 +182,7 @@ export default function App() {
           <VStack gap={3}>
             <HStack justify="between" align="center" gap={3}>
               <Heading level={2}>The till</Heading>
-              <Text type="supporting">
-                {opened ? "open" : "closed"}
-              </Text>
+              <Text type="supporting">{opened ? "open" : "closed"}</Text>
             </HStack>
             <Text type="supporting">
               mint key {till ? short(till.identity.pubkey) : "opening"}

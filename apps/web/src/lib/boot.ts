@@ -34,7 +34,6 @@ import {
 import { createWire, type WireHandle } from "@dokwa/wires";
 import type { ChainWallet } from "@dokwa/chain";
 import type { LightningNode } from "@dokwa/lightning";
-import { issueFromQuote } from "./issue.ts";
 import { loadSeed } from "./seed.ts";
 
 /** The till's float is a wallet like any other, under the wallet storage name. */
@@ -108,18 +107,21 @@ export function openPatron(id: string, mint: Mint): WalletHandle {
 }
 
 /**
- * A real quote, a real settle, real signatures, and the wallet's own receive
- * path. The first coin is the only thing the provisional `issue` file does;
- * see its header and board/room/20261119-015751.
+ * The venue's own float, acquired through the wallet's real NUT-04 path: the
+ * float asks the till for a quote, the operator's settle is the till's own
+ * business, and the wallet claims it with its own blind and unblind maths.
+ * `receiveQuote` stores nothing on a refusal, and a second claim of the same
+ * quote is refused by the till.
  */
-export async function fundTill(
-  till: TillHandle,
-  amount = 21,
-): Promise<number> {
+export async function fundTill(till: TillHandle, amount = 21): Promise<number> {
   const held = await till.float.balance();
   if (held > 0) return held;
-  const token = await issueFromQuote(till.mint, amount, "the till's float");
-  await till.float.receive(token);
+  const quote = await till.float.requestQuote({
+    amount,
+    description: "the till's float",
+  });
+  await till.mint.settle(quote.id);
+  await till.float.receiveQuote(quote.id);
   return till.float.balance();
 }
 
@@ -159,5 +161,11 @@ export async function openNode(
   }
   const wasm = new Uint8Array(await response.arrayBuffer());
   const store = openLightningStore(`${dbName("till")}:lightning`);
-  return openLightning({ seed: till.seed, wasm, store, wire, network: "signet" });
+  return openLightning({
+    seed: till.seed,
+    wasm,
+    store,
+    wire,
+    network: "signet",
+  });
 }
