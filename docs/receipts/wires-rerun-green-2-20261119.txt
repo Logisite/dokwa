@@ -1,0 +1,39 @@
+$ vitest run --passWithNoTests
+
+ RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa-wt/room/packages/wires
+
+stdout | test/relay.test.ts > relay destination, real relays > publishes a real signed event and hears delivered
+[relay] delivered by wss://nos.lol
+
+stderr | test/relay.test.ts > relay destination, real relays > reports a relay that answered and refused as failed, rejected
+relay wss://nostr.wine refused 3c59b28ff215e441: restricted: sign up at https://nostr.wine to write events to this relay
+
+ ✓ test/relay.test.ts (6 tests) 26396ms
+   ✓ relay destination, real relays > publishes a real signed event and hears delivered  2649ms
+   ✓ relay destination, real relays > subscribes, then sees the published event come back as bytes  1731ms
+   ✓ relay destination, real relays > verifies an accepted event is actually stored on the relay  1739ms
+   ✓ relay destination, real relays > reports a relay that answered and refused as failed, rejected  2770ms
+   ✓ relay destination, real relays > a socket that opens but never confirms: transport fails, queue holds  12802ms
+   ✓ relay subscription replay across a real disconnect > replays a live subscription after the relay drops the socket  4700ms
+stdout | test/signal.test.ts > the probe, against the real network > the default probe reports the endpoint's real answer
+[signal] preflight 200 from https://mempool.space/signet/api/blocks/tip/height; probe answered true
+
+ ✓ test/signal.test.ts (6 tests) 4284ms
+   ✓ the probe, against the real network > the default probe reports the endpoint's real answer  1357ms
+   ✓ the signal's answer and its change > says false while the endpoint is dead and says so on subscribe  502ms
+   ✓ the signal's answer and its change > announces the change exactly once when the endpoint comes back  1508ms
+   ✓ the signal's answer and its change > a stopped signal stops probing and keeps its last answer  903ms
+ ✓ test/chain.test.ts (6 tests) 3075ms
+   ✓ chain destination, real signet > calls a query the endpoint refuses a failed, rejected  410ms
+stdout | test/queue.test.ts > the queue survives a real cut and a reload, then drains > holds three records offline, survives a reload, drains in order
+[queue] drained event ids: e57b26e67ad43e079221d91b086b40292248b057332e7f6713480adbbc732caa ee2d706f01daaae7c4c21fc8c23e5b7cf891b95666b353e19ffbc8c1434ce980 0a554dda5e9744d8be0bcae0923e7ac8187003fe5c042a963b4951a82e2bf012
+
+ ✓ test/queue.test.ts (4 tests) 4026ms
+   ✓ the queue survives a real cut and a reload, then drains > holds three records offline, survives a reload, drains in order  4018ms
+ ✓ test/peer.test.ts (2 tests) 60ms
+
+ Test Files  5 passed (5)
+      Tests  24 passed (24)
+   Start at  04:18:38
+   Duration  42.31s (transform 326ms, setup 0ms, collect 982ms, tests 37.84s, environment 3ms, prepare 876ms)
+
