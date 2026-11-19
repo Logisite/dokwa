@@ -57,6 +57,11 @@ export interface BadgeInput {
 export interface ReadOk<T> {
   ok: true;
   value: T;
+  /**
+   * Set by the slip reader when the event carries the gate's
+   * ["badge-missing", lesson] tag: the record itself says it was uncovered.
+   */
+  badgeMissing?: string;
 }
 export interface ReadFail {
   ok: false;
@@ -200,7 +205,10 @@ export function readSlip(
   const result = read(event, SLIP_KIND, slipOf);
   if (!result.ok) return result;
   if (result.value.expires <= now) return { ok: false, reason: "expired" };
-  return result;
+  // the record carries its own warning when the gate signed over a missing
+  // badge, so a replicated event still says so
+  const tag = event.tags.find((entry) => entry[0] === "badge-missing")?.[1];
+  return tag ? { ...result, badgeMissing: tag } : result;
 }
 
 // ------------------------------------------------------------------- badges ---
