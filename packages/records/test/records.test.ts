@@ -229,7 +229,7 @@ describe("the covered lesson gate", () => {
       {
         capability: "till.open",
         subject: student.pubkey,
-        expires: 1 + Math.floor(Date.now() / 1000),
+        expires: Math.floor(Date.now() / 1000) + 3600,
       },
       [badgeFor(student.pubkey)],
     );
@@ -245,7 +245,7 @@ describe("the covered lesson gate", () => {
       {
         capability: "room.teach",
         subject: student.pubkey,
-        expires: 1 + Math.floor(Date.now() / 1000),
+        expires: Math.floor(Date.now() / 1000) + 3600,
       },
       [],
     );
@@ -265,7 +265,7 @@ describe("the covered lesson gate", () => {
       {
         capability: "till.open",
         subject: student.pubkey,
-        expires: 1 + Math.floor(Date.now() / 1000),
+        expires: Math.floor(Date.now() / 1000) + 3600,
       },
       [],
     );
@@ -285,7 +285,7 @@ describe("the covered lesson gate", () => {
         {
           capability: "till.open",
           subject: student.pubkey,
-          expires: 1 + Math.floor(Date.now() / 1000),
+          expires: Math.floor(Date.now() / 1000) + 3600,
         },
         [],
       ),
@@ -300,7 +300,7 @@ describe("the covered lesson gate", () => {
         {
           capability: "till.open",
           subject: student.pubkey,
-          expires: 1 + Math.floor(Date.now() / 1000),
+          expires: Math.floor(Date.now() / 1000) + 3600,
         },
         [],
       ),
@@ -315,7 +315,7 @@ describe("the covered lesson gate", () => {
       {
         capability: "till.open",
         subject: student.pubkey,
-        expires: 1 + Math.floor(Date.now() / 1000),
+        expires: Math.floor(Date.now() / 1000) + 3600,
       },
       [badgeFor(other.pubkey)],
     );
