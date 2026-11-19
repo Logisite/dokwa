@@ -10,6 +10,7 @@ export {
   identityFromSeed,
   pubkeyFromSecretKey,
   randomSeed,
+  secretFromSeed,
   signEvent,
   verifyDigest,
   verifyEvent,

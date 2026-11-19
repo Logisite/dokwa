@@ -38,6 +38,12 @@ export interface SlipInput {
   expires: number;
   /** a payload only the subject can read */
   sealed?: string;
+  /**
+   * The lesson whose badge was missing when the gate signed anyway. Written
+   * into the event, so the record itself says it was uncovered even after
+   * the wrapper is gone.
+   */
+  badgeMissing?: string;
 }
 
 export interface BadgeInput {
@@ -179,6 +185,9 @@ export function signSlip(
       ["capability", input.capability],
       ["p", input.subject],
       ["expiration", String(input.expires)],
+      ...(input.badgeMissing
+        ? [["badge-missing", input.badgeMissing] as [string, string]]
+        : []),
     ],
     content: JSON.stringify(slip),
   });
