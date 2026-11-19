@@ -95,7 +95,7 @@ These are mined by crypto and rendered by the room. Frozen for the same reason: 
 
 | Shape | What is fixed | What is free |
 |---|---|---|
-| **token** | the standard cashu token string as a `cashu:` URI; mint id, unit, amount inside it | everything about how it is stored |
+| **token** | the standard cashu token string as cashu-ts encodes it (`cashuB…`); the `cashu:` prefix is the URI wrapper a QR or a link adds, not part of the string | everything about how it is stored |
 | **receipt** | a signed event: author, kind, time, and a content object naming amount, unit, and what it was for | the wording |
 | **permission slip** | a signed event with a public part naming the capability and an expiry, and a sealed part readable only by the addressee | the wording of the sealed part |
 | **badge** | a signed event naming which lesson and who taught it | anything else |
