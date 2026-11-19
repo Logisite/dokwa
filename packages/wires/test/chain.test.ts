@@ -4,29 +4,62 @@
  * `request` carries a tiny HTTP envelope and returns the endpoint's raw
  * body, unopened. Wires is a pipe, not a chain interpreter: the test is the
  * only place that knows what a block height or a transaction looks like.
- * The endpoint is real (mempool.space signet), the ids are real, and an
- * unreachable endpoint here is a real refusal to connect, not a mock.
+ * The endpoint is real, the ids are real, and an unreachable endpoint here is
+ * a real refusal to connect, not a mock.
  *
- * A public explorer is allowed to refuse with 429 in a busy window. That is
- * an observation, not an unknown: when the endpoint refuses, the live legs
- * assert the loud refusal path instead of failing on a third party's budget,
- * and a re-preflight makes sure a code failure cannot hide behind a window.
+ * One endpoint for the whole run, read by the preflight and by the Wire, so
+ * "the endpoint answered" and "the request" are always about the same server.
+ * Blockstream is the default because mempool's IPv4 path is currently down;
+ * DOKWA_SIGNET_ENDPOINT overrides both without either leg drifting.
+ *
+ * When a request fails while the health check passes, the test asks the same
+ * path directly and reports what came back. Only a successful raw answer is a
+ * code failure; a raw network error or a 429 is the endpoint, named with its
+ * actual status or error instead of the word unreachable.
  */
 
 import { beforeAll, describe, expect, it } from "vitest";
 import type { Failure } from "@dokwa/core";
 import { MemoryQueueStore } from "../src/queue.ts";
-import {
-  Chain,
-  DEFAULT_SIGNET_ENDPOINT,
-  chainRequestBytes,
-} from "../src/chain.ts";
+import { Chain, chainRequestBytes } from "../src/chain.ts";
 import { createWire } from "../src/wire.ts";
 
 const TIMEOUT_MS = 90_000;
 const decoder = new TextDecoder();
 
-/** What the endpoint answers right now. A number is an HTTP status. */
+/** The one endpoint both the preflight and the Wire use this run. */
+const SIGNET_ENDPOINT =
+  process.env.DOKWA_SIGNET_ENDPOINT ?? "https://blockstream.info/signet/api";
+const HEALTH_PATH = "/blocks/tip/height";
+
+interface RawAnswer {
+  status: number;
+}
+
+/** What the endpoint answers to a plain fetch, with the real failure cause. */
+async function rawGet(
+  path: string,
+  timeoutMs = 15_000,
+): Promise<RawAnswer | { error: string }> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(`${SIGNET_ENDPOINT}${path}`, {
+      method: "GET",
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    return { status: response.status };
+  } catch (error) {
+    const cause = (error as { cause?: { code?: string } })?.cause;
+    return {
+      error: cause?.code ?? (error as Error)?.message ?? String(error),
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function preflight(
   url: string,
   timeoutMs = 8_000,
@@ -58,7 +91,7 @@ function healthy(status: number | Error): boolean {
 }
 
 beforeAll(async () => {
-  const tipUrl = `${DEFAULT_SIGNET_ENDPOINT}/blocks/tip/hash`;
+  const tipUrl = `${SIGNET_ENDPOINT}/blocks/tip/hash`;
   const status = await preflight(tipUrl);
   if (status instanceof Error) {
     preflightFailure = `${tipUrl}: ${status.message}`;
@@ -70,10 +103,7 @@ beforeAll(async () => {
     );
     return;
   }
-  const chain = new Chain({
-    signet: DEFAULT_SIGNET_ENDPOINT,
-    timeoutMs: 30_000,
-  });
+  const chain = new Chain({ signet: SIGNET_ENDPOINT, timeoutMs: 30_000 });
   const tip = await chain.request(
     chainRequestBytes({ path: "/blocks/tip/hash" }),
   );
@@ -97,43 +127,39 @@ beforeAll(async () => {
 }, TIMEOUT_MS);
 
 function chainCall(path: string) {
-  const chain = new Chain({
-    signet: DEFAULT_SIGNET_ENDPOINT,
-    timeoutMs: 30_000,
-  });
+  const chain = new Chain({ signet: SIGNET_ENDPOINT, timeoutMs: 30_000 });
   return chain.request(chainRequestBytes({ path }));
 }
 
 type Observation =
   { kind: "ok"; bytes: Uint8Array } | { kind: "refused"; reason: Failure };
 
+function isRawStatus(raw: RawAnswer | { error: string }): raw is RawAnswer {
+  return "status" in raw;
+}
+
 /**
- * Ask the real endpoint, and hold the answer to a second real observation.
- *
- * If the request failed but the endpoint answers a health check, this retries
- * once (a window may be closing), and if the endpoint is still healthy while
- * the request fails it throws: that is a code failure, not a flake.
+ * Ask the endpoint, and if the Wire says unreachable, ask the same path
+ * directly to see whether the endpoint is answering.
  */
 async function ask(path: string): Promise<Observation> {
   let replied = await chainCall(path);
   if (
     replied.status !== "ok" &&
-    healthy(await preflight(`${DEFAULT_SIGNET_ENDPOINT}/blocks/tip/height`))
+    healthy(await preflight(`${SIGNET_ENDPOINT}${HEALTH_PATH}`))
   ) {
     replied = await chainCall(path);
   }
   if (replied.status === "ok") return { kind: "ok", bytes: replied.bytes };
 
-  const status = await preflight(
-    `${DEFAULT_SIGNET_ENDPOINT}/blocks/tip/height`,
-  );
-  if (healthy(status)) {
+  const raw = await rawGet(path);
+  if (isRawStatus(raw) && raw.status >= 200 && raw.status < 300) {
     throw new Error(
-      `code failure: ${path} answered ${JSON.stringify(replied)} while the endpoint answers ${status}`,
+      `code failure: ${path} answered ${JSON.stringify(replied)} while a raw GET to the same path answered ${raw.status}`,
     );
   }
   console.log(
-    `[chain] ${path}: ${JSON.stringify(replied)} (endpoint health ${status instanceof Error ? status.message : status})`,
+    `[chain] ${path}: ${JSON.stringify(replied)} (raw ${isRawStatus(raw) ? raw.status : raw.error})`,
   );
   return {
     kind: "refused",
@@ -155,15 +181,18 @@ describe("chain destination, real signet", () => {
         ctx.skip(`preflight could not answer: ${preflightFailure}`);
         return;
       }
-      const wire = createWire({ queue: { store: new MemoryQueueStore() } });
+      const wire = createWire({
+        queue: { store: new MemoryQueueStore() },
+        chain: { signet: SIGNET_ENDPOINT },
+      });
       try {
         // request does not need signal: it is the answer-wanted call.
         const wired = await wire.request(
           { kind: "chain", network: "signet" },
-          chainRequestBytes({ path: "/blocks/tip/height" }),
+          chainRequestBytes({ path: HEALTH_PATH }),
         );
         if (wired.status !== "ok") {
-          const seen = await ask("/blocks/tip/height");
+          const seen = await ask(HEALTH_PATH);
           expect(seen.kind).toBe("refused");
           if (seen.kind === "refused") assertRefusal(seen.reason);
           return;
@@ -237,19 +266,35 @@ describe("chain destination, real signet", () => {
         ctx.skip(`preflight could not answer: ${preflightFailure}`);
         return;
       }
-      const replied = await chainCall(`/tx/${"0".repeat(64)}`);
+      const path = `/tx/${"0".repeat(64)}`;
+      const replied = await chainCall(path);
+      const raw = await rawGet(path);
+      const rawStatus = isRawStatus(raw) ? raw.status : null;
+
+      if (rawStatus !== null && rawStatus >= 200 && rawStatus < 300) {
+        throw new Error(
+          `code failure: an unknown txid answered ${JSON.stringify(replied)} while the raw endpoint answered ${rawStatus}`,
+        );
+      }
       if (replied.status !== "failed") {
         throw new Error(
           `code failure: an unknown txid answered ${JSON.stringify(replied)}`,
         );
       }
-      const status = await preflight(
-        `${DEFAULT_SIGNET_ENDPOINT}/blocks/tip/height`,
-      );
-      if (healthy(status)) {
-        // The endpoint understood and said no: that is rejected, not a retry.
+      if (
+        rawStatus !== null &&
+        rawStatus >= 400 &&
+        rawStatus < 500 &&
+        rawStatus !== 429
+      ) {
+        // The endpoint understood and said no: rejected, final.
         expect(replied).toEqual({ status: "failed", reason: "rejected" });
+      } else if (rawStatus !== null) {
+        // 429 or 5xx: the endpoint refused for now, so unreachable is right.
+        expect(replied.status).toBe("failed");
+        expect(replied.reason).toBe("unreachable");
       } else {
+        // No HTTP answer at all: a network refusal, still loud.
         assertRefusal(replied.reason);
       }
     },
@@ -265,7 +310,7 @@ describe("chain destination, real signet", () => {
         timeoutMs: 10_000,
       });
       const replied = await chain.request(
-        chainRequestBytes({ path: "/blocks/tip/height" }),
+        chainRequestBytes({ path: HEALTH_PATH }),
       );
       expect(replied.status).toBe("failed");
       expect(replied.status === "failed" && replied.reason).toBe("unreachable");
@@ -276,7 +321,7 @@ describe("chain destination, real signet", () => {
   it(
     "refuses an envelope that tries to leave the configured endpoint",
     async () => {
-      const chain = new Chain({ signet: DEFAULT_SIGNET_ENDPOINT });
+      const chain = new Chain({ signet: SIGNET_ENDPOINT });
       // A payload that names an absolute URL is not a path on this endpoint.
       const smuggled = chainRequestBytes({
         path: "https://evil.example/api/tx" as string,
