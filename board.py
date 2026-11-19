@@ -63,7 +63,8 @@ def slug(text: str, limit: int = 32, words: int = 5) -> str:
     return out or "message"
 
 
-def post(role: str, status: str, body: str, reply_to: str | None, to: list[str]) -> Path:
+def post(role: str, status: str, body: str, reply_to: str | None, to: list[str],
+         not_to: list[str]) -> Path:
     now = datetime.now(timezone.utc)
     root = board_dir()
     stream = root / role
@@ -72,6 +73,8 @@ def post(role: str, status: str, body: str, reply_to: str | None, to: list[str])
     stem = f"{now:%Y%m%d-%H%M%S}-{slug(body)}"
     header = [f"from: {role}", f"at: {now:%Y-%m-%dT%H:%M:%SZ}", f"status: {status}"]
     header.append(f"to: {', '.join(to) if to else 'all'}")
+    if not_to:
+        header.append(f"not: {', '.join(not_to)}")
     if reply_to:
         header.append(f"re: {reply_to}")
     text = "\n".join(header) + "\n\n" + body.strip() + "\n"
@@ -170,16 +173,22 @@ def save_cursor(viewer: str, cursor: dict) -> None:
     os.replace(tmp, path)
 
 
-def recipients(msg: dict) -> list[str]:
-    """Empty means broadcast: everyone but the author."""
+def recipients(msg: dict) -> tuple[list[str], list[str]]:
+    """Include and exclude lists. An empty include list means broadcast."""
     raw = msg["head"].get("to", "all").strip()
-    if not raw or raw in ("all", "*"):
-        return []
-    return [part.strip() for part in raw.split(",") if part.strip()]
+    include = [] if not raw or raw in ("all", "*", "everyone") else [
+        part.strip() for part in raw.split(",") if part.strip()
+    ]
+    raw_not = msg["head"].get("not", "").strip()
+    exclude = [part.strip() for part in raw_not.split(",") if part.strip()]
+    return include, exclude
 
 
 def addressed_to(msg: dict, viewer: str) -> bool:
-    return viewer in recipients(msg) or not recipients(msg)
+    include, exclude = recipients(msg)
+    if viewer in exclude:
+        return False
+    return viewer in include or not include
 
 
 def scan(viewer: str, cursor: dict, include_all: bool, backlog: int,
@@ -280,7 +289,9 @@ def main() -> int:
     p_post.add_argument("body", help='the message, or "-" to read stdin')
     p_post.add_argument("--re", dest="reply_to", default=None, help="e.g. wires/20261118-1405")
     p_post.add_argument("--to", default="all",
-                        help="recipients, comma-separated; all means everyone but you (default all)")
+                        help="include list, comma-separated, or all (default all)")
+    p_post.add_argument("--not", dest="not_to", default=None,
+                        help="exclude list, comma-separated, even when the message is broadcast")
 
     p_read = sub.add_parser("read", help="print the newest messages, oldest first")
     p_read.add_argument("role", nargs="?", choices=ROLES, default=None)
@@ -309,9 +320,12 @@ def main() -> int:
         if not body.strip():
             raise SystemExit("board: empty message, nothing written")
         to = [part.strip() for part in args.to.split(",") if part.strip()]
-        if len(to) == 1 and to[0] in ("all", "*"):
+        if len(to) == 1 and to[0] in ("all", "*", "everyone"):
             to = []
-        path = post(args.role, args.status, body, args.reply_to, to)
+        not_to = [part.strip() for part in (args.not_to or "").split(",") if part.strip()]
+        if to and set(to) & set(not_to):
+            raise SystemExit("board: a recipient cannot be both included and excluded")
+        path = post(args.role, args.status, body, args.reply_to, to, not_to)
         print(path.relative_to(board_dir()))
         return 0
 
