@@ -202,7 +202,9 @@ describe("the wallet over a peer destination", () => {
     const payload = new TextEncoder().encode(
       JSON.stringify({
         ok: true,
-        body: { keysets: [{ id: "stale", unit: "sat", active: true, keys: {} }] },
+        body: {
+          keysets: [{ id: "stale", unit: "sat", active: true, keys: {} }],
+        },
       }),
     );
     pair.inject(encodeFrame(0x7fffffff, payload));
@@ -212,7 +214,8 @@ describe("the wallet over a peer destination", () => {
     expect(keys.keysets[0]!.id).not.toBe("stale");
   });
 
-  it("two links never collide on their first call", async () => {    const first = setup();
+  it("two links never collide on their first call", async () => {
+    const first = setup();
     const second = setup();
     const [keysA, keysB] = await Promise.all([
       first.link.keys(),
