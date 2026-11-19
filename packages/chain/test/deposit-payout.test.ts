@@ -1,19 +1,11 @@
 /**
- * The deposit and the payout, the brief's last chain artifact, against the
- * real signet chain through the Wire.
- *
- * The deposit came from arkfaucet's on-chain rail to this wallet's first
- * address, and was confirmed at block 331474 as txid
- * b9036dfe54b1c38ae306d78643b103528c38e9a4189a9d2f6bbfffaea3c3b53a (1000
- * sats). Nothing here mints or fakes it: the wallet syncs and says what it
- * sees.
- *
- * The payout is signed by bdk with this wallet's keys and broadcast as bytes
- * through a Wire, per the seam: `request({ kind: chain })` carries the raw
- * transaction to the endpoint because a broadcast wants an answer back. The
- * Wire here is a real one, written in this test so the rig does not wait for
- * the merge: it speaks to the same mempool signet endpoint wires validated.
- * When @dokwa/wires merges, the rig gains their Wire object unchanged.
+ * A real Wire: its chain destination is the real signet endpoint, and it
+ * speaks the dialect wires' chain destination parses, so the rig is already
+ * in the right shape the day it rides their Wire: the bytes in are JSON
+ * naming method, path and body on the configured endpoint, the bytes out are
+ * the endpoint's raw response, and a broadcast goes through request because
+ * it wants its answer back. ok with the echoed txid is the success word;
+ * request never says delivered.
  */
 
 import { describe, expect, it } from "vitest";
@@ -30,10 +22,15 @@ function chainWire(): Wire {
   return {
     async send(to: Destination, bytes: Uint8Array): Promise<Sent> {
       if (to.kind !== "chain") return { status: "failed", reason: "rejected" };
-      const response = await fetch(`${ENDPOINT}/tx`, {
-        method: "POST",
+      const envelope = JSON.parse(new TextDecoder().decode(bytes)) as {
+        method?: string;
+        path: string;
+        body?: string;
+      };
+      const response = await fetch(`${ENDPOINT}${envelope.path}`, {
+        method: envelope.method ?? "GET",
         headers: { "Content-Type": "text/plain" },
-        body: Buffer.from(bytes).toString("hex"),
+        body: envelope.body,
       });
       return response.ok
         ? { status: "delivered" }
@@ -41,16 +38,21 @@ function chainWire(): Wire {
     },
     async request(to: Destination, bytes: Uint8Array): Promise<Replied> {
       if (to.kind !== "chain") return { status: "failed", reason: "rejected" };
-      const response = await fetch(`${ENDPOINT}/tx`, {
-        method: "POST",
+      const envelope = JSON.parse(new TextDecoder().decode(bytes)) as {
+        method?: string;
+        path: string;
+        body?: string;
+      };
+      const response = await fetch(`${ENDPOINT}${envelope.path}`, {
+        method: envelope.method ?? "GET",
         headers: { "Content-Type": "text/plain" },
-        body: Buffer.from(bytes).toString("hex"),
+        body: envelope.body,
       });
       if (!response.ok) return { status: "failed", reason: "rejected" };
-      const txid = (await response.text()).trim();
+      const text = (await response.text()).trim();
       return {
         status: "ok",
-        bytes: new TextEncoder().encode(txid),
+        bytes: new TextEncoder().encode(text),
       };
     },
     onBytes(): () => void {
@@ -112,13 +114,16 @@ describe("a deposit and a payout, real signet", () => {
       destination.index,
     );
 
-    const { payout, sent } = await payer.sendPayout(
+    const { payout, replied } = await payer.sendPayout(
       { address: destination.address, amountSat: amount },
       1,
     );
     console.log("PAYOUT TXID:", payout.txid);
-    console.log("SEAM ANSWER:", JSON.stringify(sent));
-    expect(sent.status).toBe("delivered");
+    console.log("SEAM ANSWER:", JSON.stringify(replied));
+    // the chain destination's success word is ok, with the echoed txid
+    if (replied.status !== "ok")
+      throw new Error(`chain rig: the broadcast was ${replied.status}`);
+    expect(new TextDecoder().decode(replied.bytes).trim()).toBe(payout.txid);
 
     // the receiver's own sync finds the money coming in; the real endpoint
     // occasionally drops a request, so the rig retries deliberately rather

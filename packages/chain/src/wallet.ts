@@ -28,7 +28,7 @@ import {
   Wallet as BdkWallet,
   type DescriptorPair,
 } from "@bitcoindevkit/bdk-wallet-web";
-import type { Wire } from "@dokwa/core";
+import type { Replied, Wire } from "@dokwa/core";
 
 export type ChainNetwork = "signet";
 
@@ -92,11 +92,21 @@ export interface ChainWallet {
     to: { address: string; amountSat: number },
     feeSatPerVb?: number,
   ): Payout;
-  /** the payout through the Wire, with the seam's own answer */
+  /** sign a payout; no bytes leave the device here */
+  preparePayout(
+    to: { address: string; amountSat: number },
+    feeSatPerVb?: number,
+  ): Payout;
+  /**
+   * The payout through the Wire: the bytes carry the HTTP envelope the
+   * chain destination parses (method, path, body on the configured
+   * endpoint), and `ok` with the echoed txid is the success word, stronger
+   * than `delivered`, because the endpoint confirmed it parsed and accepted.
+   */
   sendPayout(
     to: { address: string; amountSat: number },
     feeSatPerVb?: number,
-  ): Promise<{ payout: Payout; sent: Awaited<ReturnType<Wire["send"]>> }>;
+  ): Promise<{ payout: Payout; replied: Replied }>;
   /** whether the txid is in the wallet's graph after a sync */
   hasTransaction(txid: string): boolean;
 }
@@ -107,6 +117,19 @@ export function chainDescriptors(
 ): ChainDescriptors & { pair: DescriptorPair } {
   const pair = seed_to_descriptor(seed, network, "p2wpkh");
   return { external: pair.external, internal: pair.internal, pair };
+}
+
+/** The HTTP envelope the chain destination parses: method, path, body. */
+function chainRequestBytes(request: {
+  method?: string;
+  path: string;
+  body?: string;
+}): Uint8Array {
+  return new TextEncoder().encode(JSON.stringify(request));
+}
+
+function hex(bytes: Uint8Array): string {
+  return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 export function createChainWallet(options: ChainWalletOptions): ChainWallet {
@@ -194,11 +217,29 @@ export function createChainWallet(options: ChainWalletOptions): ChainWallet {
           "chain: a payout leaves through a Wire, and none was injected",
         );
       const payout = buildPayout(to, feeSatPerVb);
-      const sent = await options.wire.send(
+      const envelope = chainRequestBytes({
+        method: "POST",
+        path: "/tx",
+        body: hex(payout.raw),
+      });
+      const replied = await options.wire.request(
         { kind: "chain", network: "signet" },
-        payout.raw,
+        envelope,
       );
-      return { payout, sent };
+      if (replied.status !== "ok")
+        throw new Error(
+          `chain: the broadcast did not get an answer from the Wire: ${
+            replied.status === "failed"
+              ? `failed / ${replied.reason}`
+              : replied.status
+          }`,
+        );
+      const echoed = new TextDecoder().decode(replied.bytes).trim();
+      if (echoed !== payout.txid)
+        throw new Error(
+          `chain: the endpoint echoed ${echoed}, but the signed transaction is ${payout.txid}`,
+        );
+      return { payout, replied };
     },
 
     hasTransaction(txid: string): boolean {
