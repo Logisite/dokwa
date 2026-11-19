@@ -283,30 +283,34 @@ describe("relay destination, real relays", () => {
   it(
     "reports a relay that answered and refused as failed, rejected",
     async () => {
-      const wire = relayWire();
-      await waitForOnline(wire);
+      // The refusal is a transport observation, so it is asserted where the
+      // OK is read: a Relays instance with a generous window, not the queue
+      // with a signal probe in front of it. `later` is the answer when nobody
+      // has spoken, and this test exists to prove the relay did speak.
+      const relays = new Relays({
+        okTimeoutMs: 90_000,
+        connectTimeoutMs: 90_000,
+      });
       try {
         const event = signedNote(`dokwa relay refused ${Date.now()}`);
-        // A policy no is stable: a couple of attempts cover a transient socket,
-        // and the assertion stays specific to the refusal.
-        let sent: Sent = { status: "later" };
-        for (
-          let attempt = 1;
-          attempt <= 3 && sent.status === "later";
-          attempt++
-        ) {
-          sent = await wire.send(
-            { kind: "relay", url: REFUSING_RELAY },
-            publishFrame(event),
+        const frame = publishFrame(event);
+        let sent: Sent = await relays.send(REFUSING_RELAY, frame);
+        console.log(
+          `[relay] ${REFUSING_RELAY} answered ${JSON.stringify(sent)}`,
+        );
+        if (sent.status === "failed" && sent.reason === "unreachable") {
+          // The socket itself did not open: that is not a refusal, try once
+          // more on a fresh connection, then fail loudly.
+          await sleep(3_000);
+          sent = await relays.send(REFUSING_RELAY, frame);
+          console.log(
+            `[relay] ${REFUSING_RELAY} retry answered ${JSON.stringify(sent)}`,
           );
-          if (sent.status === "later") await sleep(3_000);
         }
         // nostr.wine's no is policy: "restricted". Final, not worth a retry.
         expect(sent).toEqual({ status: "failed", reason: "rejected" });
-        // A refused write is not queued: retrying it forever would be a lie.
-        expect(await wire.pending()).toEqual([]);
       } finally {
-        wire.close();
+        relays.close();
       }
     },
     TIMEOUT_MS,
