@@ -14,6 +14,7 @@ import {
   createWire,
   type PeerSignal,
   type PeerSignaller,
+  type Unsubscribe,
   type WireHandle,
 } from "@dokwa/wires";
 
@@ -63,14 +64,116 @@ const signaller: PeerSignaller = {
   },
 };
 
+// -- A manual signaller: the signalling QR floor, no network. ------------------
+
+/**
+ * The code path. A human moves codes between screens: the offerer's tab shows
+ * the offer, the responder's tab shows the answer. ICE is in the SDP, because
+ * there is no second channel.
+ */
+class ManualSignaller implements PeerSignaller {
+  offer = "";
+  answer = "";
+  readonly trace: string[] = [];
+  private readonly listeners = new Set<
+    (from: string, signal: PeerSignal) => void
+  >();
+  private readonly waiters: Array<(sdp: string) => void> = [];
+
+  private traceTo(msg: string): void {
+    this.trace.push(msg);
+  }
+
+  async send(_to: string, signal: PeerSignal): Promise<void> {
+    if (signal.type === "offer") {
+      this.offer = signal.sdp;
+      this.traceTo(
+        `offer out (${signal.sdp.length} chars, has candidates: ${signal.sdp.includes("a=candidate")})`,
+      );
+    } else if (signal.type === "answer") {
+      this.answer = signal.sdp;
+      this.traceTo(`answer out (${signal.sdp.length} chars)`);
+      for (const resolve of this.waiters.splice(0)) resolve(signal.sdp);
+    }
+    // "ice" is ignored: complete mode puts the candidates in the SDP.
+  }
+
+  onSignal(handler: (from: string, signal: PeerSignal) => void): Unsubscribe {
+    this.listeners.add(handler);
+    return () => {
+      this.listeners.delete(handler);
+    };
+  }
+
+  /** Feed a peer's code into this tab's wire. */
+  receive(from: string, signal: PeerSignal): void {
+    this.traceTo(`receive ${signal.type} from ${from.slice(0, 8)}`);
+    for (const listener of [...this.listeners]) listener(from, signal);
+  }
+
+  /**
+   * Open the connection as the offerer, from this tab. Returns the offer SDP
+   * for the human to read off this screen; the connect completes when the
+   * answer code is applied with applyAnswer.
+   */
+  start(from: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(
+        () => reject(new Error("no offer in 20s")),
+        20_000,
+      );
+      const check = () => {
+        if (this.offer) {
+          clearTimeout(timer);
+          resolve(this.offer);
+        } else {
+          setTimeout(check, 100);
+        }
+      };
+      setTimeout(check, 100);
+      void wire
+        .send({ kind: "peer", id: from }, new Uint8Array([0]))
+        .then((sent) => log(`manual connect: ${JSON.stringify(sent)}`))
+        .catch((error: unknown) =>
+          log(`manual connect error: ${String(error)}`),
+        );
+    });
+  }
+
+  /** The answer SDP when it arrives, or immediately if we already have it. */
+  waitAnswer(): Promise<string> {
+    if (this.answer) return Promise.resolve(this.answer);
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(
+        () => reject(new Error("no answer in 20s")),
+        20_000,
+      );
+      this.waiters.push((sdp) => {
+        clearTimeout(timer);
+        resolve(sdp);
+      });
+    });
+  }
+}
+
 // -- The wire, exactly as the app will hold it. ------------------------------
+
+const manual = new URLSearchParams(location.search).has("manual");
+
+const relaySignaller: PeerSignaller = signaller;
+const manualSignaller = new ManualSignaller();
 
 const wire: WireHandle = createWire({
   // One queue per tab: two tabs share an origin, and each is its own peer
   // with its own outbox, so the storage names are kept apart the same way
   // two devices would keep theirs apart.
   queue: { dbName: `dokwa:wires:testbed-${myPubkey.slice(0, 8)}` },
-  peer: { signaller },
+  peer: manual
+    ? {
+        signaller: manualSignaller,
+        iceGathering: "complete",
+      }
+    : { signaller: relaySignaller },
 });
 
 // Subscribe for signalling events addressed to this tab.
@@ -173,6 +276,12 @@ function log(text: string): void {
   (window as unknown as { __log: string[] }).__log.push(text);
 }
 
+if (manual) {
+  wire.onPeerState((id, state) =>
+    log(`peer state ${id.slice(0, 8)}: ${state}`),
+  );
+}
+
 (window as unknown as { __log: string[] }).__log = [];
 
 const api = {
@@ -200,6 +309,52 @@ const api = {
   peerId: "",
   framed,
   log,
+
+  // -- Manual (code/QR) mode. Drive the whole exchange from the driver. ----
+  manual,
+  manualStart(id: string): string {
+    // Offerer: kick off the connection and let the signaller capture the
+    // offer. The code itself is exchanged through same-origin storage below,
+    // never through the driver, so the SDP reaches the peer byte for byte.
+    api.peerId = id;
+    void manualSignaller
+      .start(id)
+      .catch((error: unknown) => log(`manual start failed: ${String(error)}`));
+    return "started";
+  },
+  manualPublishOffer(): number {
+    localStorage.setItem("dokwa:testbed:offer", manualSignaller.offer);
+    return manualSignaller.offer.length;
+  },
+  manualReadOffer(): string {
+    return localStorage.getItem("dokwa:testbed:offer") ?? "";
+  },
+  async manualAcceptLocal(from: string): Promise<number> {
+    const offer = localStorage.getItem("dokwa:testbed:offer") ?? "";
+    if (!offer) throw new Error("no offer in storage");
+    api.peerId = from;
+    manualSignaller.receive(from, { type: "offer", sdp: offer });
+    const answer = await manualSignaller.waitAnswer();
+    localStorage.setItem("dokwa:testbed:answer", answer);
+    return answer.length;
+  },
+  manualReadAnswer(): string {
+    return localStorage.getItem("dokwa:testbed:answer") ?? "";
+  },
+  manualApplyLocal(from: string): string {
+    const answer = localStorage.getItem("dokwa:testbed:answer") ?? "";
+    if (!answer) throw new Error("no answer in storage");
+    manualSignaller.receive(from, { type: "answer", sdp: answer });
+    return "applied";
+  },
+  manualClearMailbox(): void {
+    localStorage.removeItem("dokwa:testbed:offer");
+    localStorage.removeItem("dokwa:testbed:answer");
+  },
+  manualOffer(): string {
+    return manualSignaller.offer;
+  },
+  manualLog: () => manualSignaller.trace,
 };
 
 Object.assign(window, { __tb: api });

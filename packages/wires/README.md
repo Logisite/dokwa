@@ -92,3 +92,33 @@ same relay the app already publishes to.
   browser tabs carrying byte-exact payloads over one data channel with the
   framing done by the receiver. See `packages/wires/test` and
   `packages/wires/testbed`.
+
+## Plain words
+
+The vocabulary here comes from a few standards and from the product's shop
+metaphor. In one line each:
+
+- **destination**: one of the three places bytes can go: a relay, the chain,
+  or a peer.
+- **relay**: a public websocket server that keeps and forwards events.
+- **chain**: the Bitcoin network, reached through an HTTP explorer API; the
+  only destination that answers a question.
+- **peer**: another phone, joined over a direct data channel.
+- **signaller**: whatever carries the connection text (offer, answer and the
+  network addresses) between two phones. Today a relay; in the code path, two
+  QR codes.
+- **offer / answer**: the two pieces of connection text one side proposes and
+  the other confirms.
+- **ICE**: the browser's process of finding a workable network path between
+  two devices. A **candidate** is one address it might use.
+- **trickle / complete**: send candidates as they are found (trickle), or
+  wait until they are all found and put them inside the offer or answer text
+  (complete), so a single code carries everything. A code has no side channel,
+  so the code path uses complete, with a five second cap so an unreachable
+  address server cannot hang it.
+- **till**: the venue's cash register in the product's language: the device
+  that holds the ecash and hands out tokens. Not a wire concept.
+- **ecash / token**: bearer money; the value the till hands out.
+- **outbox / queue**: the stored list of sends that have not been delivered
+  yet. `later` means "in here".
+- **signal**: whether a real request to a real endpoint succeeds right now.

@@ -26,6 +26,21 @@ export interface PeerOptions {
   iceServers?: RTCIceServer[];
   /** How long a data channel may take to open. */
   connectTimeoutMs?: number;
+  /**
+   * How ICE candidates reach the peer.
+   *
+   * "trickle" (the default) sends each candidate as its own `ice` signal,
+   * which is what a live relay or data channel is for.
+   *
+   * "complete" waits for gathering to finish and puts the candidates in the
+   * offer or answer SDP, so one code carries everything. That is the shape
+   * the specification's signalling QR needs (D8, 9.3): two phones, no
+   * network, one code each way. Use `iceServers: []` for a hotspot with no
+   * uplink, so gathering does not wait on an unreachable STUN server.
+   */
+  iceGathering?: "trickle" | "complete";
+  /** How long "complete" waits for gathering before sending the SDP as-is. */
+  iceGatheringTimeoutMs?: number;
 }
 
 export type PeerState = "connecting" | "open" | "closed";
@@ -107,12 +122,23 @@ export class Peers {
 
     const offer = await record.pc.createOffer();
     await record.pc.setLocalDescription(offer);
+    await this.settleIce(record.pc);
     await this.signaller.send(id, {
       type: "offer",
       sdp: record.pc.localDescription?.sdp ?? offer.sdp ?? "",
     });
 
     await record.ready;
+  }
+
+  /**
+   * In "complete" mode the SDP must carry its candidates before it leaves,
+   * because a code has no second channel to trickle them through. In
+   * "trickle" mode there is nothing to wait for.
+   */
+  private settleIce(pc: RTCPeerConnection): Promise<void> {
+    if (this.options.iceGathering !== "complete") return Promise.resolve();
+    return waitForIceGathering(pc, this.options.iceGatheringTimeoutMs ?? 5_000);
   }
 
   async send(id: string, bytes: Uint8Array): Promise<Sent> {
@@ -171,6 +197,7 @@ export class Peers {
         await this.flushCandidates(record);
         const answer = await record.pc.createAnswer();
         await record.pc.setLocalDescription(answer);
+        await this.settleIce(record.pc);
         await this.signaller?.send(from, {
           type: "answer",
           sdp: record.pc.localDescription?.sdp ?? answer.sdp ?? "",
@@ -199,6 +226,9 @@ export class Peers {
     }
 
     if (signal.type === "ice") {
+      // In "complete" mode the candidates are already inside the SDP; stray
+      // ice signals are ignored rather than added twice.
+      if (this.options.iceGathering === "complete") return;
       if (record.remoteSet) {
         try {
           await record.pc.addIceCandidate(signal.candidate);
@@ -258,6 +288,9 @@ export class Peers {
 
     pc.onicecandidate = (event) => {
       if (!event.candidate) return;
+      // In "complete" mode the candidate is already being gathered into the
+      // SDP, and there is no channel to trickle it through.
+      if (this.options.iceGathering === "complete") return;
       void this.signaller
         ?.send(id, { type: "ice", candidate: event.candidate.toJSON() })
         .catch(() => {
@@ -333,3 +366,37 @@ export class Peers {
 }
 
 class PeerTimeout extends Error {}
+
+/**
+ * Resolve when ICE gathering has finished, or when the cap expires. The cap
+ * matters on a hotspot with no uplink: an unreachable STUN server must not
+ * hold a code hostage. The gathered candidates are already inside the SDP by
+ * the time this resolves.
+ */
+function waitForIceGathering(
+  pc: RTCPeerConnection,
+  timeoutMs: number,
+): Promise<void> {
+  if (pc.iceGatheringState === "complete") return Promise.resolve();
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      pc.removeEventListener("icegatheringstatechange", onChange);
+      pc.removeEventListener("icecandidate", onCandidate);
+      clearTimeout(timer);
+      resolve();
+    };
+    const onChange = () => {
+      if (pc.iceGatheringState === "complete") finish();
+    };
+    const onCandidate = (event: RTCPeerConnectionIceEvent) => {
+      if (event.candidate === null) finish();
+    };
+    const timer = setTimeout(finish, timeoutMs);
+    (timer as { unref?: () => void }).unref?.();
+    pc.addEventListener("icegatheringstatechange", onChange);
+    pc.addEventListener("icecandidate", onCandidate);
+  });
+}
