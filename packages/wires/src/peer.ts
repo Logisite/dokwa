@@ -6,6 +6,14 @@
  * letting signalling use the same relay the rest of the app uses. The data
  * channel itself is ordered and reliable; we add no framing on top, so a
  * receiver sees exactly the chunks the platform delivered and frames them.
+ *
+ * The Destination id is the link identity. When a caller needs one connection
+ * distinguished from another (a stale outbox item from an earlier session
+ * must never reach a new channel), it chooses a per-link id, for example the
+ * peer's public key plus a link nonce carried in the code. Wires keys the
+ * outbox and the peer record by that string and hands it back unchanged in
+ * `onBytes`, so two links with the same peer and different ids are two
+ * queues, two records and two destinations. No second field is needed.
  */
 
 import type { Sent, Unsubscribe } from "@dokwa/core";
@@ -102,6 +110,12 @@ export class Peers {
   private readonly stateListeners = new Set<
     (id: string, state: PeerState) => void
   >();
+
+  /** One state change, delivered to every onState listener. */
+  private emit(id: string, state: PeerState): void {
+    this.emitState(id, state);
+    for (const listener of [...this.stateListeners]) listener(id, state);
+  }
 
   async connect(id: string): Promise<void> {
     if (typeof RTCPeerConnection === "undefined") {
@@ -276,7 +290,7 @@ export class Peers {
       candidates: [],
     };
     this.records.set(id, record);
-    this.emitState(id, "connecting");
+    this.emit(id, "connecting");
 
     record.timer = setTimeout(() => {
       if (record.settled) return;
@@ -323,7 +337,7 @@ export class Peers {
         record.timer = null;
       }
       record.resolveReady(channel);
-      this.emitState(record.id, "open");
+      this.emit(record.id, "open");
     };
 
     channel.onmessage = (event: MessageEvent) => {
@@ -361,7 +375,7 @@ export class Peers {
     } catch {
       // ignore
     }
-    this.emitState(id, "closed");
+    this.emit(id, "closed");
   }
 }
 
