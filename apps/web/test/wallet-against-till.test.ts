@@ -55,12 +55,20 @@ describe("the wallet against the till", () => {
 
     // ---------------------------------------------------------- page one --
     const tillStore = openMintStore(tillDb);
-    const till = openMint({ keyset, identity, url: "dokwa:till", store: tillStore });
+    const till = openMint({
+      keyset,
+      identity,
+      url: "dokwa:till",
+      store: tillStore,
+    });
     const walletStore = openWalletStore(walletDb);
     const wallet = openWallet({ store: walletStore, mint: till });
 
     // the venue takes real cash over the counter
-    const quote = await till.createQuote({ amount: 21, description: "the rig's quote" });
+    const quote = await till.createQuote({
+      amount: 21,
+      description: "the rig's quote",
+    });
     await till.settle(quote.id);
 
     // the wallet's side of the mint, blinding with cashu-ts's own maths
@@ -114,7 +122,12 @@ describe("the wallet against the till", () => {
     tillStore.close();
     walletStore.close();
     const tillStore2 = openMintStore(tillDb);
-    const till2 = openMint({ keyset, identity, url: "dokwa:till", store: tillStore2 });
+    const till2 = openMint({
+      keyset,
+      identity,
+      url: "dokwa:till",
+      store: tillStore2,
+    });
     const walletStore2 = openWalletStore(walletDb);
     const wallet2 = openWallet({ store: walletStore2, mint: till2 });
 
