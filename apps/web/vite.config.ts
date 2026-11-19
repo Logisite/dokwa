@@ -51,6 +51,9 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,wasm,woff2}"],
         // the offline promise is real: navigation falls back to the shell
         navigateFallback: "/index.html",
+        // the Lightning wasm is 14.6 MB and the till must open with no
+        // network, so the precache limit is raised past it on purpose
+        maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
       },
     }),
   ],
