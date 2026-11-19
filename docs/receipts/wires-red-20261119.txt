@@ -1,0 +1,262 @@
+Scope: 9 of 10 workspace projects
+packages/core test$ vitest run
+packages/core test: 
+packages/core test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa-wt/room/packages/core
+packages/core test: 
+packages/core test:  ✓ test/code.test.ts (4 tests) 31ms
+packages/core test: 
+packages/core test:  Test Files  1 passed (1)
+packages/core test:       Tests  4 passed (4)
+packages/core test:    Start at  03:28:42
+packages/core test:    Duration  1.44s (transform 168ms, setup 0ms, collect 125ms, tests 31ms, environment 1ms, prepare 316ms)
+packages/core test: 
+packages/core test: Done
+packages/keys test$ vitest run --passWithNoTests
+packages/wires test$ vitest run --passWithNoTests
+packages/keys test: 
+packages/keys test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa-wt/room/packages/keys
+packages/keys test: 
+packages/wires test: 
+packages/wires test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa-wt/room/packages/wires
+packages/wires test: 
+packages/keys test:  ✓ test/identity.test.ts (13 tests) 812ms
+packages/keys test:    ✓ identity > is deterministic: one seed, one key  306ms
+packages/keys test:  ✓ test/mint.test.ts (20 tests) 1192ms
+packages/keys test: 
+packages/keys test:  Test Files  2 passed (2)
+packages/keys test:       Tests  33 passed (33)
+packages/keys test:    Start at  03:28:45
+packages/keys test:    Duration  5.38s (transform 556ms, setup 0ms, collect 1.47s, tests 2.00s, environment 4ms, prepare 1.42s)
+packages/keys test: 
+packages/keys test: Done
+packages/chain test$ vitest run --passWithNoTests
+packages/lightning test$ vitest run --passWithNoTests
+packages/mint test$ vitest run --passWithNoTests
+packages/wires test: stdout | test/queue.test.ts > the queue survives a real cut and a reload, then drains > holds three records offline, survives a reload, drains in order
+packages/wires test: [queue] drained event ids: 1180fd465ed2120a76f2539d839ac6c56541b15fc4f565938b3a0edcd288b0f6 01fa22bfc833021d2d71dff83e4a9aaf00bb7c614666e1439240af6693d3a72d 0ebcbcd76eefc27b84ee0637c76041732ed8f2a1bf9c7c10ee24d89484b808ab
+packages/wires test: 
+packages/wires test:  ✓ test/queue.test.ts (4 tests) 3954ms
+packages/wires test:    ✓ the queue survives a real cut and a reload, then drains > holds three records offline, survives a reload, drains in order  3909ms
+packages/wires test:  ✓ test/signal.test.ts (6 tests) 4759ms
+packages/wires test:    ✓ the probe, against the real network > the real signet endpoint answers true while it is reachable  1805ms
+packages/wires test:    ✓ the signal's answer and its change > says false while the endpoint is dead and says so on subscribe  504ms
+packages/wires test:    ✓ the signal's answer and its change > announces the change exactly once when the endpoint comes back  1510ms
+packages/wires test:    ✓ the signal's answer and its change > a stopped signal stops probing and keeps its last answer  912ms
+packages/wires test: stderr | test/relay.test.ts > relay destination, real relays > verifies an accepted event is actually stored on the relay
+packages/wires test: relay wss://nos.lol refused 95aed058a0512ecb: not acceptable at this point
+packages/wires test: 
+packages/mint test: 
+packages/mint test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa-wt/room/packages/mint
+packages/mint test: 
+packages/chain test: 
+packages/chain test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa-wt/room/packages/chain
+packages/chain test: 
+packages/wires test: stderr | test/relay.test.ts > relay destination, real relays > verifies an accepted event is actually stored on the relay
+packages/wires test: relay wss://nos.lol refused 95aed058a0512ecb: not acceptable at this point
+packages/wires test: 
+packages/lightning test: 
+packages/lightning test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa-wt/room/packages/lightning
+packages/lightning test: 
+packages/wires test: stderr | test/relay.test.ts > relay destination, real relays > verifies an accepted event is actually stored on the relay
+packages/wires test: relay wss://nos.lol refused 95aed058a0512ecb: not acceptable at this point
+packages/wires test: 
+packages/wires test:  ✓ test/peer.test.ts (2 tests) 461ms
+packages/wires test:    ✓ the peer link without a browser > at the transport layer: failed, unreachable; through the queue: later  378ms
+packages/chain test: (node:226666) ExperimentalWarning: Importing WebAssembly module instances is an experimental feature and might change at any time
+packages/chain test: (Use `node-22 --trace-warnings ...` to show where the warning was created)
+packages/wires test:  ✓ test/chain.test.ts (6 tests) 4361ms
+packages/wires test:    ✓ chain destination, real signet > answers a chain question with the endpoint's own bytes  523ms
+packages/wires test:    ✓ chain destination, real signet > fetches a real signet transaction through request  548ms
+packages/wires test:    ✓ chain destination, real signet > fetches the raw transaction bytes for a broadcast-worthy id  454ms
+packages/wires test:    ✓ chain destination, real signet > calls a query the endpoint refuses a failed, rejected  515ms
+packages/wires test: stderr | test/relay.test.ts > relay destination, real relays > verifies an accepted event is actually stored on the relay
+packages/wires test: relay wss://nos.lol refused 95aed058a0512ecb: rate-limited: slow down matey
+packages/wires test: 
+packages/chain test: (node:226659) ExperimentalWarning: Importing WebAssembly module instances is an experimental feature and might change at any time
+packages/chain test: (Use `node-22 --trace-warnings ...` to show where the warning was created)
+packages/mint test: stdout | test/first-token.test.ts > the first artifact: a token string and the refusal > issues real ecash and refuses its second spend
+packages/mint test: till pubkey  : a7f1863c7b5ac7e58ef9fe413a45bd7f0447ccb384432b5a490f7dbc8562c2b1
+packages/mint test: keyset id    : 0198c83d6d51caab079b586b94366b33537bf17906d94a8a580f22d32933c2119a
+packages/mint test: denominations: 32 powers of two
+packages/mint test: 
+packages/mint test: stdout | test/first-token.test.ts > the first artifact: a token string and the refusal > issues real ecash and refuses its second spend
+packages/mint test: token        : cashu:cashuBpGFtamRva3dhOnRpbGxhdWNzYXRhdIGiYWlIAZjIPW1RyqthcIOjYWEQYXN4U2ZpcnN0LXRva2VuLWNvaW4tMC1lZDY1NGI3NzQzMDIyNjZkZDFjYWI3MmRiMTAyNDM5NjkxNTM0YWRiMDViNzRmZTY4ZjdjZjVkZTVkYTE4ZWNmYWNYIQKRZA3DifgKo8ZRaoF8xijkwX5C43d3-lO4_iTLOr3bJqNhYQRhc3hTZmlyc3QtdG9rZW4tY29pbi0xLWVkNjU0Yjc3NDMwMjI2NmRkMWNhYjcyZGIxMDI0Mzk2OTE1MzRhZGIwNWI3NGZlNjhmN2NmNWRlNWRhMThlY2ZhY1ghA9d_quBClRtziT2-UyUdsF05i34ViN_PYFDpBvgjMtero2FhAWFzeFNmaXJzdC10b2tlbi1jb2luLTItZWQ2NTRiNzc0MzAyMjY2ZGQxY2FiNzJkYjEwMjQzOTY5MTUzNGFkYjA1Yjc0ZmU2OGY3Y2Y1ZGU1ZGExOGVjZmFjWCEDfXWaL9qYKSwPa--UECc1LDe2jY8hAuAphgjdv_51JcphZHR0aGUgZmlyc3QgcmVhbCB0b2tlbg
+packages/mint test: 
+packages/mint test: stdout | test/first-token.test.ts > the first artifact: a token string and the refusal > issues real ecash and refuses its second spend
+packages/mint test: second spend : refused with code 11001 (token already spent)
+packages/mint test: 
+packages/mint test:  ✓ test/first-token.test.ts (1 test) 2123ms
+packages/mint test:    ✓ the first artifact: a token string and the refusal > issues real ecash and refuses its second spend  2107ms
+packages/lightning test: stdout | test/node.test.ts
+packages/lightning test: Loaded LDK-Java Bindings with LDK v0.2.5-37-g6accd2acaff8f94f and LDK-C-Bindings v0.2.5.0
+packages/lightning test: 
+packages/lightning test: stdout | test/node.test.ts > the node's keys > one seed, one node; another seed, another node
+packages/lightning test: Loaded LDK-Java Bindings with LDK v0.2.5-37-g6accd2acaff8f94f and LDK-C-Bindings v0.2.5.0
+packages/lightning test: 
+packages/mint test:  ✓ test/mint.test.ts (10 tests) 4483ms
+packages/mint test:    ✓ the keyset agrees with cashu-ts, byte for byte > createNewMintKeys from the same seed derives the same private keys  1232ms
+packages/mint test:    ✓ the till, against the wallet > issues a quote, settles it, mints the coins, and refuses a second mint  724ms
+packages/mint test:    ✓ the till, against the wallet > the token is a real cashu: URI that cashu-ts reads back  310ms
+packages/mint test:    ✓ the spent list > refuses the second spend of a bundle: whole or nothing  353ms
+packages/mint test:    ✓ the spent list > refuses a counterfeit before anything is recorded  303ms
+packages/mint test:    ✓ the spent list > refuses to sign a blinded message for a keyset it does not hold  483ms
+packages/mint test: 
+packages/mint test:  Test Files  2 passed (2)
+packages/mint test:       Tests  11 passed (11)
+packages/mint test:    Start at  03:28:53
+packages/mint test:    Duration  12.94s (transform 2.52s, setup 0ms, collect 4.24s, tests 6.61s, environment 2ms, prepare 3.13s)
+packages/mint test: 
+packages/lightning test: stderr | test/node.test.ts > persistence and the reload > a network graph that does not decode falls back to genesis, out loud
+packages/lightning test: ldk: the stored network graph does not decode; starting from genesis
+packages/lightning test: 
+packages/lightning test:  ✓ test/node.test.ts (6 tests) 1976ms
+packages/lightning test:    ✓ the node's keys > one seed, one node; another seed, another node  883ms
+packages/lightning test:    ✓ persistence and the reload > the store that survives is the real one: two databases over one name  549ms
+packages/lightning test: 
+packages/lightning test:  Test Files  1 passed (1)
+packages/lightning test:       Tests  6 passed (6)
+packages/lightning test:    Start at  03:28:55
+packages/lightning test:    Duration  12.08s (transform 1.46s, setup 0ms, collect 6.31s, tests 1.98s, environment 1ms, prepare 1.04s)
+packages/lightning test: 
+packages/mint test: Done
+packages/records test$ vitest run --passWithNoTests
+packages/lightning test: Done
+packages/wallet test$ vitest run --passWithNoTests
+packages/wires test: stderr | test/relay.test.ts > relay destination, real relays > verifies an accepted event is actually stored on the relay
+packages/wires test: relay wss://nos.lol refused 95aed058a0512ecb: rate-limited: slow down matey
+packages/wires test: 
+packages/records test: 
+packages/records test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa-wt/room/packages/records
+packages/records test: 
+packages/chain test: stdout | test/deposit-payout.test.ts > a deposit and a payout, real signet > sees the real deposit, signs a payout, and the receiving wallet finds it
+packages/chain test: PAYER BALANCE AFTER SYNC: {"confirmedSat":0,"trustedSpendableSat":0,"totalSat":0}
+packages/chain test: RIG NOTE: the rig wallet is spent down to 0 sats; a payout would be below dust or unaffordable. Refill it via the faucet and rerun
+packages/chain test: 
+packages/chain test:  ✓ test/deposit-payout.test.ts (1 test) 8211ms
+packages/chain test:    ✓ a deposit and a payout, real signet > sees the real deposit, signs a payout, and the receiving wallet finds it  8199ms
+packages/chain test:  ✓ test/wallet.test.ts (10 tests) 9342ms
+packages/chain test:    ✓ deposit addresses > an address from a seed is a real signet bech32 address  370ms
+packages/chain test:    ✓ deposit addresses > an address per deposit: the next deposit gets the next index  943ms
+packages/chain test:    ✓ deposit addresses > the same seed gives the same first address, and another seed another  676ms
+packages/chain test:    ✓ sync, the ruled exception > syncs a fresh wallet against real signet and reports an honest zero  6553ms
+packages/chain test: 
+packages/chain test:  Test Files  2 passed (2)
+packages/chain test:       Tests  11 passed (11)
+packages/chain test:    Start at  03:28:54
+packages/chain test:    Duration  15.85s (transform 1.21s, setup 0ms, collect 1.97s, tests 17.55s, environment 6ms, prepare 2.82s)
+packages/chain test: 
+packages/wallet test: 
+packages/wallet test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa-wt/room/packages/wallet
+packages/wallet test: 
+packages/chain test: Done
+packages/records test:  ✓ test/records.test.ts (18 tests) 1962ms
+packages/records test:    ✓ permission slips > round trips for every subject, whatever the parity of their key  1448ms
+packages/records test: 
+packages/records test:  Test Files  1 passed (1)
+packages/records test:       Tests  18 passed (18)
+packages/records test:    Start at  03:29:09
+packages/records test:    Duration  6.09s (transform 1.19s, setup 0ms, collect 1.53s, tests 1.96s, environment 21ms, prepare 637ms)
+packages/records test: 
+packages/wallet test:  ✓ test/acquisition.test.ts (7 tests) 2341ms
+packages/wallet test:    ✓ acquiring the first ecash > asks for a quote and reads the instruction back  460ms
+packages/wallet test:    ✓ acquiring the first ecash > a settled quote becomes real coins the wallet holds  675ms
+packages/wallet test:    ✓ acquiring the first ecash > waits for a slow operator when asked to  338ms
+packages/records test: Done
+packages/wallet test:  ✓ test/wallet.test.ts (9 tests) 3980ms
+packages/wallet test:    ✓ holding > starts empty and stays consistent  393ms
+packages/wallet test:    ✓ receiving > takes a real token in, verifies it, swaps it, and holds the fresh coins  708ms
+packages/wallet test:    ✓ receiving > refuses the same token twice, and the balance does not double  611ms
+packages/wallet test:    ✓ receiving > refuses a token signed by a mint it does not know  471ms
+packages/wallet test:    ✓ sending > sends exact coins and keeps the change  714ms
+packages/wallet test:    ✓ two wallets, one counterparty > a sent token lands in the receiver's purse, once  591ms
+packages/wallet test: 
+packages/wallet test:  Test Files  2 passed (2)
+packages/wallet test:       Tests  16 passed (16)
+packages/wallet test:    Start at  03:29:10
+packages/wallet test:    Duration  7.72s (transform 699ms, setup 0ms, collect 1.35s, tests 6.32s, environment 2ms, prepare 1.21s)
+packages/wallet test: 
+packages/wallet test: Done
+packages/wires test: stderr | test/relay.test.ts > relay destination, real relays > verifies an accepted event is actually stored on the relay
+packages/wires test: relay wss://nos.lol refused 95aed058a0512ecb: rate-limited: slow down matey
+packages/wires test: 
+packages/wires test: stderr | test/relay.test.ts > relay destination, real relays > verifies an accepted event is actually stored on the relay
+packages/wires test: relay wss://nos.lol refused 95aed058a0512ecb: rate-limited: slow down matey
+packages/wires test: 
+packages/wires test: stderr | test/relay.test.ts > relay destination, real relays > reports a relay that answered and refused as failed, rejected
+packages/wires test: relay wss://nostr.wine refused e98c1b76c407cd74: restricted: sign up at https://nostr.wine to write events to this relay
+packages/wires test: 
+packages/wires test: stderr | test/relay.test.ts > relay subscription replay across a real disconnect > replays a live subscription after the relay drops the socket
+packages/wires test: relay wss://nos.lol refused faacf50a0a05efed: rate-limited: slow down matey
+packages/wires test: 
+packages/wires test: stderr | test/relay.test.ts > relay subscription replay across a real disconnect > replays a live subscription after the relay drops the socket
+packages/wires test: relay wss://nos.lol refused faacf50a0a05efed: rate-limited: slow down matey
+packages/wires test: 
+packages/wires test: stderr | test/relay.test.ts > relay subscription replay across a real disconnect > replays a live subscription after the relay drops the socket
+packages/wires test: relay wss://nos.lol refused faacf50a0a05efed: rate-limited: slow down matey
+packages/wires test: 
+packages/wires test: stderr | test/relay.test.ts > relay subscription replay across a real disconnect > replays a live subscription after the relay drops the socket
+packages/wires test: relay wss://nos.lol refused faacf50a0a05efed: rate-limited: slow down matey
+packages/wires test: 
+packages/wires test: stderr | test/relay.test.ts > relay subscription replay across a real disconnect > replays a live subscription after the relay drops the socket
+packages/wires test: relay wss://nos.lol refused faacf50a0a05efed: rate-limited: slow down matey
+packages/wires test: 
+packages/wires test: stderr | test/relay.test.ts > relay subscription replay across a real disconnect > replays a live subscription after the relay drops the socket
+packages/wires test: relay wss://nos.lol refused faacf50a0a05efed: rate-limited: slow down matey
+packages/wires test: 
+packages/wires test: stderr | test/relay.test.ts > relay subscription replay across a real disconnect > replays a live subscription after the relay drops the socket
+packages/wires test: relay wss://nos.lol refused faacf50a0a05efed: rate-limited: slow down matey
+packages/wires test: 
+packages/wires test: stderr | test/relay.test.ts > relay subscription replay across a real disconnect > replays a live subscription after the relay drops the socket
+packages/wires test: relay wss://nos.lol refused faacf50a0a05efed: rate-limited: slow down matey
+packages/wires test: 
+packages/wires test:  ❯ test/relay.test.ts (6 tests | 2 failed) 159567ms
+packages/wires test:    ✓ relay destination, real relays > publishes a real signed event and hears delivered  1817ms
+packages/wires test:    ✓ relay destination, real relays > subscribes, then sees the published event come back as bytes  1437ms
+packages/wires test:    × relay destination, real relays > verifies an accepted event is actually stored on the relay 91291ms
+packages/wires test:      → queue never delivered to wss://nos.lol within 90000ms
+packages/wires test:    ✓ relay destination, real relays > reports a relay that answered and refused as failed, rejected  1566ms
+packages/wires test:    ✓ relay destination, real relays > a socket that opens but never confirms: transport fails, queue holds  12690ms
+packages/wires test:    × relay subscription replay across a real disconnect > replays a live subscription after the relay drops the socket 50745ms
+packages/wires test:      → relay never accepted faacf50a0a05efed936a6179f842a5862f50e339e7c13073dd8aac2a047ef71a
+packages/wires test: 
+packages/wires test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+packages/wires test: 
+packages/wires test:  FAIL  test/relay.test.ts > relay destination, real relays > verifies an accepted event is actually stored on the relay
+packages/wires test: Error: queue never delivered to wss://nos.lol within 90000ms
+packages/wires test:  ❯ deliverToRelay test/relay.test.ts:138:11
+packages/wires test:     136|       await sleep(1_000);
+packages/wires test:     137|     }
+packages/wires test:     138|     throw new Error(`queue never delivered to ${url} within ${timeoutM…
+packages/wires test:        |           ^
+packages/wires test:     139|   } finally {
+packages/wires test:     140|     stop();
+packages/wires test:  ❯ test/relay.test.ts:211:22
+packages/wires test: 
+packages/wires test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+packages/wires test: 
+packages/wires test:  FAIL  test/relay.test.ts > relay subscription replay across a real disconnect > replays a live subscription after the relay drops the socket
+packages/wires test: Error: relay never accepted faacf50a0a05efed936a6179f842a5862f50e339e7c13073dd8aac2a047ef71a
+packages/wires test:  ❯ publishRetry test/relay.test.ts:330:13
+packages/wires test:     328|         await sleep(6_000);
+packages/wires test:     329|       }
+packages/wires test:     330|       throw new Error(`relay never accepted ${event.id}`);
+packages/wires test:        |             ^
+packages/wires test:     331|     };
+packages/wires test:     332| 
+packages/wires test:  ❯ test/relay.test.ts:340:21
+packages/wires test: 
+packages/wires test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+packages/wires test: 
+packages/wires test: 
+packages/wires test:  Test Files  1 failed | 4 passed (5)
+packages/wires test:       Tests  2 failed | 22 passed (24)
+packages/wires test:    Start at  03:28:45
+packages/wires test:    Duration  163.59s (transform 1.11s, setup 0ms, collect 4.34s, tests 173.10s, environment 9ms, prepare 3.51s)
+packages/wires test: 
+packages/wires test: Failed
+[ELIFECYCLE] Test failed. See above for more details.
+Error: ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL
+
+  × "pnpm recursive run" failed in /home/logisiteau/projects/hacks/dokwa-wt/
+  │ room/packages/wires
+
