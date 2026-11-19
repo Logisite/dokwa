@@ -95,6 +95,9 @@ function wirePair(lies: Lies = {}) {
     server: wireFor("server", PATRON_ID),
     counts,
     frames: clientFrames,
+    /** deliver bytes as if the carrier had brought a frame from the till */
+    inject: (bytes: Uint8Array) =>
+      deliver("client", { kind: "peer", id: TILL_ID }, bytes),
   };
 }
 
@@ -192,8 +195,24 @@ describe("the wallet over a peer destination", () => {
     await expect(link.keys()).rejects.toThrow(/refused/);
   });
 
-  it("two links never collide on their first call", async () => {
-    const first = setup();
+  it("a stale frame with an unknown request id is ignored, not fatal", async () => {
+    const { link, pair } = setup();
+    // a reconnect can drain frames the previous session queued. Craft one
+    // with an id this link never issued, carrying a tempting fake answer.
+    const payload = new TextEncoder().encode(
+      JSON.stringify({
+        ok: true,
+        body: { keysets: [{ id: "stale", unit: "sat", active: true, keys: {} }] },
+      }),
+    );
+    pair.inject(encodeFrame(0x7fffffff, payload));
+    // the next real call still resolves against the live till
+    const keys = await link.keys();
+    expect(keys.keysets.length).toBeGreaterThan(0);
+    expect(keys.keysets[0]!.id).not.toBe("stale");
+  });
+
+  it("two links never collide on their first call", async () => {    const first = setup();
     const second = setup();
     const [keysA, keysB] = await Promise.all([
       first.link.keys(),
