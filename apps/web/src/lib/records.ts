@@ -11,9 +11,11 @@ import {
   RECEIPT_KIND,
   SLIP_KIND,
   openGate,
+  openWithSeed,
   readBadge,
   readReceipt,
   readSlip,
+  seal,
   signBadge,
   signReceipt,
   type BadgeInput,
@@ -26,8 +28,16 @@ const STORE_KEY = "dokwa:records";
 
 export interface StoredRecord {
   event: SignedEvent;
-  /** the gate's sentence when it warned, kept beside the event until the event carries it */
-  warning?: string;
+}
+
+/** Seal a slip's private half to the subject. */
+export function sealFor(subject: string, plaintext: string): string {
+  return seal(subject, plaintext);
+}
+
+/** Open a sealed half with the subject's seed. Null means the wrong seed or a changed byte. */
+export function openSealed(seed: Uint8Array, sealed: string): string | null {
+  return openWithSeed(seed, sealed);
 }
 
 export function loadStored(): StoredRecord[] {
@@ -60,6 +70,7 @@ export interface SlipRequest {
   capability: Capability;
   subject: string;
   minutes: number;
+  sealed?: string;
 }
 
 export async function issueSlip(
@@ -76,12 +87,10 @@ export async function issueSlip(
     capability: request.capability,
     subject: request.subject,
     expires: Math.floor(Date.now() / 1000) + request.minutes * 60,
+    ...(request.sealed ? { sealed: request.sealed } : {}),
   };
   const result = await gate.makeSlip(ownerIdentity(), input, badges);
-  storeRecord({
-    event: result.event,
-    ...(result.warning ? { warning: result.warning.message } : {}),
-  });
+  storeRecord({ event: result.event });
   return {
     event: result.event,
     ...(result.warning ? { warning: result.warning.message } : {}),
@@ -101,7 +110,7 @@ export function issueReceipt(input: ReceiptInput): SignedEvent {
 }
 
 export type ReadSummary =
-  | { kind: "slip"; ok: true; value: Slip }
+  | { kind: "slip"; ok: true; value: Slip; badgeMissing?: string }
   | { kind: "badge"; ok: true; value: Badge }
   | { kind: "receipt"; ok: true; value: Receipt }
   | { kind: "slip" | "badge" | "receipt"; ok: false; reason: string }
@@ -112,7 +121,12 @@ export function readEvent(event: SignedEvent): ReadSummary {
   if (event.kind === SLIP_KIND) {
     const read = readSlip(event);
     return read.ok
-      ? { kind: "slip", ok: true, value: read.value }
+      ? {
+          kind: "slip",
+          ok: true,
+          value: read.value,
+          ...(read.badgeMissing ? { badgeMissing: read.badgeMissing } : {}),
+        }
       : { kind: "slip", ok: false, reason: read.reason };
   }
   if (event.kind === BADGE_KIND) {

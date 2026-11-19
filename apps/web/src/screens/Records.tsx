@@ -11,14 +11,16 @@ import { useNavigate } from "react-router";
 import type { SignedEvent } from "@dokwa/keys";
 import { BADGE_KIND, RECEIPT_KIND, SLIP_KIND } from "@dokwa/records";
 import { Page } from "../components/Page.tsx";
-import { hasSeed } from "../lib/seed.ts";
+import { hasSeed, loadSeed } from "../lib/seed.ts";
 import {
   issueBadge,
   issueReceipt,
   issueSlip,
   loadStored,
+  openSealed,
   ownerIdentity,
   readEvent,
+  sealFor,
   type ReadSummary,
   type StoredRecord,
 } from "../lib/records.ts";
@@ -43,6 +45,8 @@ export default function Records() {
   const [capability, setCapability] = useState("till.open");
   const [subject, setSubject] = useState("");
   const [minutes, setMinutes] = useState("60");
+  const [sealedMessage, setSealedMessage] = useState("");
+  const [opened, setOpened] = useState<string | null>(null);
   const [lesson, setLesson] = useState("till");
   const [amount, setAmount] = useState("5");
   const [purpose, setPurpose] = useState("the night");
@@ -110,6 +114,9 @@ export default function Records() {
             capability: capability.trim(),
             subject: subject.trim(),
             minutes: minutesValue,
+            ...(sealedMessage.trim()
+              ? { sealed: sealFor(subject.trim(), sealedMessage.trim()) }
+              : {}),
           },
           ask,
         );
@@ -124,6 +131,7 @@ export default function Records() {
   function readPasted() {
     setFailure(null);
     setRead(null);
+    setOpened(null);
     try {
       const event = JSON.parse(pasted) as SignedEvent;
       if (!event || typeof event !== "object" || typeof event.id !== "string") {
@@ -133,6 +141,22 @@ export default function Records() {
     } catch (error) {
       setFailure(sentence(error));
     }
+  }
+
+  function openTheSealed() {
+    if (!read || read.kind !== "slip" || !read.ok || !read.value.sealed) return;
+    setFailure(null);
+    setOpened(null);
+    if (!hasSeed("wallet:me")) {
+      setFailure("this device has no wallet key to open the sealed part");
+      return;
+    }
+    const plaintext = openSealed(loadSeed("wallet:me").seed, read.value.sealed);
+    if (plaintext === null) {
+      setFailure("the sealed part did not open with this device's key");
+      return;
+    }
+    setOpened(plaintext);
   }
 
   return (
@@ -228,6 +252,14 @@ export default function Records() {
                     value={minutes}
                     onChange={setMinutes}
                     inputMode="numeric"
+                    width="100%"
+                  />
+                  <TextArea
+                    label="Sealed message"
+                    value={sealedMessage}
+                    onChange={setSealedMessage}
+                    rows={3}
+                    placeholder="Optional. Only the subject's seed opens this."
                     width="100%"
                   />
                 </>
@@ -335,6 +367,26 @@ export default function Records() {
                     {JSON.stringify(read.value)}
                   </Text>
                 ) : null}
+                {read.kind === "slip" && read.ok && read.badgeMissing ? (
+                  <Text type="supporting" textWrap="pretty">
+                    The event itself says the badge was missing:{" "}
+                    {read.badgeMissing}
+                  </Text>
+                ) : null}
+                {read.kind === "slip" && read.ok && read.value.sealed ? (
+                  <VStack gap={2}>
+                    <Button
+                      label="Open the sealed part"
+                      width="100%"
+                      onClick={openTheSealed}
+                    />
+                    {opened !== null ? (
+                      <Text type="code" wordBreak="break-all">
+                        {opened}
+                      </Text>
+                    ) : null}
+                  </VStack>
+                ) : null}
               </VStack>
             </Card>
           ) : null}
@@ -362,9 +414,12 @@ export default function Records() {
                     <Text type="code" wordBreak="break-all">
                       {record.event.id}
                     </Text>
-                    {record.warning ? (
+                    {summary.kind === "slip" &&
+                    summary.ok &&
+                    summary.badgeMissing ? (
                       <Text type="supporting" textWrap="pretty">
-                        {record.warning}
+                        The event says the badge was missing:{" "}
+                        {summary.badgeMissing}
                       </Text>
                     ) : null}
                   </VStack>

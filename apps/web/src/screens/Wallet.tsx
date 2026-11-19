@@ -88,7 +88,18 @@ export default function Wallet() {
       <VStack gap={3}>
         <HStack justify="between" align="center" gap={3}>
           <Heading level={1}>Wallet</Heading>
-          <Button label="Home" variant="ghost" onClick={() => navigate("/")} />
+          <HStack gap={1}>
+            <Button
+              label="Scan"
+              variant="ghost"
+              onClick={() => navigate("/scan")}
+            />
+            <Button
+              label="Home"
+              variant="ghost"
+              onClick={() => navigate("/")}
+            />
+          </HStack>
         </HStack>
         <HStack justify="between" align="center" gap={3}>
           <Text weight="semibold">Holds</Text>
@@ -109,9 +120,9 @@ export default function Wallet() {
 
       <Card variant="muted" padding={3}>
         <Text type="supporting" textWrap="pretty">
-          No till is connected on this device yet. The framed NUT envelope is
-          being built in the wallet package; until it lands, receive and send
-          can describe what they would do but cannot reach a mint.
+          No till is connected on this device yet. The peer frame exists in the
+          wallet package now; the signaller that opens the data channel is not
+          wired into boot, so receive and send cannot reach a mint.
         </Text>
       </Card>
 

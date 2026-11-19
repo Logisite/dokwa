@@ -151,6 +151,11 @@ export default function Till() {
           <Heading level={1}>{venue}</Heading>
           <HStack gap={1}>
             <Button
+              label="Scan"
+              variant="ghost"
+              onClick={() => navigate("/scan")}
+            />
+            <Button
               label="Records"
               variant="ghost"
               onClick={() => navigate("/records")}

@@ -1,7 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
-import { registerSW } from "virtual:pwa-register";
 import { Theme } from "@astryxdesign/core/theme";
 import "@astryxdesign/core/reset.css";
 import "@astryxdesign/core/astryx.css";
@@ -11,10 +10,8 @@ import "./app.css";
 
 /**
  * `prompt`, not `autoUpdate`: a till tab that reloads itself mid-session can
- * lose an unflushed write. The interface asks; the interface never guesses.
+ * lose an unflushed write. The prompt lives in App's UpdatePrompt.
  */
-registerSW({ immediate: true });
-
 const root = document.getElementById("root");
 if (!root) throw new Error("dokwa: index.html has no #root");
 
