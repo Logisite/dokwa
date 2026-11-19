@@ -79,7 +79,6 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-
 describe("the peer link without a browser", () => {
   it("at the transport layer: failed, unreachable; through the queue: later", async () => {
     // Transport: the platform cannot open a channel, and the link says so.

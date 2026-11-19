@@ -16,6 +16,12 @@ export default tseslint.config(
     rules: {
       // an interface with one required field is a shape, not a mystery
       "@typescript-eslint/no-empty-object-type": "off",
+      // a stub often has to accept a parameter it does not use; the leading
+      // underscore says so on purpose rather than by accident
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
     },
   },
   {

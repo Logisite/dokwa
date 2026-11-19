@@ -1,0 +1,229 @@
+Scope: 9 of 10 workspace projects
+packages/core test$ vitest run
+packages/core test: 
+packages/core test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/core
+packages/core test: 
+packages/core test:  ✓ test/code.test.ts (4 tests) 45ms
+packages/core test: 
+packages/core test:  Test Files  1 passed (1)
+packages/core test:       Tests  4 passed (4)
+packages/core test:    Start at  21:22:41
+packages/core test:    Duration  2.01s (transform 286ms, setup 0ms, collect 193ms, tests 45ms, environment 2ms, prepare 293ms)
+packages/core test: 
+packages/core test: Done
+packages/keys test$ vitest run --passWithNoTests
+packages/wires test$ vitest run --passWithNoTests
+packages/keys test: 
+packages/keys test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/keys
+packages/keys test: 
+packages/wires test: 
+packages/wires test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/wires
+packages/wires test: 
+packages/keys test:  ✓ test/identity.test.ts (13 tests) 1132ms
+packages/keys test:    ✓ identity > is deterministic: one seed, one key  337ms
+packages/wires test: stdout | test/relay.test.ts > relay destination, real relays > publishes a real signed event and hears delivered
+packages/wires test: [relay] delivered by wss://nos.lol
+packages/wires test: 
+packages/keys test:  ✓ test/mint.test.ts (20 tests) 2385ms
+packages/keys test:    ✓ keysets > derives the same keys from the same seed  525ms
+packages/keys test:    ✓ keysets > derives different keys from different seeds  417ms
+packages/keys test: 
+packages/keys test:  Test Files  2 passed (2)
+packages/keys test:       Tests  33 passed (33)
+packages/keys test:    Start at  21:22:46
+packages/keys test:    Duration  7.47s (transform 958ms, setup 0ms, collect 2.90s, tests 3.52s, environment 2ms, prepare 1.62s)
+packages/keys test: 
+packages/keys test: Done
+packages/mint test$ vitest run --passWithNoTests
+packages/lightning test$ vitest run --passWithNoTests
+packages/chain test$ vitest run --passWithNoTests
+packages/chain test: 
+packages/chain test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/chain
+packages/chain test: 
+packages/mint test: 
+packages/mint test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/mint
+packages/mint test: 
+packages/lightning test: 
+packages/lightning test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/lightning
+packages/lightning test: 
+packages/chain test: (node:28844) ExperimentalWarning: Importing WebAssembly module instances is an experimental feature and might change at any time
+packages/chain test: (Use `node-22 --trace-warnings ...` to show where the warning was created)
+packages/chain test: (node:28846) ExperimentalWarning: Importing WebAssembly module instances is an experimental feature and might change at any time
+packages/chain test: (Use `node-22 --trace-warnings ...` to show where the warning was created)
+packages/mint test: stdout | test/first-token.test.ts > the first artifact: a token string and the refusal > issues real ecash and refuses its second spend
+packages/mint test: till pubkey  : a7319b301dbdad133a54c9e30c18b5f9b40a483d98a6c1dc755841ba7ba4d040
+packages/mint test: keyset id    : 019c45c8f87922c285bde8f3fb4508096f8f6d7037d78c21583bda2425253202bb
+packages/mint test: denominations: 32 powers of two
+packages/mint test: 
+packages/mint test: stdout | test/first-token.test.ts > the first artifact: a token string and the refusal > issues real ecash and refuses its second spend
+packages/mint test: token        : cashu:cashuBpGFtamRva3dhOnRpbGxhdWNzYXRhdIGiYWlIAZxFyPh5IsJhcIOjYWEQYXN4U2ZpcnN0LXRva2VuLWNvaW4tMC1kZjczMjRkNjA2ZmNmMzljZGJlZDhkYjQ3ZTU0N2VlMzMxZGMyZTRkMjA0MGM1NmI4ZmNmZmRkZjNmMThkYWIyYWNYIQPvSOHj2UErtSRdfAtGoiDSy415GXSRPHnUtxBtMuzoXqNhYQRhc3hTZmlyc3QtdG9rZW4tY29pbi0xLWRmNzMyNGQ2MDZmY2YzOWNkYmVkOGRiNDdlNTQ3ZWUzMzFkYzJlNGQyMDQwYzU2YjhmY2ZmZGRmM2YxOGRhYjJhY1ghAjh07OLH1EhGPy9HNKhFOyF_7l9pd-1kt1V0bRlFbTXXo2FhAWFzeFNmaXJzdC10b2tlbi1jb2luLTItZGY3MzI0ZDYwNmZjZjM5Y2RiZWQ4ZGI0N2U1NDdlZTMzMWRjMmU0ZDIwNDBjNTZiOGZjZmZkZGYzZjE4ZGFiMmFjWCEDliJ0SMczSB2mRrL8jR7DkvBcS6w-nDM3oYpjExlaz3lhZHR0aGUgZmlyc3QgcmVhbCB0b2tlbg
+packages/mint test: 
+packages/mint test: stdout | test/first-token.test.ts > the first artifact: a token string and the refusal > issues real ecash and refuses its second spend
+packages/mint test: second spend : refused with code 11001 (token already spent)
+packages/mint test: 
+packages/mint test:  ✓ test/first-token.test.ts (1 test) 2898ms
+packages/mint test:    ✓ the first artifact: a token string and the refusal > issues real ecash and refuses its second spend  2886ms
+packages/lightning test: stdout | test/peers.test.ts
+packages/lightning test: Loaded LDK-Java Bindings with LDK v0.2.5-37-g6accd2acaff8f94f and LDK-C-Bindings v0.2.5.0
+packages/lightning test: 
+packages/lightning test: stdout | test/peers.test.ts > the peer byte surface > two real LDK nodes complete their handshake over the Wire
+packages/lightning test: Loaded LDK-Java Bindings with LDK v0.2.5-37-g6accd2acaff8f94f and LDK-C-Bindings v0.2.5.0
+packages/lightning test: 
+packages/lightning test: stdout | test/node.test.ts
+packages/lightning test: Loaded LDK-Java Bindings with LDK v0.2.5-37-g6accd2acaff8f94f and LDK-C-Bindings v0.2.5.0
+packages/lightning test: 
+packages/lightning test: stdout | test/peers.test.ts > the peer byte surface > two real LDK nodes complete their handshake over the Wire
+packages/lightning test: ldk lightning::ln::peer_handler: Finished noise handshake for connection with 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9
+packages/lightning test: ldk lightning::ln::peer_handler: Enqueueing message Init { features: [33, 81, 10, 10, 8, 152, 8, 128], networks: Some([f61eee3b63a380a477a063af32b2bbc97c9ff9f01f2c4225e973988108000000]), remote_network_address: None } to 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9
+packages/lightning test: 
+packages/lightning test: stdout | test/peers.test.ts > the peer byte surface > two real LDK nodes complete their handshake over the Wire
+packages/lightning test: ldk lightning::ln::peer_handler: Finished noise handshake for connection with 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658
+packages/lightning test: ldk lightning::ln::peer_handler: Enqueueing message Init { features: [33, 81, 10, 10, 8, 152, 8, 128], networks: Some([f61eee3b63a380a477a063af32b2bbc97c9ff9f01f2c4225e973988108000000]), remote_network_address: None } to 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658
+packages/lightning test: ldk lightning::ln::peer_handler: Received peer Init message from 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658: DataLossProtect: required, InitialRoutingSync: not supported, UpfrontShutdownScript: supported, GossipQueries: not supported, VariableLengthOnion: required, StaticRemoteKey: required, PaymentSecret: required, BasicMPP: supported, Wumbo: supported, AnchorsNonzeroFeeHtlcTx: not supported, AnchorsZeroFeeHtlcTx: not supported, RouteBlinding: supported, ShutdownAnySegwit: supported, DualFund: not supported, Taproot: not supported, Quiescence: supported, OnionMessages: not supported, ProvideStorage: supported, ChannelType: required, SCIDPrivacy: supported, ZeroConf: supported, Trampoline: not supported, SimpleClose: not supported, SpliceProduction: supported, SplicePrototype: supported, AnchorZeroFeeCommitmentsStaging: not supported, HtlcHold: not supported, unknown flags: none
+packages/lightning test: ldk lightning::ln::channelmanager: Generating channel_reestablish events for 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658
+packages/lightning test: ldk lightning::ln::peer_handler: Received peer Init message from 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9: DataLossProtect: required, InitialRoutingSync: not supported, UpfrontShutdownScript: supported, GossipQueries: not supported, VariableLengthOnion: required, StaticRemoteKey: required, PaymentSecret: required, BasicMPP: supported, Wumbo: supported, AnchorsNonzeroFeeHtlcTx: not supported, AnchorsZeroFeeHtlcTx: not supported, RouteBlinding: supported, ShutdownAnySegwit: supported, DualFund: not supported, Taproot: not supported, Quiescence: supported, OnionMessages: not supported, ProvideStorage: supported, ChannelType: required, SCIDPrivacy: supported, ZeroConf: supported, Trampoline: not supported, SimpleClose: not supported, SpliceProduction: supported, SplicePrototype: supported, AnchorZeroFeeCommitmentsStaging: not supported, HtlcHold: not supported, unknown flags: none
+packages/lightning test: ldk lightning::ln::channelmanager: Generating channel_reestablish events for 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9
+packages/lightning test: 
+packages/lightning test: stdout | test/peers.test.ts > the peer byte surface > a message split across two arrivals is framed by LDK, not the carrier
+packages/lightning test: ldk lightning::ln::peer_handler: Finished noise handshake for connection with 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9
+packages/lightning test: ldk lightning::ln::peer_handler: Enqueueing message Init { features: [33, 81, 10, 10, 8, 152, 8, 128], networks: Some([f61eee3b63a380a477a063af32b2bbc97c9ff9f01f2c4225e973988108000000]), remote_network_address: None } to 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9
+packages/lightning test: 
+packages/lightning test: stdout | test/peers.test.ts > the peer byte surface > a message split across two arrivals is framed by LDK, not the carrier
+packages/lightning test: ldk lightning::ln::peer_handler: Finished noise handshake for connection with 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658
+packages/lightning test: ldk lightning::ln::peer_handler: Enqueueing message Init { features: [33, 81, 10, 10, 8, 152, 8, 128], networks: Some([f61eee3b63a380a477a063af32b2bbc97c9ff9f01f2c4225e973988108000000]), remote_network_address: None } to 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658
+packages/lightning test: ldk lightning::ln::peer_handler: Received peer Init message from 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658: DataLossProtect: required, InitialRoutingSync: not supported, UpfrontShutdownScript: supported, GossipQueries: not supported, VariableLengthOnion: required, StaticRemoteKey: required, PaymentSecret: required, BasicMPP: supported, Wumbo: supported, AnchorsNonzeroFeeHtlcTx: not supported, AnchorsZeroFeeHtlcTx: not supported, RouteBlinding: supported, ShutdownAnySegwit: supported, DualFund: not supported, Taproot: not supported, Quiescence: supported, OnionMessages: not supported, ProvideStorage: supported, ChannelType: required, SCIDPrivacy: supported, ZeroConf: supported, Trampoline: not supported, SimpleClose: not supported, SpliceProduction: supported, SplicePrototype: supported, AnchorZeroFeeCommitmentsStaging: not supported, HtlcHold: not supported, unknown flags: none
+packages/lightning test: ldk lightning::ln::channelmanager: Generating channel_reestablish events for 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658
+packages/lightning test: ldk lightning::ln::peer_handler: Received peer Init message from 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9: DataLossProtect: required, InitialRoutingSync: not supported, UpfrontShutdownScript: supported, GossipQueries: not supported, VariableLengthOnion: required, StaticRemoteKey: required, PaymentSecret: required, BasicMPP: supported, Wumbo: supported, AnchorsNonzeroFeeHtlcTx: not supported, AnchorsZeroFeeHtlcTx: not supported, RouteBlinding: supported, ShutdownAnySegwit: supported, DualFund: not supported, Taproot: not supported, Quiescence: supported, OnionMessages: not supported, ProvideStorage: supported, ChannelType: required, SCIDPrivacy: supported, ZeroConf: supported, Trampoline: not supported, SimpleClose: not supported, SpliceProduction: supported, SplicePrototype: supported, AnchorZeroFeeCommitmentsStaging: not supported, HtlcHold: not supported, unknown flags: none
+packages/lightning test: ldk lightning::ln::channelmanager: Generating channel_reestablish events for 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9
+packages/lightning test: 
+packages/lightning test: stdout | test/node.test.ts > the node's keys > one seed, one node; another seed, another node
+packages/lightning test: Loaded LDK-Java Bindings with LDK v0.2.5-37-g6accd2acaff8f94f and LDK-C-Bindings v0.2.5.0
+packages/lightning test: 
+packages/mint test:  ✓ test/mint.test.ts (10 tests) 5989ms
+packages/mint test:    ✓ the keyset agrees with cashu-ts, byte for byte > createNewMintKeys from the same seed derives the same private keys  977ms
+packages/mint test:    ✓ the keyset agrees with cashu-ts, byte for byte > cashu-ts refuses the same signature with a different blinding factor  359ms
+packages/mint test:    ✓ the till, against the wallet > issues a quote, settles it, mints the coins, and refuses a second mint  1015ms
+packages/mint test:    ✓ the till, against the wallet > the token is a real cashu: URI that cashu-ts reads back  1134ms
+packages/mint test:    ✓ the spent list > refuses the second spend of a bundle: whole or nothing  591ms
+packages/mint test:    ✓ the spent list > refuses a counterfeit before anything is recorded  633ms
+packages/mint test:    ✓ the spent list > refuses to sign a blinded message for a keyset it does not hold  517ms
+packages/mint test: 
+packages/mint test:  Test Files  2 passed (2)
+packages/mint test:       Tests  11 passed (11)
+packages/mint test:    Start at  21:22:57
+packages/mint test:    Duration  12.95s (transform 1.83s, setup 0ms, collect 3.55s, tests 8.89s, environment 4ms, prepare 1.73s)
+packages/mint test: 
+packages/wires test: stderr | test/relay.test.ts > relay destination, real relays > reports a relay that answered and refused as failed, rejected
+packages/wires test: relay wss://nostr.wine refused 6971a2adac4e22ae: restricted: sign up at https://nostr.wine to write events to this relay
+packages/wires test: 
+packages/wires test: stdout | test/relay.test.ts > relay destination, real relays > reports a relay that answered and refused as failed, rejected
+packages/wires test: [relay] wss://nostr.wine answered {"status":"failed","reason":"rejected"}
+packages/wires test: 
+packages/lightning test:  ✓ test/peers.test.ts (4 tests) 3291ms
+packages/lightning test:    ✓ the peer byte surface > two real LDK nodes complete their handshake over the Wire  1733ms
+packages/lightning test:    ✓ the peer byte surface > refuses a peer id that is not a compressed node key  1165ms
+packages/lightning test: stderr | test/node.test.ts > persistence and the reload > a network graph that does not decode falls back to genesis, out loud
+packages/lightning test: ldk: the stored network graph does not decode; starting from genesis
+packages/lightning test: 
+packages/lightning test:  ✓ test/node.test.ts (6 tests) 2251ms
+packages/lightning test:    ✓ the node's keys > one seed, one node; another seed, another node  984ms
+packages/lightning test:    ✓ persistence and the reload > a fresh node persists its state, and the reloaded node reproduces it byte for byte  324ms
+packages/lightning test:    ✓ persistence and the reload > the store that survives is the real one: two databases over one name  686ms
+packages/lightning test: 
+packages/lightning test:  Test Files  2 passed (2)
+packages/lightning test:       Tests  10 passed (10)
+packages/lightning test:    Start at  21:22:57
+packages/lightning test:    Duration  13.94s (transform 1.30s, setup 0ms, collect 12.93s, tests 5.54s, environment 12ms, prepare 2.18s)
+packages/lightning test: 
+packages/mint test: Done
+packages/records test$ vitest run --passWithNoTests
+packages/chain test:  ✓ test/wallet.test.ts (10 tests | 1 skipped) 9543ms
+packages/chain test:    ✓ descriptors from a seed > one seed, one wallet, checksummed and real  401ms
+packages/chain test:    ✓ descriptors from a seed > a real Wallet object accepts the descriptors and knows signet  902ms
+packages/chain test:    ✓ deposit addresses > an address from a seed is a real signet bech32 address  473ms
+packages/chain test:    ✓ deposit addresses > the same seed gives the same first address, and another seed another  829ms
+packages/chain test:    ↓ sync, the ruled exception > syncs a fresh wallet against real signet and reports an honest zero [the preflight for https://blockstream.info/signet/api could not answer at all]
+packages/lightning test: Done
+packages/wallet test$ vitest run --passWithNoTests
+packages/records test: 
+packages/records test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/records
+packages/records test: 
+packages/wallet test: 
+packages/wallet test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/wallet
+packages/wallet test: 
+packages/chain test: stdout | test/deposit-payout.test.ts > a deposit and a payout, real signet > sees the real deposit, signs a payout, and the receiving wallet finds it
+packages/chain test: PAYER BALANCE AFTER SYNC: {"confirmedSat":0,"trustedSpendableSat":0,"totalSat":0}
+packages/chain test: RIG NOTE: the rig wallet is spent down to 0 sats; a payout would be below dust or unaffordable. Refill it via the faucet and rerun
+packages/chain test: 
+packages/chain test:  ✓ test/deposit-payout.test.ts (1 test) 16850ms
+packages/chain test:    ✓ a deposit and a payout, real signet > sees the real deposit, signs a payout, and the receiving wallet finds it  16828ms
+packages/chain test: 
+packages/chain test:  Test Files  2 passed (2)
+packages/chain test:       Tests  10 passed | 1 skipped (11)
+packages/chain test:    Start at  21:22:57
+packages/chain test:    Duration  22.15s (transform 1.27s, setup 0ms, collect 2.04s, tests 26.39s, environment 2ms, prepare 2.44s)
+packages/chain test: 
+packages/records test:  ✓ test/records.test.ts (20 tests) 2100ms
+packages/records test:    ✓ permission slips > round trips for every subject, whatever the parity of their key  1290ms
+packages/records test: 
+packages/records test:  Test Files  1 passed (1)
+packages/records test:       Tests  20 passed (20)
+packages/records test:    Start at  21:23:14
+packages/records test:    Duration  5.42s (transform 795ms, setup 0ms, collect 1.42s, tests 2.10s, environment 1ms, prepare 456ms)
+packages/records test: 
+packages/wallet test:  ✓ test/peer.test.ts (9 tests) 2386ms
+packages/wallet test:    ✓ the wallet over a peer destination > acquires and holds ecash through the frame  1094ms
+packages/wallet test:    ✓ the wallet over a peer destination > refuses the second claim of one quote, through the frame  321ms
+packages/wallet test:  ✓ test/acquisition.test.ts (7 tests) 3294ms
+packages/wallet test:    ✓ acquiring the first ecash > asks for a quote and reads the instruction back  732ms
+packages/wallet test:    ✓ acquiring the first ecash > a settled quote becomes real coins the wallet holds  1067ms
+packages/wallet test:    ✓ acquiring the first ecash > refuses the second claim of the same quote, and stores nothing  415ms
+packages/wallet test:    ✓ acquiring the first ecash > two wallets racing one quote: exactly one gets the coins  379ms
+packages/wallet test:    ✓ acquiring the first ecash > waits for a slow operator when asked to  304ms
+packages/chain test: Done
+packages/records test: Done
+packages/wallet test:  ✓ test/wallet.test.ts (9 tests) 5438ms
+packages/wallet test:    ✓ holding > starts empty and stays consistent  626ms
+packages/wallet test:    ✓ receiving > takes a real token in, verifies it, swaps it, and holds the fresh coins  1050ms
+packages/wallet test:    ✓ receiving > refuses the same token twice, and the balance does not double  841ms
+packages/wallet test:    ✓ receiving > refuses a token signed by a mint it does not know  720ms
+packages/wallet test:    ✓ sending > sends exact coins and keeps the change  825ms
+packages/wallet test:    ✓ two wallets, one counterparty > a sent token lands in the receiver's purse, once  723ms
+packages/wallet test: 
+packages/wallet test:  Test Files  3 passed (3)
+packages/wallet test:       Tests  25 passed (25)
+packages/wallet test:    Start at  21:23:14
+packages/wallet test:    Duration  8.54s (transform 800ms, setup 0ms, collect 2.23s, tests 11.12s, environment 4ms, prepare 1.74s)
+packages/wallet test: 
+packages/wallet test: Done
+packages/wires test:  ✓ test/relay.test.ts (6 tests) 37993ms
+packages/wires test:    ✓ relay destination, real relays > publishes a real signed event and hears delivered  2234ms
+packages/wires test:    ✓ relay destination, real relays > subscribes, then sees the published event come back as bytes  6987ms
+packages/wires test:    ✓ relay destination, real relays > verifies an accepted event is actually stored on the relay  2183ms
+packages/wires test:    ✓ relay destination, real relays > reports a relay that answered and refused as failed, rejected  7561ms
+packages/wires test:    ✓ relay destination, real relays > a socket that opens but never confirms: transport fails, queue holds  13909ms
+packages/wires test:    ✓ relay subscription replay across a real disconnect > replays a live subscription after the relay drops the socket  5109ms
+packages/wires test: stdout | test/signal.test.ts > the probe, against the real network > the default probe reports the endpoint's real answer
+packages/wires test: [signal] preflight 200 from https://mempool.space/signet/api/blocks/tip/height; probe answered true
+packages/wires test: 
+packages/wires test:  ✓ test/signal.test.ts (6 tests) 4963ms
+packages/wires test:    ✓ the probe, against the real network > the default probe reports the endpoint's real answer  2036ms
+packages/wires test:    ✓ the signal's answer and its change > says false while the endpoint is dead and says so on subscribe  504ms
+packages/wires test:    ✓ the signal's answer and its change > announces the change exactly once when the endpoint comes back  1507ms
+packages/wires test:    ✓ the signal's answer and its change > a stopped signal stops probing and keeps its last answer  902ms
+packages/wires test: stdout | test/queue.test.ts > the queue survives a real cut and a reload, then drains > holds three records offline, survives a reload, drains in order
+packages/wires test: [queue] drained event ids: 78ffcf90438f561022239bc92585af39c7afed77deaf023c1ec0325120da3cb6 5c66ffb4532db46b2e50bda2908147a34386bbdf047e3428045b18819a6c35d2 49a97d1cf1ad4ce93378f4764bc1cace7a97c1c3b367489b1475419384d5deb7
+packages/wires test: 
+packages/wires test:  ✓ test/queue.test.ts (5 tests) 3956ms
+packages/wires test:    ✓ the queue survives a real cut and a reload, then drains > holds three records offline, survives a reload, drains in order  3935ms
+packages/wires test:  ✓ test/chain.test.ts (6 tests) 4538ms
+packages/wires test:    ✓ chain destination, real signet > fetches a real signet transaction through request  347ms
+packages/wires test:    ✓ chain destination, real signet > calls a query the endpoint refuses a failed, rejected  459ms
+packages/wires test:  ✓ test/peer.test.ts (3 tests) 192ms
+packages/wires test: 
+packages/wires test:  Test Files  5 passed (5)
+packages/wires test:       Tests  26 passed (26)
+packages/wires test:    Start at  21:22:46
+packages/wires test:    Duration  63.58s (transform 1.37s, setup 0ms, collect 2.97s, tests 51.64s, environment 19ms, prepare 1.91s)
+packages/wires test: 
+packages/wires test: Done
