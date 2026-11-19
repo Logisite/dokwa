@@ -183,6 +183,9 @@ export function noTillLink(): MintLink {
     async checkstate() {
       return refuse();
     },
+    async melt() {
+      return refuse();
+    },
   };
 }
 

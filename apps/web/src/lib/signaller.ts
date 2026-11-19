@@ -18,7 +18,7 @@ const SIGNALLING_KIND = 25050;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-export const DEFAULT_SIGNALLING_RELAY = "wss://nos.lol";
+export const DEFAULT_SIGNALLING_RELAY = "wss://relay.primal.net";
 
 export interface RelaySignallerOptions {
   wire: Wire;
