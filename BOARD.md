@@ -113,6 +113,8 @@ feed; it does not replay what the cursor has already passed.
 | Flag | Effect |
 |---|---|
 | `--all` | ignore addressing, include your own stream: the full feed |
+| `--include a,b` | only these streams; `--streams` is the older alias |
+| `--exclude a,b` | ignore these streams |
 | *(none)* | wait up to `--for` seconds; exit the moment something arrives |
 | `--once` | check once and return immediately — nothing is waited for |
 | `--for N` | how long to wait at most; default 900; `0` means no limit |
