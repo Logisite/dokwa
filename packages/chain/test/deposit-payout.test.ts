@@ -12,7 +12,7 @@ import { describe, expect, it } from "vitest";
 import type { Destination, Pending, Replied, Sent, Wire } from "@dokwa/core";
 import { createChainWallet, type ChainWallet } from "../src/wallet.ts";
 
-const ENDPOINT = "https://blockstream.info/signet/api";
+const ENDPOINT = "https://mempool.space/signet/api";
 
 /**
  * A sync that retries deliberately against the real rate-limit windows the

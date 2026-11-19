@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { chainDescriptors, createChainWallet, type ChainWallet } from "../src/wallet.ts";
+import {
+  chainDescriptors,
+  createChainWallet,
+  type ChainWallet,
+} from "../src/wallet.ts";
 
 const seed = new Uint8Array(32).fill(11);
 const otherSeed = new Uint8Array(32).fill(12);
@@ -84,7 +88,7 @@ describe("sync, the ruled exception", () => {
     // an unfunded seed, so the zero is honest and stays that way
     const wallet = createChainWallet({
       seed: new Uint8Array(32).fill(0x5a),
-      endpoint: "https://blockstream.info/signet/api",
+      endpoint: "https://mempool.space/signet/api",
     });
     const balance = await syncResilient(wallet, "the unfunded wallet");
     expect(balance.confirmedSat).toBe(0);
