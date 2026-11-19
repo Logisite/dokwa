@@ -148,9 +148,12 @@ describe("the queue survives a real cut and a reload, then drains", () => {
     }
 
     // -- The reload. Same database, new page, new store instance. --------
-    // The second page opens with the real signal: a live probe to the real
-    // signet endpoint. When it comes up, the queue empties itself.
+    // The second page opens with the restored signal: a real probe to a real,
+    // reliably answering endpoint, so "the network came back" does not depend
+    // on a public explorer's rate window. The cut above was the real dead
+    // endpoint; this is the real return.
     const pageTwo = createWire({
+      signal: { probe: httpProbe("https://example.com", 5_000) },
       queue: { store: new DexieQueueStore(DB_NAME) },
     });
     const delivered: DeliveryResult[] = [];
