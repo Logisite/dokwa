@@ -37,7 +37,11 @@ import {
 import { httpProbe } from "../src/signal.ts";
 import { createWire, type WireHandle } from "../src/wire.ts";
 
-const WORKING_RELAY = "wss://nos.lol";
+// The drain destination. nos.lol is kept as a relay in the relay suite, but
+// its short windows and outages made this rig fail on the relay, not the
+// queue; primal accepted a burst and answered reads in the probe, so the
+// reload rig drains there and still names the relay in its evidence.
+const WORKING_RELAY = "wss://relay.primal.net";
 const DEAD_ENDPOINT = "http://127.0.0.1:1";
 const DB_NAME = "dokwa:wires-queue-reload";
 
