@@ -283,7 +283,10 @@ describe("the queue's bookkeeping, unit rigs with an honest stub", () => {
     const outbox = new Outbox({
       store,
       deliver: async (to, bytes) => {
-        seen.push({ to: { ...to } as Destination, bytes: new TextDecoder().decode(bytes) });
+        seen.push({
+          to: { ...to } as Destination,
+          bytes: new TextDecoder().decode(bytes),
+        });
         return { status: "delivered" };
       },
       isOnline: () => online,
