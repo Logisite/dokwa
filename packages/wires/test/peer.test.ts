@@ -46,9 +46,9 @@ class FakePeerConnection {
   ondatachannel: ((event: { channel: FakeChannel }) => void) | null = null;
   private channel: FakeChannel | null = null;
 
-  constructor(_configuration?: unknown) {}
+  constructor() {}
 
-  createDataChannel(_label?: string, _options?: unknown): FakeChannel {
+  createDataChannel(): FakeChannel {
     this.channel = new FakeChannel();
     return this.channel;
   }
@@ -78,7 +78,6 @@ class FakePeerConnection {
 afterEach(() => {
   vi.unstubAllGlobals();
 });
-
 
 describe("the peer link without a browser", () => {
   it("at the transport layer: failed, unreachable; through the queue: later", async () => {
