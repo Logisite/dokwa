@@ -1,9 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { registerSW } from "virtual:pwa-register";
+import { Theme } from "@astryxdesign/core/theme";
 import "@astryxdesign/core/reset.css";
 import "@astryxdesign/core/astryx.css";
-import "@astryxdesign/theme-neutral/theme.css";
+import { defaultThemeSlug, themes } from "./astryx-themes.ts";
 import App from "./App.jsx";
 import "./app.css";
 
@@ -18,6 +19,8 @@ if (!root) throw new Error("dokwa: index.html has no #root");
 
 createRoot(root).render(
   <StrictMode>
-    <App />
+    <Theme theme={themes[defaultThemeSlug]}>
+      <App />
+    </Theme>
   </StrictMode>,
 );

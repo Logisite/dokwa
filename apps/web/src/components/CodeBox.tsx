@@ -32,6 +32,7 @@ export function CodeBox({ text, label }: CodeBoxProps) {
       style={{
         backgroundColor: "white",
         borderRadius: "var(--radius-container)",
+        border: "var(--border-width) solid var(--color-border)",
       }}
     >
       <svg
