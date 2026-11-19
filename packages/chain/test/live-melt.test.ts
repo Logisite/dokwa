@@ -12,7 +12,7 @@
 import { describe, expect, it } from "vitest";
 import type { Destination, Pending, Replied, Sent, Wire } from "@dokwa/core";
 import { createChainWallet, type ChainWallet } from "../src/wallet.ts";
-import { endpointStatus, refusing } from "./live.ts";
+import { endpointStatus, isEndpointFailure, refusing } from "./live.ts";
 
 const ENDPOINT = "https://mempool.space/signet/api";
 const EXPLORER = "https://mempool.space/signet";
@@ -160,7 +160,14 @@ describe("a real payer pays a payout on signet", () => {
 
     const payer = wallet(PAYER_SEED);
     const receiver = wallet(RECEIVER_SEED);
-    let balance = await sync(payer, "the payer");
+    let balance;
+    try {
+      balance = await sync(payer, "the payer");
+    } catch (error) {
+      if (!isEndpointFailure(error)) throw error;
+      ctx.skip(`the payer sync could not reach ${ENDPOINT}: ${String(error)}`);
+      return;
+    }
     // refill only when the wallet cannot cover the payout and its fee
     let refillNote = "not needed";
     if (balance.trustedSpendableSat < 800) {
@@ -175,6 +182,7 @@ describe("a real payer pays a payout on signet", () => {
       try {
         balance = await sync(payer, "the payer after the refill");
       } catch (error) {
+        if (!isEndpointFailure(error)) throw error;
         ctx.skip(
           `the payer sync after the faucet answer could not reach ${ENDPOINT}: ${String(error)}`,
         );

@@ -11,7 +11,7 @@
 import { describe, expect, it } from "vitest";
 import type { Destination, Pending, Replied, Sent, Wire } from "@dokwa/core";
 import { createChainWallet, type ChainWallet } from "../src/wallet.ts";
-import { endpointStatus, refusing } from "./live.ts";
+import { endpointStatus, isEndpointFailure, refusing } from "./live.ts";
 
 const ENDPOINT = "https://mempool.space/signet/api";
 
@@ -124,7 +124,14 @@ describe("a deposit and a payout, real signet", () => {
       );
       return;
     }
-    const balance = await syncResilient(payer, "the payer");
+    let balance;
+    try {
+      balance = await syncResilient(payer, "the payer");
+    } catch (error) {
+      if (!isEndpointFailure(error)) throw error;
+      ctx.skip(`the payer sync could not reach ${ENDPOINT}: ${String(error)}`);
+      return;
+    }
     console.log("PAYER BALANCE AFTER SYNC:", JSON.stringify(balance));
     // the deposit the faucet named, in the wallet's own graph whatever it
     // has spent since
@@ -170,13 +177,30 @@ describe("a deposit and a payout, real signet", () => {
     // the receiver's own sync finds the money coming in; the real endpoint
     // enforces rate windows, so the rig retries deliberately rather than
     // hoping, and gives up loudly if it truly cannot see
-    const seen = await syncResilient(receiver, "the receiver");
+    let seen;
+    try {
+      seen = await syncResilient(receiver, "the receiver");
+    } catch (error) {
+      if (!isEndpointFailure(error)) throw error;
+      ctx.skip(
+        `the receiver sync could not reach ${ENDPOINT}: ${String(error)}`,
+      );
+      return;
+    }
     console.log("RECEIVER BALANCE AFTER SYNC:", JSON.stringify(seen));
     expect(seen.totalSat).toBeGreaterThanOrEqual(amount);
     expect(receiver.hasTransaction(payout.txid)).toBe(true);
 
     // and the payer's graph holds it too, minus the fee
-    await syncResilient(payer, "the payer after the payout");
+    try {
+      await syncResilient(payer, "the payer after the payout");
+    } catch (error) {
+      if (!isEndpointFailure(error)) throw error;
+      console.log(
+        "the payer's post-payout re-read was refused by the endpoint:",
+        String(error),
+      );
+    }
     expect(payer.hasTransaction(payout.txid)).toBe(true);
   }, 420_000);
 });
