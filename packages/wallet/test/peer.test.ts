@@ -28,6 +28,7 @@ function wirePair(lies: Lies = {}) {
   let serverHandler: ((from: Destination, bytes: Uint8Array) => void) | null =
     null;
   const counts = { toServer: 0, toClient: 0 };
+  const clientFrames: Uint8Array[] = [];
   let held: Uint8Array | null = null;
 
   const deliver = (
@@ -44,6 +45,7 @@ function wirePair(lies: Lies = {}) {
       if (to.kind !== "peer") return { status: "failed", reason: "rejected" };
       if (which === "client") {
         counts.toServer += 1;
+        clientFrames.push(bytes);
         deliver("server", { kind: "peer", id: PATRON_ID }, bytes);
       } else {
         counts.toClient += 1;
@@ -92,6 +94,7 @@ function wirePair(lies: Lies = {}) {
     client: wireFor("client", TILL_ID),
     server: wireFor("server", PATRON_ID),
     counts,
+    frames: clientFrames,
   };
 }
 
@@ -187,6 +190,30 @@ describe("the wallet over a peer destination", () => {
     });
     void serveMintLink({ wire: pair.server, peerId: PATRON_ID, mint: till });
     await expect(link.keys()).rejects.toThrow(/refused/);
+  });
+
+  it("two links never collide on their first call", async () => {
+    const first = setup();
+    const second = setup();
+    const [keysA, keysB] = await Promise.all([
+      first.link.keys(),
+      second.link.keys(),
+    ]);
+    expect(keysA.keysets.length).toBeGreaterThan(0);
+    expect(keysB.keysets.length).toBeGreaterThan(0);
+    const firstFrame = first.pair.frames[0]!;
+    const secondFrame = second.pair.frames[0]!;
+    const idA = new DataView(
+      firstFrame.buffer,
+      firstFrame.byteOffset + 4,
+      4,
+    ).getUint32(0, false);
+    const idB = new DataView(
+      secondFrame.buffer,
+      secondFrame.byteOffset + 4,
+      4,
+    ).getUint32(0, false);
+    expect(idA).not.toBe(idB);
   });
 });
 
