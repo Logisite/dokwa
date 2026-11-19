@@ -8,6 +8,7 @@ export {
   createIdentity,
   eventId,
   identityFromSeed,
+  pubkeyFromSecretKey,
   randomSeed,
   signEvent,
   verifyDigest,

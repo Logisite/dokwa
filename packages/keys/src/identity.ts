@@ -9,7 +9,7 @@
  */
 
 import type { PublicKey } from "@dokwa/core";
-import { schnorr } from "@noble/curves/secp256k1.js";
+import { schnorr, secp256k1 } from "@noble/curves/secp256k1.js";
 import { sha256 } from "@noble/hashes/sha2.js";
 import {
   bytesToHex,
@@ -61,8 +61,17 @@ export function createIdentity(seed: Uint8Array = randomSeed()): Identity {
   return identityFromSeed(seed);
 }
 
-/** True only for a signature this public key made over this digest. */
-export function verifyDigest(
+/**
+ * The compressed public key of a raw secp256k1 secret, 66 characters of hex.
+ * The Lightning node's secret comes from LDK's own derivation; the id it is
+ * known by on the network is the point of that secret, which only the curve
+ * can give.
+ */
+export function pubkeyFromSecretKey(secret: Uint8Array): string {
+  return bytesToHex(secp256k1.getPublicKey(secret, true));
+}
+
+/** True only for a signature this public key made over this digest. */ export function verifyDigest(
   digest: Uint8Array,
   signature: string,
   pubkey: PublicKey,
