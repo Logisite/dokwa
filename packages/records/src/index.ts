@@ -23,7 +23,7 @@ export {
   type SlipInput,
 } from "./records.ts";
 
-export { open, seal } from "./seal.ts";
+export { open, openWithSeed, seal } from "./seal.ts";
 
 export {
   openGate,

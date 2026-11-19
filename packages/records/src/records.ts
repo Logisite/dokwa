@@ -38,6 +38,12 @@ export interface SlipInput {
   expires: number;
   /** a payload only the subject can read */
   sealed?: string;
+  /**
+   * The lesson whose badge was missing when the gate signed anyway. Written
+   * into the event, so the record itself says it was uncovered even after
+   * the wrapper is gone.
+   */
+  badgeMissing?: string;
 }
 
 export interface BadgeInput {
@@ -51,6 +57,11 @@ export interface BadgeInput {
 export interface ReadOk<T> {
   ok: true;
   value: T;
+  /**
+   * Set by the slip reader when the event carries the gate's
+   * ["badge-missing", lesson] tag: the record itself says it was uncovered.
+   */
+  badgeMissing?: string;
 }
 export interface ReadFail {
   ok: false;
@@ -179,6 +190,9 @@ export function signSlip(
       ["capability", input.capability],
       ["p", input.subject],
       ["expiration", String(input.expires)],
+      ...(input.badgeMissing
+        ? [["badge-missing", input.badgeMissing] as [string, string]]
+        : []),
     ],
     content: JSON.stringify(slip),
   });
@@ -191,7 +205,10 @@ export function readSlip(
   const result = read(event, SLIP_KIND, slipOf);
   if (!result.ok) return result;
   if (result.value.expires <= now) return { ok: false, reason: "expired" };
-  return result;
+  // the record carries its own warning when the gate signed over a missing
+  // badge, so a replicated event still says so
+  const tag = event.tags.find((entry) => entry[0] === "badge-missing")?.[1];
+  return tag ? { ...result, badgeMissing: tag } : result;
 }
 
 // ------------------------------------------------------------------- badges ---

@@ -37,12 +37,22 @@ export function randomSeed(): Uint8Array {
 }
 
 /**
+ * The raw secp256k1 secret a seed derives, before anything is signed. The
+ * identity keeps it private, but a sealed slip's recipient needs exactly
+ * this value to open the envelope, and the derivation must have one
+ * implementation, not two.
+ */
+export function secretFromSeed(seed: Uint8Array): Uint8Array {
+  if (seed.length < 16) throw new Error("dokwa: a seed is at least 16 bytes");
+  return sha256(concatBytes(IDENTITY_TAG, seed));
+}
+
+/**
  * The identity for a seed. The same seed always gives the same key, which is
  * what lets a device be restored from the one secret the owner keeps.
  */
 export function identityFromSeed(seed: Uint8Array): Identity {
-  if (seed.length < 16) throw new Error("dokwa: a seed is at least 16 bytes");
-  const secret = sha256(concatBytes(IDENTITY_TAG, seed));
+  const secret = secretFromSeed(seed);
   const pubkey = bytesToHex(schnorr.getPublicKey(secret));
   return {
     pubkey,

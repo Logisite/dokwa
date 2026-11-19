@@ -38,8 +38,12 @@ export interface MintLinkQuote {
 }
 
 export interface MintLink {
-  /** the public keysets, denominations included */
-  keys(): MintLinkKeys;
+  /**
+   * The public keysets, denominations included. Synchronous in process, and
+   * a promise across a peer destination, where even this answer travels as
+   * bytes; callers await it either way.
+   */
+  keys(): MintLinkKeys | Promise<MintLinkKeys>;
   /**
    * Ask the till for value: the NUT-04 quote request. This is the call a
    * patron on another device frames over the peer channel, so it lives on

@@ -112,7 +112,11 @@ export function openGate(
           );
         }
         return {
-          event: signSlip(identity, input, Math.floor(now() / 1000)),
+          event: signSlip(
+            identity,
+            { ...input, badgeMissing: lesson },
+            Math.floor(now() / 1000),
+          ),
           warning,
         };
       }

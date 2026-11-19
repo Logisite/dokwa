@@ -6,6 +6,18 @@
 
 export { openWallet } from "./wallet.ts";
 export { openWalletStore, type DexieWalletStore } from "./store.ts";
+export {
+  openPeerMintLink,
+  serveMintLink,
+  type PeerMintLinkOptions,
+  type ServeMintLinkOptions,
+} from "./peer.ts";
+export {
+  encodeFrame,
+  FrameReader,
+  MAX_FRAME_BYTES,
+  type Frame,
+} from "./frame.ts";
 export type {
   MintLink,
   MintLinkCheckState,
