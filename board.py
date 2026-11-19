@@ -63,7 +63,7 @@ def slug(text: str, limit: int = 32, words: int = 5) -> str:
     return out or "message"
 
 
-def post(role: str, status: str, body: str, reply_to: str | None) -> Path:
+def post(role: str, status: str, body: str, reply_to: str | None, to: list[str]) -> Path:
     now = datetime.now(timezone.utc)
     root = board_dir()
     stream = root / role
@@ -71,6 +71,7 @@ def post(role: str, status: str, body: str, reply_to: str | None) -> Path:
 
     stem = f"{now:%Y%m%d-%H%M%S}-{slug(body)}"
     header = [f"from: {role}", f"at: {now:%Y-%m-%dT%H:%M:%SZ}", f"status: {status}"]
+    header.append(f"to: {', '.join(to) if to else 'all'}")
     if reply_to:
         header.append(f"re: {reply_to}")
     text = "\n".join(header) + "\n\n" + body.strip() + "\n"
@@ -112,7 +113,7 @@ def parse(path: Path) -> dict:
 def format_message(path: Path) -> str:
     msg = parse(path)
     head = msg["head"]
-    meta = "  ".join(f"{k}: {head[k]}" for k in ("at", "status", "re") if k in head)
+    meta = "  ".join(f"{k}: {head[k]}" for k in ("at", "status", "to", "re") if k in head)
     lines = [f"--- {path.parent.name}/{path.name}"]
     if meta:
         lines.append(f"    {meta}")
@@ -169,7 +170,20 @@ def save_cursor(viewer: str, cursor: dict) -> None:
     os.replace(tmp, path)
 
 
-def scan(viewer: str, cursor: dict, include_all: bool, backlog: int) -> tuple[list[Path], dict]:
+def recipients(msg: dict) -> list[str]:
+    """Empty means broadcast: everyone but the author."""
+    raw = msg["head"].get("to", "all").strip()
+    if not raw or raw in ("all", "*"):
+        return []
+    return [part.strip() for part in raw.split(",") if part.strip()]
+
+
+def addressed_to(msg: dict, viewer: str) -> bool:
+    return viewer in recipients(msg) or not recipients(msg)
+
+
+def scan(viewer: str, cursor: dict, include_all: bool, backlog: int,
+         see_all: bool = False) -> tuple[list[Path], dict]:
     """Return what this viewer has not seen, and the cursor to remember."""
     root = board_dir()
     found: list[Path] = []
@@ -185,7 +199,10 @@ def scan(viewer: str, cursor: dict, include_all: bool, backlog: int) -> tuple[li
         if not files:
             continue
         mark = cursor.get(role)
-        found.extend(files[-backlog:] if mark is None else [p for p in files if p.name > mark])
+        unseen = files[-backlog:] if mark is None else [p for p in files if p.name > mark]
+        if not see_all:
+            unseen = [p for p in unseen if addressed_to(parse(p), viewer)]
+        found.extend(unseen)
         next_cursor[role] = files[-1].name
 
     return found, next_cursor
@@ -201,7 +218,7 @@ def watch(viewer: str, seconds: int, every: int, stay: bool, once: bool,
     cursor = load_cursor(viewer)
 
     if once:
-        new, next_cursor = scan(viewer, cursor or {}, include_all, backlog)
+        new, next_cursor = scan(viewer, cursor or {}, include_all, backlog, see_all=include_all)
         for path in new:
             print(format_message(path))
             print()
@@ -224,7 +241,7 @@ def watch(viewer: str, seconds: int, every: int, stay: bool, once: bool,
 
     try:
         while True:
-            new, next_cursor = scan(viewer, cursor, include_all, backlog)
+            new, next_cursor = scan(viewer, cursor, include_all, backlog, see_all=include_all)
             if new:
                 if notify:
                     print(f"[board] {len(new)} new message{'s' if len(new) > 1 else ''}")
@@ -262,6 +279,8 @@ def main() -> int:
     p_post.add_argument("status", choices=STATUSES)
     p_post.add_argument("body", help='the message, or "-" to read stdin')
     p_post.add_argument("--re", dest="reply_to", default=None, help="e.g. wires/20261118-1405")
+    p_post.add_argument("--to", default="all",
+                        help="recipients, comma-separated; all means everyone but you (default all)")
 
     p_read = sub.add_parser("read", help="print the newest messages, oldest first")
     p_read.add_argument("role", nargs="?", choices=ROLES, default=None)
@@ -275,7 +294,8 @@ def main() -> int:
     p_watch.add_argument("--stay", action="store_true", help="keep following after printing, do not exit")
     p_watch.add_argument("--once", action="store_true",
                          help="check once and return immediately; nothing is waited for")
-    p_watch.add_argument("--all", dest="include_all", action="store_true", help="include your own stream")
+    p_watch.add_argument("--all", dest="include_all", action="store_true",
+                         help="ignore addressing and include your own stream: the full feed")
     p_watch.add_argument("--notify", action="store_true", help="print one summary line before the bodies")
     p_watch.add_argument("--backlog", type=int, default=3,
                          help="on a first run, how many per stream to show (default 3)")
@@ -288,7 +308,10 @@ def main() -> int:
         body = sys.stdin.read() if args.body == "-" else args.body
         if not body.strip():
             raise SystemExit("board: empty message, nothing written")
-        path = post(args.role, args.status, body, args.reply_to)
+        to = [part.strip() for part in args.to.split(",") if part.strip()]
+        if len(to) == 1 and to[0] in ("all", "*"):
+            to = []
+        path = post(args.role, args.status, body, args.reply_to, to)
         print(path.relative_to(board_dir()))
         return 0
 
