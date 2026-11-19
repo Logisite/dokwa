@@ -46,15 +46,14 @@ export default function Landing() {
               <Badge variant="success" label="ready" />
             </HStack>
             <Button
-              label="Continue to the room"
+              label="Continue"
               variant="primary"
               width="100%"
-              onClick={() => navigate("/field")}
+              onClick={() => navigate(mode === "till" ? "/till" : "/wallet")}
             />
             <Text type="supporting" textWrap="pretty">
-              The working room is the field test while the till and wallet
-              screens are built. The mode is saved; changing it later does not
-              touch the keys.
+              The mode is saved. Changing it later does not touch the keys or
+              the money on this origin.
             </Text>
           </VStack>
         </Card>

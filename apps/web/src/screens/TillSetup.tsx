@@ -137,11 +137,11 @@ export default function TillSetup() {
             label="I have written it down"
             variant="primary"
             width="100%"
-            onClick={() => navigate("/field")}
+            onClick={() => navigate("/till")}
           />
           <Text type="supporting" textWrap="pretty">
-            The working room is the field test while the till screen is built.
-            The key above is the key it will use.
+            The till opens with this key. Nothing of value is in it until you
+            fund the float.
           </Text>
         </VStack>
       )}

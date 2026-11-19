@@ -96,14 +96,14 @@ export default function WalletSetup() {
           </Card>
 
           <Button
-            label="Continue to the room"
+            label="Continue"
             variant="primary"
             width="100%"
-            onClick={() => navigate("/field")}
+            onClick={() => navigate("/wallet")}
           />
           <Text type="supporting" textWrap="pretty">
-            The working room is the field test while the wallet screen is built.
-            It runs a separate purse against a till in the same page.
+            The wallet opens with this key. It cannot take value until a till is
+            connected.
           </Text>
         </VStack>
       )}
