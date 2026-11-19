@@ -183,8 +183,12 @@ export function hashToCurve(secret: string | Uint8Array): typeof Point.BASE {
   throw new Error("dokwa: no curve point found for this secret");
 }
 
-/** Y, the point a spent list records. Compressed hex. */
-export function secretToY(secret: string): string {
+/**
+ * Y, the point a spent list records. Compressed hex. The secret is whatever
+ * the proof carries: a string on our side, bytes when a wallet library hands
+ * one over, and hash-to-curve already takes both.
+ */
+export function secretToY(secret: string | Uint8Array): string {
   return hashToCurve(secret).toHex(true);
 }
 
