@@ -311,6 +311,10 @@ export class Peers {
       resolveReady = resolve;
       rejectReady = reject;
     });
+    // The answerer never awaits `ready`; a destroyed record would otherwise
+    // leave a rejected promise with no handler and show up as an unhandled
+    // rejection. Mark it handled; `connect` still receives the rejection.
+    void ready.catch(() => {});
 
     const record: PeerRecord = {
       id,

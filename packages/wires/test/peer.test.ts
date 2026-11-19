@@ -38,6 +38,7 @@ class FakeChannel {
 }
 
 class FakePeerConnection {
+  static rejectNextRemote = false;
   localDescription: { type: string; sdp: string } | null = null;
   remoteDescription: { type: string; sdp: string } | null = null;
   connectionState = "new";
@@ -66,6 +67,10 @@ class FakePeerConnection {
     type: string;
     sdp: string;
   }): Promise<void> {
+    if (FakePeerConnection.rejectNextRemote) {
+      FakePeerConnection.rejectNextRemote = false;
+      throw new Error("Failed to parse SessionDescription: test rejection");
+    }
     this.remoteDescription = description;
   }
 
@@ -202,6 +207,49 @@ describe("the peer link's state, on a stubbed platform", () => {
         1,
       );
     } finally {
+      peers.close();
+    }
+  });
+
+  it("a rejected remote description is reported, not swallowed", async () => {
+    vi.stubGlobal("RTCPeerConnection", FakePeerConnection);
+    FakePeerConnection.rejectNextRemote = true;
+    const warnings: string[] = [];
+    const spy = vi
+      .spyOn(console, "warn")
+      .mockImplementation((...args: unknown[]) => {
+        warnings.push(args.map(String).join(" "));
+      });
+    let deliver: ((from: string, signal: PeerSignal) => void) | null = null;
+    const states: string[] = [];
+    const peers = new Peers(
+      {
+        signaller: {
+          async send() {},
+          onSignal(handler) {
+            deliver = handler;
+            return () => {
+              deliver = null;
+            };
+          },
+        },
+      },
+      () => {},
+    );
+    peers.onState((_id, state) => states.push(state));
+    try {
+      deliver!("wallet", {
+        type: "offer",
+        sdp: "v=0\r\no=- 0 0 IN IP4 127.0.0.1\r\n",
+      });
+      await new Promise((r) => setTimeout(r, 20));
+      const text = warnings.join(" | ");
+      expect(text).toContain("could not be applied");
+      expect(text).toContain("Failed to parse SessionDescription");
+      // A fresh offer that cannot be applied is destroyed, which is right.
+      expect(states).toContain("closed");
+    } finally {
+      spy.mockRestore();
       peers.close();
     }
   });
