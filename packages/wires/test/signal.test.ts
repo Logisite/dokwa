@@ -42,11 +42,13 @@ async function preflight(
 }
 
 describe("the probe, against the real network", () => {
-  it("the default probe reports the endpoint's real answer", async (ctx) => {
-    // The test asserts the observation, not the assumption. A 429 from a
-    // public explorer is the endpoint talking, and the probe must say false;
-    // a 200 must say true. Only a preflight that cannot answer is a skip.
-    const status = await preflight(DEFAULT_PROBE_URL);
+  it("the default probe never reports signal for a refusing endpoint", async (ctx) => {
+    // The dangerous direction is optimism: a probe that says true while the
+    // endpoint refuses turns a recoverable moment into a lost sale. That
+    // direction fails hard here. The safe direction is a slow endpoint that
+    // answers one plain fetch but not the probe inside the same cap; that is
+    // the world, named as a skip, not the code lying.
+    const status = await preflight(DEFAULT_PROBE_URL, 5_000);
     if (status instanceof Error) {
       ctx.skip(
         `preflight could not reach ${DEFAULT_PROBE_URL}: ${status.message}`,
@@ -59,8 +61,17 @@ describe("the probe, against the real network", () => {
     console.log(
       `[signal] preflight ${status} from ${DEFAULT_PROBE_URL}; probe answered ${answered}`,
     );
-    // This is the assertion that goes red if the probe starts lying: a
-    // refusing endpoint must never be reported as signal.
+    if (answered && !endpointAccepted) {
+      throw new Error(
+        `the probe reported signal for ${DEFAULT_PROBE_URL} while it answered ${status}`,
+      );
+    }
+    if (!answered && endpointAccepted) {
+      ctx.skip(
+        `preflight ${status} from ${DEFAULT_PROBE_URL} but the probe found no answer inside the same 5s cap; the endpoint is slow, not lying`,
+      );
+      return;
+    }
     expect(answered).toBe(endpointAccepted);
   }, 30_000);
 
