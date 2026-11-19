@@ -24,7 +24,7 @@ import { finalizeEvent, generateSecretKey, getPublicKey } from "nostr-tools";
 import type { Sent } from "@dokwa/core";
 import { MemoryQueueStore, type DeliveryResult } from "../src/queue.ts";
 import { Relays } from "../src/relay.ts";
-import { httpProbe } from "../src/signal.ts";
+import type { Probe } from "../src/signal.ts";
 import { createWire, type WireHandle } from "../src/wire.ts";
 
 const WORKING_RELAY = "wss://nos.lol";
@@ -34,7 +34,7 @@ const WORKING_RELAY = "wss://nos.lol";
 // order-sensitive legs use it and the basic publish still goes to nos.lol.
 const SECOND_RELAY = "wss://relay.primal.net";
 const REFUSING_RELAY = "wss://nostr.wine";
-const RELIABLE_PROBE = "https://example.com";
+
 const TIMEOUT_MS = 240_000;
 const DELIVERY_BUDGET_MS = 90_000;
 
@@ -71,11 +71,57 @@ function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-/** A wire for these tests: real queue, real relay, a real reliable probe. */
-function relayWire(options: { okTimeoutMs?: number } = {}): WireHandle {
+/**
+ * Online for these tests means "a relay under test accepts a socket", not
+ * "some other party's endpoint answered". Each probe is a real WebSocket
+ * handshake to one of the relays this suite publishes to, closed at once when
+ * it opens. The first reachable relay in the list is enough, which also covers
+ * the publish test's fallback pair. signal.test.ts keeps the explorer probe
+ * and the 429-means-false case, where that belongs.
+ */
+function relaySocketProbe(urls: string[], timeoutMs = 5_000): Probe {
+  return async () => {
+    for (const url of urls) {
+      const reachable = await new Promise<boolean>((resolve) => {
+        let settled = false;
+        let socket: WebSocket | undefined;
+        const finish = (value: boolean) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          try {
+            socket?.close();
+          } catch {
+            // already gone
+          }
+          resolve(value);
+        };
+        const timer = setTimeout(() => finish(false), timeoutMs);
+        try {
+          socket = new WebSocket(url);
+        } catch {
+          finish(false);
+          return;
+        }
+        socket.onopen = () => finish(true);
+        socket.onerror = () => finish(false);
+      });
+      if (reachable) return true;
+    }
+    return false;
+  };
+}
+
+/** A wire for these tests: real queue, real relay, a relay-socket probe. */
+function relayWire(
+  options: { okTimeoutMs?: number; relays?: string[] } = {},
+): WireHandle {
   return createWire({
     queue: { store: new MemoryQueueStore() },
-    signal: { probe: httpProbe(RELIABLE_PROBE, 5_000) },
+    signal: {
+      probe: relaySocketProbe(options.relays ?? [WORKING_RELAY, SECOND_RELAY]),
+      intervalMs: 5_000,
+    },
     relay: {
       okTimeoutMs: options.okTimeoutMs ?? 15_000,
       connectTimeoutMs: 20_000,
