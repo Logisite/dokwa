@@ -149,7 +149,18 @@ export default function Till() {
       <VStack gap={3}>
         <HStack justify="between" align="center" gap={3}>
           <Heading level={1}>{venue}</Heading>
-          <Button label="Home" variant="ghost" onClick={() => navigate("/")} />
+          <HStack gap={1}>
+            <Button
+              label="Records"
+              variant="ghost"
+              onClick={() => navigate("/records")}
+            />
+            <Button
+              label="Home"
+              variant="ghost"
+              onClick={() => navigate("/")}
+            />
+          </HStack>
         </HStack>
         <HStack gap={2} wrap="wrap">
           <Badge
