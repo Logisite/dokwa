@@ -109,7 +109,7 @@ Two jobs, in this order.
 
 **Wire first.** Bind the parts: the wallet's requests go to the till; the chain wallet's lookups go to wires; the pouch's socket goes to the data channel; a receipt or a slip gets signed by crypto and queued with wires. This is the smallest part of the phase and it is what tells you whether the contract held.
 
-**Then the interface.** Every screen, the camera and the codes, first run, till mode and wallet mode, install, opening with the wifi off, and the deploy. This is the bulk.
+**Then the interface.** Every screen, the camera and the codes, first run with the root route that says what this is, till mode and wallet mode, install, opening with the wifi off, and the deploy. Then the test till and the eleven shifts, a second moneyless instance and the guided scenarios of the specification's §7, awarding real badges on real mechanisms. This is the bulk.
 
 Brief: `build-agent-3-room.md`.
 

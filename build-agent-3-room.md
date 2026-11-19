@@ -39,7 +39,7 @@ This is the bulk. In this order:
 
 **1. What it looks like.** The design system, the type scale, the colours, the one place the style is defined. It has to survive a phone in a dim room and a phone in daylight, and it must not depend on the theme to keep a code scannable: a code is pure black on white inside its own box, always.
 
-**2. First run.** Two modes, chosen once and changeable later. Till mode asks for the venue's identity and creates its keys, and shows the export before anything of value exists. Wallet mode asks for nothing much and works immediately.
+**2. First run.** The root route first: one screen that says what this is, written for the patron who just scanned a QR and installed nothing yet. Then the mode choice, made once and changeable later. Till mode asks for the venue's identity and creates its keys, and shows the export before anything of value exists. Wallet mode asks for nothing much and works immediately.
 
 **3. The till.** Open, hand out a token, take one back, show what came in, close. Every one of those must be one screen and one action, because it happens with a queue in front of it. Amount keypad large enough for a thumb. A refusal must be a sentence, not a spinner.
 
@@ -52,6 +52,8 @@ This is the bulk. In this order:
 **7. Install and offline.** The manifest, the icons, the service worker with an explicit update prompt — never a silent swap mid-payment — and every wasm module precached so the till opens with no network at all.
 
 **8. The deploy.** Static build, one origin, one hostname, chosen once. The origin is where the data lives; changing it is losing everything.
+
+**9. The test till and the eleven shifts.** A second instance of the same app, configured moneyless: same mechanisms, no value at risk. On it, the eleven shifts of the specification's §7.2 as guided scenarios, each one real: real keys, real signing, real refusals, real records, no money. Each shift awards a badge from the records package; the gate behaves exactly as it does everywhere else, a warning the owner confirms, never a lock. The shifts are content on top of proven machinery; if one needs a mechanism that does not exist, that is a finding against the specification, posted before it is built.
 
 ## What you must not do
 
