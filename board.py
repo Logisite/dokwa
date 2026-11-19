@@ -192,7 +192,8 @@ def addressed_to(msg: dict, viewer: str) -> bool:
 
 
 def scan(viewer: str, cursor: dict, include_all: bool, backlog: int,
-         see_all: bool = False) -> tuple[list[Path], dict]:
+         see_all: bool = False, include: list[str] | None = None,
+         exclude: list[str] | None = None) -> tuple[list[Path], dict]:
     """Return what this viewer has not seen, and the cursor to remember."""
     root = board_dir()
     found: list[Path] = []
@@ -203,6 +204,10 @@ def scan(viewer: str, cursor: dict, include_all: bool, backlog: int,
     for stream in sorted(p for p in root.iterdir() if p.is_dir() and not p.name.startswith(".")):
         role = stream.name
         if role == viewer and not include_all:
+            continue
+        if include and role not in include:
+            continue
+        if exclude and role in exclude:
             continue
         files = sorted(p for p in stream.glob("*.md") if p.name not in SKIP)
         if not files:
@@ -218,7 +223,8 @@ def scan(viewer: str, cursor: dict, include_all: bool, backlog: int,
 
 
 def watch(viewer: str, seconds: int, every: int, stay: bool, once: bool,
-          include_all: bool, notify: bool, backlog: int) -> int:
+          include_all: bool, notify: bool, backlog: int,
+          include: list[str], exclude: list[str]) -> int:
     def stop(*_: object) -> None:
         raise KeyboardInterrupt
 
@@ -227,7 +233,8 @@ def watch(viewer: str, seconds: int, every: int, stay: bool, once: bool,
     cursor = load_cursor(viewer)
 
     if once:
-        new, next_cursor = scan(viewer, cursor or {}, include_all, backlog, see_all=include_all)
+        new, next_cursor = scan(viewer, cursor or {}, include_all, backlog,
+                                see_all=include_all, include=include, exclude=exclude)
         for path in new:
             print(format_message(path))
             print()
@@ -250,7 +257,8 @@ def watch(viewer: str, seconds: int, every: int, stay: bool, once: bool,
 
     try:
         while True:
-            new, next_cursor = scan(viewer, cursor, include_all, backlog, see_all=include_all)
+            new, next_cursor = scan(viewer, cursor, include_all, backlog,
+                                    see_all=include_all, include=include, exclude=exclude)
             if new:
                 if notify:
                     print(f"[board] {len(new)} new message{'s' if len(new) > 1 else ''}")
@@ -307,6 +315,10 @@ def main() -> int:
                          help="check once and return immediately; nothing is waited for")
     p_watch.add_argument("--all", dest="include_all", action="store_true",
                          help="ignore addressing and include your own stream: the full feed")
+    p_watch.add_argument("--include", dest="include", default=None,
+                         help="only these streams, comma-separated")
+    p_watch.add_argument("--streams", dest="include", help="alias of --include")
+    p_watch.add_argument("--exclude", default=None, help="ignore these streams, comma-separated")
     p_watch.add_argument("--notify", action="store_true", help="print one summary line before the bodies")
     p_watch.add_argument("--backlog", type=int, default=3,
                          help="on a first run, how many per stream to show (default 3)")
@@ -333,8 +345,10 @@ def main() -> int:
         return read(args.role, max(1, args.count))
 
     if args.cmd == "watch":
+        include = [x.strip() for x in args.include.split(",") if x.strip()] if args.include else []
+        exclude = [x.strip() for x in args.exclude.split(",") if x.strip()] if args.exclude else []
         return watch(args.role, args.seconds, max(1, args.every), args.stay, args.once,
-                     args.include_all, args.notify, max(1, args.backlog))
+                     args.include_all, args.notify, max(1, args.backlog), include, exclude)
 
     for path in messages():
         print(path.relative_to(board_dir()))
