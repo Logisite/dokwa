@@ -41,6 +41,7 @@ class FakePeerConnection {
   static rejectNextRemote = false;
   localDescription: { type: string; sdp: string } | null = null;
   remoteDescription: { type: string; sdp: string } | null = null;
+  signalingState = "stable";
   connectionState = "new";
   iceGatheringState = "complete";
   onicecandidate: ((event: { candidate: unknown }) => void) | null = null;
@@ -71,6 +72,17 @@ class FakePeerConnection {
       FakePeerConnection.rejectNextRemote = false;
       throw new Error("Failed to parse SessionDescription: test rejection");
     }
+    if (description.type === "offer") {
+      if (this.signalingState === "have-local-offer") {
+        throw new Error("Called in wrong state: have-local-offer");
+      }
+      this.signalingState = "have-remote-offer";
+    } else {
+      if (this.signalingState !== "have-local-offer") {
+        throw new Error(`Called in wrong state: ${this.signalingState}`);
+      }
+      this.signalingState = "stable";
+    }
     this.remoteDescription = description;
   }
 
@@ -78,6 +90,14 @@ class FakePeerConnection {
     type: string;
     sdp: string;
   }): Promise<void> {
+    if (description.type === "answer") {
+      if (this.signalingState !== "have-remote-offer") {
+        throw new Error(`Called in wrong state: ${this.signalingState}`);
+      }
+      this.signalingState = "stable";
+    } else {
+      this.signalingState = "have-local-offer";
+    }
     this.localDescription = description;
     // The platform brings the channel up just after the description lands:
     // the offerer opens the one it created, the answerer receives one.
@@ -248,6 +268,54 @@ describe("the peer link's state, on a stubbed platform", () => {
       expect(text).toContain("Failed to parse SessionDescription");
       // A fresh offer that cannot be applied is destroyed, which is right.
       expect(states).toContain("closed");
+    } finally {
+      spy.mockRestore();
+      peers.close();
+    }
+  });
+
+  it("two offers back to back produce one answer, not a state error", async () => {
+    vi.stubGlobal("RTCPeerConnection", FakePeerConnection);
+    const warnings: string[] = [];
+    const spy = vi
+      .spyOn(console, "warn")
+      .mockImplementation((...args: unknown[]) => {
+        warnings.push(args.map(String).join(" "));
+      });
+    let deliver: ((from: string, signal: PeerSignal) => void) | null = null;
+    const answers: PeerSignal[] = [];
+    const states: string[] = [];
+    const peers = new Peers(
+      {
+        signaller: {
+          async send(_to, signal) {
+            answers.push(signal);
+          },
+          onSignal(handler) {
+            deliver = handler;
+            return () => {
+              deliver = null;
+            };
+          },
+        },
+      },
+      () => {},
+    );
+    peers.onState((_id, state) => states.push(state));
+    try {
+      const offer: PeerSignal = {
+        type: "offer",
+        sdp: "v=0\r\no=- 0 0 IN IP4 127.0.0.1\r\n",
+      };
+      // Both delivered in the same tick, as a relay replay can.
+      deliver!("wallet", offer);
+      deliver!("wallet", offer);
+      await new Promise((r) => setTimeout(r, 40));
+      expect(warnings.join(" | ")).not.toContain("could not be applied");
+      expect(answers.filter((signal) => signal.type === "answer")).toHaveLength(
+        1,
+      );
+      expect(states).toEqual(["connecting", "open"]);
     } finally {
       spy.mockRestore();
       peers.close();
