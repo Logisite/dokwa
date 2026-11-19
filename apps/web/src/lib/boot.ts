@@ -29,6 +29,7 @@ import {
   openWallet,
   openWalletStore,
   type DexieWalletStore,
+  type MintLink,
   type Wallet,
 } from "@dokwa/wallet";
 import { createWire, type WireHandle } from "@dokwa/wires";
@@ -98,12 +99,44 @@ export function openTill(): TillHandle {
   };
 }
 
-export function openPatron(id: string, mint: Mint): WalletHandle {
+export function openPatron(id: string, mint: MintLink): WalletHandle {
   const { seed, created } = loadSeed(`wallet:${id}`);
   const identity = createIdentity(seed);
   const store = openWalletStore(dbName({ wallet: id }));
   const wallet = openWallet({ store, mint });
   return { id, seed, created, identity, wallet, store };
+}
+
+/**
+ * A wallet on a device that is only a wallet. The purse and the key are real
+ * and the balance is real; the till is not connected because the cross-device
+ * NUT frame does not exist yet. Every call that needs a till says so in a
+ * sentence instead of pretending to be offline.
+ */
+export function noTillLink(): MintLink {
+  function refuse(): never {
+    throw new Error(
+      "wallet: no till is connected yet, so there is nothing to ask for value",
+    );
+  }
+  return {
+    keys: refuse,
+    async createQuote() {
+      return refuse();
+    },
+    async readQuote() {
+      return refuse();
+    },
+    async mint() {
+      return refuse();
+    },
+    async swap() {
+      return refuse();
+    },
+    async checkstate() {
+      return refuse();
+    },
+  };
 }
 
 /**

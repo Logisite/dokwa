@@ -54,3 +54,12 @@ export function loadSeed(role: string): LoadedSeed {
 export function hasSeed(role: string): boolean {
   return globalThis.localStorage.getItem(PREFIX + role) !== null;
 }
+
+/**
+ * The export. A till shows this before anything of value exists, because the
+ * seed is the only way to restore the device and there is no account to
+ * recover it from. It is the same bytes `loadSeed` reads.
+ */
+export function seedHex(seed: Uint8Array): string {
+  return toHex(seed);
+}

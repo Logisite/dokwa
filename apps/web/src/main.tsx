@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router";
 import { registerSW } from "virtual:pwa-register";
 import { Theme } from "@astryxdesign/core/theme";
 import "@astryxdesign/core/reset.css";
@@ -20,7 +21,9 @@ if (!root) throw new Error("dokwa: index.html has no #root");
 createRoot(root).render(
   <StrictMode>
     <Theme theme={themes[defaultThemeSlug]}>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </Theme>
   </StrictMode>,
 );
