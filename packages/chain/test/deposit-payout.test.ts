@@ -11,6 +11,7 @@
 import { describe, expect, it } from "vitest";
 import type { Destination, Pending, Replied, Sent, Wire } from "@dokwa/core";
 import { createChainWallet, type ChainWallet } from "../src/wallet.ts";
+import { endpointStatus, refusing } from "./live.ts";
 
 const ENDPOINT = "https://mempool.space/signet/api";
 
@@ -105,8 +106,24 @@ function walletB(): ChainWallet {
 }
 
 describe("a deposit and a payout, real signet", () => {
-  it("sees the real deposit, signs a payout, and the receiving wallet finds it", async () => {
+  it("sees the real deposit, signs a payout, and the receiving wallet finds it", async (ctx) => {
+    // the preflight: a refusing endpoint is an observation, so the loud
+    // refusal is asserted; only a preflight that cannot answer at all skips
+    const status = await endpointStatus(ENDPOINT);
+    if (status === 0) {
+      ctx.skip(`the preflight for ${ENDPOINT} could not answer at all`);
+      return;
+    }
     const payer = walletA();
+    if (refusing(status)) {
+      console.log(
+        `endpoint ${ENDPOINT} answered ${status}; asserting the loud refusal`,
+      );
+      await expect(syncResilient(payer, "the payer", 1)).rejects.toThrow(
+        /could not reach/,
+      );
+      return;
+    }
     const balance = await syncResilient(payer, "the payer");
     console.log("PAYER BALANCE AFTER SYNC:", JSON.stringify(balance));
     // the deposit the faucet named, in the wallet's own graph whatever it
