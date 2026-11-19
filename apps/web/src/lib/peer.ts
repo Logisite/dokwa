@@ -39,6 +39,10 @@ export function serveTillOverPeer(options: {
 }
 
 /** The patron's MintLink to a till whose wire id came from its code. */
-export function openWalletOverPeer(wire: Wire, tillId: string): MintLink {
-  return openPeerMintLink({ wire, peerId: tillId, timeoutMs: 60_000 });
+export function openWalletOverPeer(
+  wire: Wire,
+  tillId: string,
+  timeoutMs = 60_000,
+): MintLink {
+  return openPeerMintLink({ wire, peerId: tillId, timeoutMs });
 }

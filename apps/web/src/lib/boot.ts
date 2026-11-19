@@ -77,7 +77,12 @@ export function createRoomWire(identity?: Identity): RoomWire {
   // signalling event behind a false "offline". Probe this origin: if the app
   // itself is serving, attempts go out and a real relay failure is reported
   // as failed, not hidden as unsent.
-  const wire = createWire({ signal: { probe: httpProbe("/probe.txt") } });
+  const wire = createWire({
+    signal: { probe: httpProbe("/probe.txt") },
+    // One code carries the SDP and its candidates. Trickle ICE would emit a
+    // second code per candidate and the last one would hide the offer.
+    peer: { iceGathering: "complete" },
+  });
   const signaller = identity
     ? createRelaySignaller({ wire, identity })
     : undefined;

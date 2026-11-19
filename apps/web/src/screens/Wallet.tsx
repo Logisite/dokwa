@@ -120,7 +120,12 @@ export default function Wallet() {
         signaller.onCode(setOutgoingCode);
         setCodeSignaller(signaller);
       }
-      const link = openWalletOverPeer(wire.wire, id);
+      // A hand-carried offer and answer take longer than a relay round trip.
+      const link = openWalletOverPeer(
+        wire.wire,
+        id,
+        choice === "code" ? 300_000 : 60_000,
+      );
       setWallet(reopenWallet(wallet, link));
       setTillId(id);
       setMode(choice);
