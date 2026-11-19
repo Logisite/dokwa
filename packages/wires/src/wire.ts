@@ -42,6 +42,9 @@ export interface WireOptions {
     signaller?: PeerSignaller;
     iceServers?: RTCIceServer[];
     connectTimeoutMs?: number;
+    /** See PeerOptions: "complete" for a code/QR signaller. */
+    iceGathering?: "trickle" | "complete";
+    iceGatheringTimeoutMs?: number;
   };
   relay?: {
     okTimeoutMs?: number;
@@ -113,6 +116,8 @@ export function createWire(options: WireOptions = {}): WireHandle {
       signaller: options.peer?.signaller,
       iceServers: options.peer?.iceServers,
       connectTimeoutMs: options.peer?.connectTimeoutMs ?? timeoutMs,
+      iceGathering: options.peer?.iceGathering,
+      iceGatheringTimeoutMs: options.peer?.iceGatheringTimeoutMs,
     },
     (id, bytes) => {
       for (const listener of [...bytesListeners])
