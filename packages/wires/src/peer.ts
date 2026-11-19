@@ -103,6 +103,12 @@ export class Peers {
     (id: string, state: PeerState) => void
   >();
 
+  /** One state change, delivered to every onState listener. */
+  private emit(id: string, state: PeerState): void {
+    this.emitState(id, state);
+    for (const listener of [...this.stateListeners]) listener(id, state);
+  }
+
   async connect(id: string): Promise<void> {
     if (typeof RTCPeerConnection === "undefined") {
       throw new Error("RTCPeerConnection is unavailable");
@@ -276,7 +282,7 @@ export class Peers {
       candidates: [],
     };
     this.records.set(id, record);
-    this.emitState(id, "connecting");
+    this.emit(id, "connecting");
 
     record.timer = setTimeout(() => {
       if (record.settled) return;
@@ -323,7 +329,7 @@ export class Peers {
         record.timer = null;
       }
       record.resolveReady(channel);
-      this.emitState(record.id, "open");
+      this.emit(record.id, "open");
     };
 
     channel.onmessage = (event: MessageEvent) => {
@@ -361,7 +367,7 @@ export class Peers {
     } catch {
       // ignore
     }
-    this.emitState(id, "closed");
+    this.emit(id, "closed");
   }
 }
 
