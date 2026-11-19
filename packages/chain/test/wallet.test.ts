@@ -1,8 +1,29 @@
 import { describe, expect, it } from "vitest";
-import { createChainWallet, chainDescriptors } from "../src/wallet.ts";
+import { chainDescriptors, createChainWallet, type ChainWallet } from "../src/wallet.ts";
 
 const seed = new Uint8Array(32).fill(11);
 const otherSeed = new Uint8Array(32).fill(12);
+
+/**
+ * A sync that retries deliberately against the real rate-limit windows the
+ * endpoints enforce: the 429 is the endpoint talking, not the code failing,
+ * and the retry ceiling is loud, never silent.
+ */
+async function syncResilient(wallet: ChainWallet, label: string, attempts = 3) {
+  let last: unknown = null;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await wallet.sync();
+    } catch (error) {
+      last = error;
+      if (attempt < attempts - 1)
+        await new Promise((resolve) => setTimeout(resolve, 15_000));
+    }
+  }
+  throw new Error(
+    `chain rig: ${label} could not sync after ${attempts} real attempts: ${String(last)}`,
+  );
+}
 
 describe("descriptors from a seed", () => {
   it("one seed, one wallet, checksummed and real", () => {
@@ -65,10 +86,10 @@ describe("sync, the ruled exception", () => {
       seed: new Uint8Array(32).fill(0x5a),
       endpoint: "https://blockstream.info/signet/api",
     });
-    const balance = await wallet.sync();
+    const balance = await syncResilient(wallet, "the unfunded wallet");
     expect(balance.confirmedSat).toBe(0);
     expect(balance.totalSat).toBe(0);
-  }, 90_000);
+  }, 120_000);
 
   it("offline is loud: a dead endpoint refuses and nothing is shown as current", async () => {
     const wallet = createChainWallet({ seed, endpoint: "http://127.0.0.1:1" });

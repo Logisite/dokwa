@@ -14,6 +14,27 @@ import { createChainWallet, type ChainWallet } from "../src/wallet.ts";
 
 const ENDPOINT = "https://blockstream.info/signet/api";
 
+/**
+ * A sync that retries deliberately against the real rate-limit windows the
+ * endpoints enforce: the 429 is the endpoint talking, not the code failing,
+ * and the retry ceiling is loud, never silent.
+ */
+async function syncResilient(wallet: ChainWallet, label: string, attempts = 3) {
+  let last: unknown = null;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await wallet.sync();
+    } catch (error) {
+      last = error;
+      if (attempt < attempts - 1)
+        await new Promise((resolve) => setTimeout(resolve, 15_000));
+    }
+  }
+  throw new Error(
+    `chain rig: ${label} could not sync after ${attempts} real attempts: ${String(last)}`,
+  );
+}
+
 const DEPOSIT_TXID =
   "b9036dfe54b1c38ae306d78643b103528c38e9a4189a9d2f6bbfffaea3c3b53a";
 
@@ -86,7 +107,7 @@ function walletB(): ChainWallet {
 describe("a deposit and a payout, real signet", () => {
   it("sees the real deposit, signs a payout, and the receiving wallet finds it", async () => {
     const payer = walletA();
-    const balance = await payer.sync();
+    const balance = await syncResilient(payer, "the payer");
     console.log("PAYER BALANCE AFTER SYNC:", JSON.stringify(balance));
     // the deposit the faucet named, in the wallet's own graph whatever it
     // has spent since
@@ -126,20 +147,9 @@ describe("a deposit and a payout, real signet", () => {
     expect(new TextDecoder().decode(replied.bytes).trim()).toBe(payout.txid);
 
     // the receiver's own sync finds the money coming in; the real endpoint
-    // occasionally drops a request, so the rig retries deliberately rather
-    // than hoping, and gives up loudly if it truly cannot see
-    let seen: Awaited<ReturnType<ChainWallet["sync"]>> | null = null;
-    for (let attempt = 0; attempt < 3 && seen === null; attempt += 1) {
-      try {
-        seen = await receiver.sync();
-      } catch {
-        await new Promise((resolve) => setTimeout(resolve, 10_000));
-      }
-    }
-    if (!seen)
-      throw new Error(
-        "chain rig: the receiver could not see after three real syncs",
-      );
+    // enforces rate windows, so the rig retries deliberately rather than
+    // hoping, and gives up loudly if it truly cannot see
+    const seen = await syncResilient(receiver, "the receiver");
     console.log("RECEIVER BALANCE AFTER SYNC:", JSON.stringify(seen));
     expect(seen.totalSat).toBeGreaterThanOrEqual(amount);
     expect(receiver.hasTransaction(payout.txid)).toBe(true);
