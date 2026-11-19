@@ -24,9 +24,34 @@ export interface MintLinkCheckState {
   witness: null;
 }
 
+/**
+ * A NUT-04 quote as the wallet sees it. `request` is what the payer is shown:
+ * a payment instruction for cash at the till, or a lightning request later.
+ */
+export interface MintLinkQuote {
+  id: string;
+  amount: number;
+  request: string;
+  /** UNPAID, PAID or ISSUED */
+  state: string;
+  expiry: number | null;
+}
+
 export interface MintLink {
   /** the public keysets, denominations included */
   keys(): MintLinkKeys;
+  /**
+   * Ask the till for value: the NUT-04 quote request. This is the call a
+   * patron on another device frames over the peer channel, so it lives on
+   * the link rather than only on the venue side.
+   */
+  createQuote(input: {
+    amount: number;
+    method?: string;
+    description?: string;
+  }): Promise<MintLinkQuote>;
+  /** whether the operator has confirmed the payment, read without paying */
+  readQuote(id: string): Promise<MintLinkQuote | null>;
   /** pay a paid quote: blinded messages in, blind signatures out */
   mint(quoteId: string, outputs: BlindedMessage[]): Promise<BlindedSignature[]>;
   /** spend proofs and get fresh ones back, same total */
