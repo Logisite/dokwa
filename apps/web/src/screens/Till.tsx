@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { encodeCode, parseCode } from "@dokwa/core";
 import { Badge } from "@astryxdesign/core/Badge";
 import { Button } from "@astryxdesign/core/Button";
@@ -7,11 +7,17 @@ import { Grid } from "@astryxdesign/core/Grid";
 import { Heading } from "@astryxdesign/core/Heading";
 import { HStack } from "@astryxdesign/core/HStack";
 import { Text } from "@astryxdesign/core/Text";
+import { TextArea } from "@astryxdesign/core/TextArea";
 import { TextInput } from "@astryxdesign/core/TextInput";
 import { VStack } from "@astryxdesign/core/VStack";
 import { useNavigate } from "react-router";
 import { CodeBox } from "../components/CodeBox.tsx";
 import { Page } from "../components/Page.tsx";
+import {
+  createCodeSignaller,
+  type CodeSignaller,
+} from "../lib/code-signaller.ts";
+import { serveTillOverPeer } from "../lib/peer.ts";
 import {
   createRoomWire,
   fundTill,
@@ -43,10 +49,23 @@ export default function Till() {
     "Open the till. If the float is empty it is funded from a settled quote.",
   );
   const [failure, setFailure] = useState<string | null>(null);
+  const [codeSignaller, setCodeSignaller] = useState<CodeSignaller | null>(
+    null,
+  );
+  const [outgoingCode, setOutgoingCode] = useState<string | null>(null);
+  const [incomingCode, setIncomingCode] = useState("");
+  const codeServer = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const nextTill = openTill();
-    const nextWire = createRoomWire();
+    const nextWire = createRoomWire(nextTill.identity);
+    const stopServing = nextWire.signaller
+      ? serveTillOverPeer({
+          wire: nextWire.wire,
+          mint: nextTill.mint,
+          signaller: nextWire.signaller,
+        })
+      : () => undefined;
     let live = true;
     setTill(nextTill);
     setWire(nextWire);
@@ -60,6 +79,8 @@ export default function Till() {
       .catch(() => undefined);
     return () => {
       live = false;
+      stopServing();
+      codeServer.current?.();
       nextTill.mintStore.close();
       nextTill.floatStore.close();
       nextWire.close();
@@ -134,7 +155,15 @@ export default function Till() {
 
   function reopen() {
     const nextTill = openTill();
-    const nextWire = createRoomWire();
+    const nextWire = createRoomWire(nextTill.identity);
+    codeServer.current?.();
+    if (nextWire.signaller) {
+      codeServer.current = serveTillOverPeer({
+        wire: nextWire.wire,
+        mint: nextTill.mint,
+        signaller: nextWire.signaller,
+      });
+    }
     setTill(nextTill);
     setWire(nextWire);
     void nextTill.float.balance().then((held) => {
@@ -142,6 +171,32 @@ export default function Till() {
       setOpened(held > 0);
       setNote(`Open with ${held} sat in the float.`);
     });
+  }
+
+  function useCodeMode() {
+    if (!wire || !till) return;
+    const signaller = createCodeSignaller(till.identity);
+    wire.wire.setPeerSignaller(signaller);
+    signaller.onCode(setOutgoingCode);
+    codeServer.current?.();
+    codeServer.current = serveTillOverPeer({
+      wire: wire.wire,
+      mint: till.mint,
+      signaller,
+    });
+    setCodeSignaller(signaller);
+    setNote(
+      "Code mode. Paste the wallet's offer, then hand it the code this till answers with.",
+    );
+  }
+
+  function deliverCode() {
+    setFailure(null);
+    if (!codeSignaller?.deliver(incomingCode.trim())) {
+      setFailure("that is not a peer code from a wallet");
+      return;
+    }
+    setIncomingCode("");
   }
 
   return (
@@ -212,6 +267,65 @@ export default function Till() {
 
       {opened && till ? (
         <>
+          <Card padding={4}>
+            <VStack gap={3}>
+              <Heading level={2}>Connect a wallet</Heading>
+              <Text type="supporting" textWrap="pretty">
+                This code names the till. A wallet on another device pastes it
+                to open a channel over the relay, or exchanges peer codes with
+                both radios off.
+              </Text>
+              <CodeBox
+                text={encodeCode({
+                  kind: "peer",
+                  id: till.identity.pubkey,
+                  signal: "connect",
+                })}
+                label="The till's peer code"
+              />
+              <Text type="code" wordBreak="break-all">
+                {encodeCode({
+                  kind: "peer",
+                  id: till.identity.pubkey,
+                  signal: "connect",
+                })}
+              </Text>
+              <Button
+                label="Answer by code"
+                width="100%"
+                onClick={useCodeMode}
+              />
+              {codeSignaller ? (
+                <VStack gap={3}>
+                  {outgoingCode ? (
+                    <VStack gap={1}>
+                      <Text type="supporting">
+                        Hand this answer to the wallet
+                      </Text>
+                      <Text type="code" wordBreak="break-all">
+                        {outgoingCode}
+                      </Text>
+                    </VStack>
+                  ) : null}
+                  <TextArea
+                    label="Offer from the wallet"
+                    value={incomingCode}
+                    onChange={setIncomingCode}
+                    rows={3}
+                    placeholder="dokwa:..."
+                    width="100%"
+                  />
+                  <Button
+                    label="Deliver it"
+                    width="100%"
+                    isDisabled={incomingCode.trim().length === 0}
+                    onClick={deliverCode}
+                  />
+                </VStack>
+              ) : null}
+            </VStack>
+          </Card>
+
           <Card padding={4}>
             <VStack gap={3}>
               <Heading level={2}>Hand out</Heading>

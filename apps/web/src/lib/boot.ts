@@ -32,9 +32,10 @@ import {
   type MintLink,
   type Wallet,
 } from "@dokwa/wallet";
-import { createWire, type WireHandle } from "@dokwa/wires";
+import { createWire, httpProbe, type WireHandle } from "@dokwa/wires";
 import type { ChainWallet } from "@dokwa/chain";
 import type { LightningNode } from "@dokwa/lightning";
+import { createRelaySignaller, type RelaySignaller } from "./signaller.ts";
 import { loadSeed } from "./seed.ts";
 
 /** The till's float is a wallet like any other, under the wallet storage name. */
@@ -65,13 +66,30 @@ export interface WalletHandle {
 
 export interface RoomWire {
   wire: WireHandle;
+  /** the relay signaller, once this device knows its identity */
+  signaller?: RelaySignaller;
   close(): void;
 }
 
-/** One wire for the page. Its queue and relay connections are real. */
-export function createRoomWire(): RoomWire {
-  const wire = createWire();
-  return { wire, close: () => wire.close() };
+/** One wire for the page. With an identity it also carries a peer signaller. */
+export function createRoomWire(identity?: Identity): RoomWire {
+  // A cross-origin probe that 429s or lacks CORS makes the outbox hold every
+  // signalling event behind a false "offline". Probe this origin: if the app
+  // itself is serving, attempts go out and a real relay failure is reported
+  // as failed, not hidden as unsent.
+  const wire = createWire({ signal: { probe: httpProbe("/probe.txt") } });
+  const signaller = identity
+    ? createRelaySignaller({ wire, identity })
+    : undefined;
+  if (signaller) wire.setPeerSignaller(signaller);
+  return {
+    wire,
+    ...(signaller ? { signaller } : {}),
+    close: () => {
+      signaller?.close();
+      wire.close();
+    },
+  };
 }
 
 export function openTill(): TillHandle {
@@ -105,6 +123,17 @@ export function openPatron(id: string, mint: MintLink): WalletHandle {
   const store = openWalletStore(dbName({ wallet: id }));
   const wallet = openWallet({ store, mint });
   return { id, seed, created, identity, wallet, store };
+}
+
+/**
+ * The same purse over a new MintLink. The store and the key do not change;
+ * only the way the wallet reaches its till does.
+ */
+export function reopenWallet(
+  handle: WalletHandle,
+  mint: MintLink,
+): WalletHandle {
+  return { ...handle, wallet: openWallet({ store: handle.store, mint }) };
 }
 
 /**
