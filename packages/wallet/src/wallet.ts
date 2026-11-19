@@ -129,9 +129,10 @@ export function openWallet(options: WalletOptions): Wallet {
   const { store, mint } = options;
   const now = options.now ?? (() => Date.now());
 
-  function activeKeyset() {
-    const keysets = mint.keys().keysets.filter((k) => k.active);
-    const keyset = keysets[0] ?? mint.keys().keysets[0];
+  async function activeKeyset() {
+    const all = (await mint.keys()).keysets;
+    const keysets = all.filter((k) => k.active);
+    const keyset = keysets[0] ?? all[0];
     if (!keyset || !keyset.keys)
       throw new Error("wallet: the mint has no usable keyset");
     return keyset;
@@ -141,12 +142,12 @@ export function openWallet(options: WalletOptions): Wallet {
     return mint.describe?.().pubkey ?? options.mintId ?? "dokwa:till";
   }
 
-  function unit(): string {
-    return activeKeyset().unit;
+  async function unit(): Promise<string> {
+    return (await activeKeyset()).unit;
   }
 
-  function decode(token: string) {
-    const known = mint.keys().keysets.map((k) => k.id);
+  async function decode(token: string) {
+    const known = (await mint.keys()).keysets.map((k) => k.id);
     try {
       return getDecodedToken(token, known);
     } catch (error) {
@@ -168,7 +169,7 @@ export function openWallet(options: WalletOptions): Wallet {
   }
 
   async function verifyProofs(proofs: Proof[]): Promise<void> {
-    const keysets = mint.keys().keysets;
+    const keysets = (await mint.keys()).keysets;
     const verdict = await verifyMintSignatures(proofs, (id) => {
       const keyset = keysets.find((k) => k.id === id);
       if (!keyset)
@@ -186,7 +187,7 @@ export function openWallet(options: WalletOptions): Wallet {
     totals: number[],
     sign: (outputs: BlindedMessage[]) => Promise<BlindedSignature[]>,
   ): Promise<StoredProof[]> {
-    const keyset = activeKeyset();
+    const keyset = await activeKeyset();
     const wanted = totals.flatMap((total) =>
       splitAmount(total, keyset.keys).map((a) => a.toNumber()),
     );
@@ -238,10 +239,13 @@ export function openWallet(options: WalletOptions): Wallet {
     return blindAndUnblind(totals, (outputs) => mint.swap(inputs, outputs));
   }
 
-  function toToken(proofs: StoredProof[], memo?: string): string {
+  async function toToken(
+    proofs: StoredProof[],
+    memo?: string,
+  ): Promise<string> {
     return getEncodedToken({
       mint: mintName(),
-      unit: unit(),
+      unit: await unit(),
       memo,
       proofs: proofs.map((p) => ({
         id: p.id,
@@ -311,7 +315,7 @@ export function openWallet(options: WalletOptions): Wallet {
     },
 
     async receive(token: string): Promise<number> {
-      const decoded = decode(token);
+      const decoded = await decode(token);
       const proofs: Proof[] = decoded.proofs.map((p) => ({
         id: p.id,
         amount: p.amount.toNumber(),
@@ -346,7 +350,7 @@ export function openWallet(options: WalletOptions): Wallet {
       // exactly the amount and the coins already fit: no swap needed
       if (selectedSum === amount) {
         await store.removeProofs(selected.map((p) => p.secret));
-        return { token: toToken(selected, memo), sent: selected };
+        return { token: await toToken(selected, memo), sent: selected };
       }
 
       const inputs: Proof[] = selected.map((p) => ({
@@ -358,17 +362,17 @@ export function openWallet(options: WalletOptions): Wallet {
       // one swap, both halves: a second swap on the same inputs would be
       // refused, and honestly so
       const fresh = await swapToFresh(inputs, [amount, selectedSum - amount]);
-      const sentCount = splitAmount(amount, activeKeyset().keys).length;
+      const sentCount = splitAmount(amount, (await activeKeyset()).keys).length;
       const sentProofs = fresh.slice(0, sentCount);
       const changeProofs = fresh.slice(sentCount);
       // the sent half leaves with the token; only the change stays here
       await store.putProofs(changeProofs);
       await store.removeProofs(selected.map((p) => p.secret));
-      return { token: toToken(sentProofs, memo), sent: sentProofs };
+      return { token: await toToken(sentProofs, memo), sent: sentProofs };
     },
 
     async check(token): Promise<TokenCheck> {
-      const decoded = decode(token);
+      const decoded = await decode(token);
       const proofs: Proof[] = decoded.proofs.map((p) => ({
         id: p.id,
         amount: p.amount.toNumber(),
