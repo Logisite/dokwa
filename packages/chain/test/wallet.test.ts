@@ -4,6 +4,7 @@ import {
   createChainWallet,
   type ChainWallet,
 } from "../src/wallet.ts";
+import { endpointStatus, refusing } from "./live.ts";
 
 const seed = new Uint8Array(32).fill(11);
 const otherSeed = new Uint8Array(32).fill(12);
@@ -89,15 +90,31 @@ describe("deposit addresses", () => {
 });
 
 describe("sync, the ruled exception", () => {
-  it("syncs a fresh wallet against real signet and reports an honest zero", async () => {
+  it("syncs a fresh wallet against real signet and reports an honest zero", async (ctx) => {
     // an unfunded seed, so the zero is honest and stays that way. The light
     // sync refreshes only revealed addresses: it reveals one, then asks the
     // chain about it, a handful of requests instead of a full scan
+    const endpoint = "https://blockstream.info/signet/api";
+    const status = await endpointStatus(endpoint);
+    if (status === 0) {
+      ctx.skip(`the preflight for ${endpoint} could not answer at all`);
+      return;
+    }
     const wallet = createChainWallet({
       seed: new Uint8Array(32).fill(0x5a),
-      endpoint: "https://blockstream.info/signet/api",
+      endpoint,
     });
     wallet.newDepositAddress();
+    if (refusing(status)) {
+      // the endpoint is refusing; the loud refusal is the correct behaviour
+      console.log(
+        `endpoint ${endpoint} answered ${status}; asserting the loud refusal`,
+      );
+      await expect(
+        syncResilient(wallet, "the unfunded wallet", 1, true),
+      ).rejects.toThrow(/could not reach/);
+      return;
+    }
     const balance = await syncResilient(wallet, "the unfunded wallet", 3, true);
     expect(balance.confirmedSat).toBe(0);
     expect(balance.totalSat).toBe(0);
