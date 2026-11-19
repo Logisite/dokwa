@@ -46,9 +46,9 @@ class FakePeerConnection {
   ondatachannel: ((event: { channel: FakeChannel }) => void) | null = null;
   private channel: FakeChannel | null = null;
 
-  constructor(_configuration?: unknown) {}
+  constructor() {}
 
-  createDataChannel(_label?: string, _options?: unknown): FakeChannel {
+  createDataChannel(): FakeChannel {
     this.channel = new FakeChannel();
     return this.channel;
   }

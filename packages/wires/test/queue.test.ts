@@ -35,7 +35,6 @@ import {
   type DeliveryResult,
   type QueueItem,
 } from "../src/queue.ts";
-import { httpProbe } from "../src/signal.ts";
 import { createWire, type WireHandle } from "../src/wire.ts";
 
 // The drain destination. nos.lol is kept as a relay in the relay suite, but
@@ -43,7 +42,6 @@ import { createWire, type WireHandle } from "../src/wire.ts";
 // queue; primal accepted a burst and answered reads in the probe, so the
 // reload rig drains there and still names the relay in its evidence.
 const WORKING_RELAY = "wss://relay.primal.net";
-const DEAD_ENDPOINT = "http://127.0.0.1:1";
 const DB_NAME = "dokwa:wires-queue-reload";
 
 const encoder = new TextEncoder();
@@ -87,10 +85,15 @@ async function waitForOnline(
 describe("the queue survives a real cut and a reload, then drains", () => {
   it("holds three records offline, survives a reload, drains in order", async () => {
     // -- The first page. The network is down, really down. ---------------
-    const cutProbe = httpProbe(DEAD_ENDPOINT, 3_000);
+    // The probe is the fixture here, not the subject: this rig tests that the
+    // queue holds while offline and drains on a signal change. Real network
+    // answers are the relay and signal suites' jobs, and those are the ones
+    // that should fail when the world is down.
+    let reachable = false;
+    const probe = async () => reachable;
     const queued = { ids: [] as string[], eventIds: [] as string[] };
     const pageOne = createWire({
-      signal: { probe: cutProbe, intervalMs: 5_000 },
+      signal: { probe, intervalMs: 1_000 },
       queue: { store: new DexieQueueStore(DB_NAME) },
     });
     try {
@@ -153,12 +156,11 @@ describe("the queue survives a real cut and a reload, then drains", () => {
     }
 
     // -- The reload. Same database, new page, new store instance. --------
-    // The second page opens with the restored signal: a real probe to a real,
-    // reliably answering endpoint, so "the network came back" does not depend
-    // on a public explorer's rate window. The cut above was the real dead
-    // endpoint; this is the real return.
+    // The signal comes back by construction, before the second page starts,
+    // so the drain is triggered by the signal change and nothing else.
+    reachable = true;
     const pageTwo = createWire({
-      signal: { probe: httpProbe("https://example.com", 5_000) },
+      signal: { probe, intervalMs: 1_000 },
       queue: { store: new DexieQueueStore(DB_NAME) },
     });
     const delivered: DeliveryResult[] = [];
@@ -189,6 +191,10 @@ describe("the queue survives a real cut and a reload, then drains", () => {
       );
       expect(delivered.slice(0, 3).map((result) => result.id)).toEqual(
         queued.ids,
+      );
+      // The drain happened once: no item was delivered twice.
+      expect(new Set(delivered.map((result) => result.id)).size).toBe(
+        delivered.length,
       );
       expect(deliveredIds.size).toBeGreaterThanOrEqual(3);
       expect(await pageTwo.pending()).toEqual([]);
@@ -283,7 +289,10 @@ describe("the queue's bookkeeping, unit rigs with an honest stub", () => {
     const outbox = new Outbox({
       store,
       deliver: async (to, bytes) => {
-        seen.push({ to: { ...to } as Destination, bytes: new TextDecoder().decode(bytes) });
+        seen.push({
+          to: { ...to } as Destination,
+          bytes: new TextDecoder().decode(bytes),
+        });
         return { status: "delivered" };
       },
       isOnline: () => online,
