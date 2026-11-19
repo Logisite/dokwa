@@ -33,5 +33,10 @@ export {
   type ChainOptions,
   type ChainRequest,
 } from "./chain.ts";
-export type { PeerSignal, PeerSignaller, PeerOptions, PeerState } from "./peer.ts";
+export type {
+  PeerSignal,
+  PeerSignaller,
+  PeerOptions,
+  PeerState,
+} from "./peer.ts";
 export type { RelayOptions, RelayState } from "./relay.ts";

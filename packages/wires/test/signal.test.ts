@@ -49,7 +49,10 @@ describe("the probe, against the real network", () => {
 
 describe("the signal's answer and its change", () => {
   it("says false while the endpoint is dead and says so on subscribe", async () => {
-    const signal = createSignal({ probe: httpProbe(DEAD_ENDPOINT, 2_000), intervalMs: 5_000 });
+    const signal = createSignal({
+      probe: httpProbe(DEAD_ENDPOINT, 2_000),
+      intervalMs: 5_000,
+    });
     signal.start();
     try {
       const answers: boolean[] = [];

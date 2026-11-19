@@ -73,7 +73,8 @@ async function waitForOnline(
 ): Promise<void> {
   const started = Date.now();
   while (!wire.isOnline()) {
-    if (Date.now() - started > timeoutMs) throw new Error("signal never came up");
+    if (Date.now() - started > timeoutMs)
+      throw new Error("signal never came up");
     await sleep(250);
   }
 }
@@ -187,7 +188,11 @@ describe("the queue survives a real cut and a reload, then drains", () => {
       // Checkable from outside this process: each drained receipt is really
       // on the relay. Ask for every id and require the event back.
       for (const eventId of queued.eventIds) {
-        const verified = await pageTwo.verifyRelay(WORKING_RELAY, eventId, 20_000);
+        const verified = await pageTwo.verifyRelay(
+          WORKING_RELAY,
+          eventId,
+          20_000,
+        );
         expect(verified).toEqual({ status: "delivered" });
       }
       console.log("[queue] drained event ids:", queued.eventIds.join(" "));
@@ -226,7 +231,12 @@ describe("the queue's bookkeeping, unit rigs with an honest stub", () => {
     expect(sent).toEqual({ status: "failed", reason: "rejected" });
     expect(await outbox.pending()).toEqual([]);
     expect(results).toEqual([
-      { id: expect.any(String), to: { kind: "relay", url: "wss://any.relay" }, status: "failed", reason: "rejected" },
+      {
+        id: expect.any(String),
+        to: { kind: "relay", url: "wss://any.relay" },
+        status: "failed",
+        reason: "rejected",
+      },
     ]);
   });
 

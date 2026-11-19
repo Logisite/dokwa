@@ -21,11 +21,7 @@ import {
   type DeliveryResult,
   type QueueStore,
 } from "./queue.ts";
-import {
-  Peers,
-  type PeerSignaller,
-  type PeerState,
-} from "./peer.ts";
+import { Peers, type PeerSignaller, type PeerState } from "./peer.ts";
 import { Relays, type RelayState } from "./relay.ts";
 import { createSignal, type Probe, type SignalOptions } from "./signal.ts";
 
@@ -35,7 +31,12 @@ export interface WireOptions {
   /** Timeout for chain requests, relay OKs and peer openings. */
   timeoutMs?: number;
   chain?: { signet?: string; timeoutMs?: number; fetch?: typeof fetch };
-  queue?: { dbName?: string; store?: QueueStore; baseBackoffMs?: number; maxBackoffMs?: number };
+  queue?: {
+    dbName?: string;
+    store?: QueueStore;
+    baseBackoffMs?: number;
+    maxBackoffMs?: number;
+  };
   signal?: SignalOptions & { probe?: Probe };
   peer?: {
     signaller?: PeerSignaller;
@@ -211,4 +212,3 @@ export function createWire(options: WireOptions = {}): WireHandle {
 
   return handle;
 }
-

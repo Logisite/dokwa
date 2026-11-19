@@ -157,9 +157,11 @@ export class Outbox {
 
   async pending(): Promise<Pending[]> {
     const items = await this.store.all();
-    return items
-      .sort(compare)
-      .map(({ id, to, queuedAt }) => ({ id, to: { ...to } as Destination, queuedAt }));
+    return items.sort(compare).map(({ id, to, queuedAt }) => ({
+      id,
+      to: { ...to } as Destination,
+      queuedAt,
+    }));
   }
 
   /**

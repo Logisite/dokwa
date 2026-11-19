@@ -10,7 +10,12 @@
 
 import { finalizeEvent, generateSecretKey, getPublicKey } from "nostr-tools";
 import type { Destination, Sent } from "@dokwa/core";
-import { createWire, type PeerSignal, type PeerSignaller, type WireHandle } from "@dokwa/wires";
+import {
+  createWire,
+  type PeerSignal,
+  type PeerSignaller,
+  type WireHandle,
+} from "@dokwa/wires";
 
 const RELAY = "wss://nos.lol";
 const SIGNALLING_KIND = 25050; // ephemeral: no relay needs to keep these
@@ -28,7 +33,9 @@ type SignallingListener = (from: string, signal: PeerSignal) => void;
 const listeners = new Set<SignallingListener>();
 
 function relayFrame(kind: unknown, payload: unknown): Uint8Array {
-  return encoder.encode(JSON.stringify(kind === "EVENT" ? ["EVENT", payload] : [kind, payload]));
+  return encoder.encode(
+    JSON.stringify(kind === "EVENT" ? ["EVENT", payload] : [kind, payload]),
+  );
 }
 
 async function publishSignal(to: string, signal: PeerSignal): Promise<void> {
@@ -74,12 +81,18 @@ wire
       JSON.stringify([
         "REQ",
         `dokwa-testbed-${myPubkey.slice(0, 8)}`,
-        { kinds: [SIGNALLING_KIND], "#p": [myPubkey], since: Math.floor(Date.now() / 1000) - 60 },
+        {
+          kinds: [SIGNALLING_KIND],
+          "#p": [myPubkey],
+          since: Math.floor(Date.now() / 1000) - 60,
+        },
       ]),
     ),
   )
   .then((sent: Sent) => log(`signalling subscription: ${JSON.stringify(sent)}`))
-  .catch((error: unknown) => log(`signalling subscription failed: ${String(error)}`));
+  .catch((error: unknown) =>
+    log(`signalling subscription failed: ${String(error)}`),
+  );
 
 wire.onBytes((from: Destination, bytes: Uint8Array) => {
   if (from.kind === "relay") {
@@ -93,9 +106,13 @@ wire.onBytes((from: Destination, bytes: Uint8Array) => {
     }
     if (!Array.isArray(frame) || frame[0] !== "EVENT") return;
     const event = frame[frame.length - 1] as
-      | { kind?: unknown; content?: unknown; pubkey?: unknown }
-      | undefined;
-    if (!event || event.kind !== SIGNALLING_KIND || typeof event.content !== "string") return;
+      { kind?: unknown; content?: unknown; pubkey?: unknown } | undefined;
+    if (
+      !event ||
+      event.kind !== SIGNALLING_KIND ||
+      typeof event.content !== "string"
+    )
+      return;
     let signal: PeerSignal;
     try {
       signal = JSON.parse(event.content) as PeerSignal;
@@ -162,7 +179,8 @@ const api = {
   myPubkey,
   wire,
   async connectTo(id: string): Promise<void> {
-    if (!id || id.startsWith('"')) throw new Error("peer id is not a bare hex pubkey");
+    if (!id || id.startsWith('"'))
+      throw new Error("peer id is not a bare hex pubkey");
     log(`connecting to ${id.slice(0, 8)}`);
     await wire.send({ kind: "peer", id }, encoder.encode("")); // opens the link
     log("connect send answered");

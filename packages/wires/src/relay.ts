@@ -170,11 +170,7 @@ class Connection {
         // that answer the shape loosely, so scan the frame for it.
         for (const slot of frame) {
           const event = slot as { id?: unknown } | null;
-          if (
-            event &&
-            typeof event === "object" &&
-            event.id === eventId
-          ) {
+          if (event && typeof event === "object" && event.id === eventId) {
             finish({ status: "delivered" });
             return;
           }
@@ -316,7 +312,9 @@ class Connection {
           if (typeof id === "string" && typeof accepted === "boolean") {
             const message = typeof frame[3] === "string" ? frame[3] : "";
             if (!accepted && message) {
-              console.warn(`relay ${this.url} refused ${id.slice(0, 16)}: ${message}`);
+              console.warn(
+                `relay ${this.url} refused ${id.slice(0, 16)}: ${message}`,
+              );
             }
             this.resolvePending(
               id,
@@ -403,7 +401,8 @@ export class Relays {
   send(url: string, bytes: Uint8Array): Promise<Sent> {
     const text = decoder.decode(bytes);
     const frame = parseFrame(text);
-    if (!frame) return Promise.resolve({ status: "failed", reason: "rejected" });
+    if (!frame)
+      return Promise.resolve({ status: "failed", reason: "rejected" });
     const type = frame[0];
     if (typeof type !== "string")
       return Promise.resolve({ status: "failed", reason: "rejected" });

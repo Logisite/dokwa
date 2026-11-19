@@ -83,7 +83,7 @@ export class Chain {
           request.method === "POST"
             ? { "content-type": "text/plain", accept: "*/*" }
             : { accept: "*/*" },
-        body: request.method === "POST" ? request.body ?? "" : undefined,
+        body: request.method === "POST" ? (request.body ?? "") : undefined,
         cache: "no-store",
         signal: controller.signal,
       });
