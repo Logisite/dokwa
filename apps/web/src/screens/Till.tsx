@@ -26,6 +26,7 @@ import {
   type TillHandle,
 } from "../lib/boot.ts";
 import { loadVenueName } from "../lib/mode.ts";
+import { newLinkId } from "../lib/seed.ts";
 
 const AMOUNTS = [1, 2, 5, 10, 20, 50];
 
@@ -55,10 +56,13 @@ export default function Till() {
   const [outgoingCode, setOutgoingCode] = useState<string | null>(null);
   const [incomingCode, setIncomingCode] = useState("");
   const codeServer = useRef<(() => void) | null>(null);
+  const linkId = useRef<string | null>(null);
 
   useEffect(() => {
     const nextTill = openTill();
-    const nextWire = createRoomWire(nextTill.identity);
+    const id = newLinkId(nextTill.identity.pubkey);
+    linkId.current = id;
+    const nextWire = createRoomWire(nextTill.identity, id);
     const stopServing = nextWire.signaller
       ? serveTillOverPeer({
           wire: nextWire.wire,
@@ -175,7 +179,10 @@ export default function Till() {
 
   function useCodeMode() {
     if (!wire || !till) return;
-    const signaller = createCodeSignaller(till.identity);
+    const signaller = createCodeSignaller(
+      till.identity,
+      linkId.current ?? undefined,
+    );
     wire.wire.setPeerSignaller(signaller);
     signaller.onCode(setOutgoingCode);
     codeServer.current?.();
@@ -278,7 +285,7 @@ export default function Till() {
               <CodeBox
                 text={encodeCode({
                   kind: "peer",
-                  id: till.identity.pubkey,
+                  id: linkId.current ?? till.identity.pubkey,
                   signal: "connect",
                 })}
                 label="The till's peer code"
@@ -286,7 +293,7 @@ export default function Till() {
               <Text type="code" wordBreak="break-all">
                 {encodeCode({
                   kind: "peer",
-                  id: till.identity.pubkey,
+                  id: linkId.current ?? till.identity.pubkey,
                   signal: "connect",
                 })}
               </Text>

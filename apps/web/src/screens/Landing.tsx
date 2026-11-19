@@ -105,6 +105,11 @@ export default function Landing() {
           No account. The key is the identity. A code is the money; a receipt is
           what was signed.
         </Text>
+        <Button
+          label="The test till"
+          variant="ghost"
+          onClick={() => navigate("/practice")}
+        />
       </VStack>
     </Page>
   );

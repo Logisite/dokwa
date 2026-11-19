@@ -23,6 +23,8 @@ export const DEFAULT_SIGNALLING_RELAY = "wss://nos.lol";
 export interface RelaySignallerOptions {
   wire: Wire;
   identity: Identity;
+  /** the caller-chosen link id: identity plus a per-connection nonce */
+  selfId?: string;
   relay?: string;
 }
 
@@ -40,9 +42,10 @@ export function createRelaySignaller(
   options: RelaySignallerOptions,
 ): RelaySignaller {
   const { wire, identity } = options;
+  const id = options.selfId ?? identity.pubkey;
   const relay = options.relay ?? DEFAULT_SIGNALLING_RELAY;
-  const id = identity.pubkey;
-  const subscription = `dokwa-signal-${id.slice(0, 8)}`;
+  const devicePubkey = identity.pubkey;
+  const subscription = `dokwa-signal-${devicePubkey.slice(0, 8)}`;
   const listeners = new Set<Listener>();
   let settle: (() => void) | null = null;
   const ready = new Promise<void>((resolve) => {
@@ -61,7 +64,7 @@ export function createRelaySignaller(
     subscription,
     {
       kinds: [SIGNALLING_KIND],
-      "#p": [id],
+      "#p": [devicePubkey],
       since: Math.floor(Date.now() / 1000) - 60,
     },
   ]);
@@ -94,25 +97,36 @@ export function createRelaySignaller(
       event.kind !== SIGNALLING_KIND ||
       typeof event.content !== "string" ||
       typeof event.pubkey !== "string" ||
-      event.pubkey === id
+      event.pubkey === identity.pubkey
     ) {
       return;
     }
     const tagged = Array.isArray(event.tags)
       ? event.tags.some(
-          (tag) => Array.isArray(tag) && tag[0] === "p" && tag[1] === id,
+          (tag) =>
+            Array.isArray(tag) && tag[0] === "p" && tag[1] === devicePubkey,
         )
       : false;
     if (!tagged) return;
     const signed = event as Parameters<typeof verifyEvent>[0];
     if (!verifyEvent(signed)) return;
-    let signal: PeerSignal;
+    let envelope: { sender: string; signal: PeerSignal };
     try {
-      signal = JSON.parse(event.content) as PeerSignal;
+      envelope = JSON.parse(event.content) as typeof envelope;
     } catch {
       return;
     }
-    for (const listener of [...listeners]) listener(event.pubkey, signal);
+    if (
+      !envelope ||
+      typeof envelope.sender !== "string" ||
+      !envelope.signal ||
+      typeof envelope.signal.type !== "string"
+    ) {
+      return;
+    }
+    for (const listener of [...listeners]) {
+      listener(envelope.sender, envelope.signal);
+    }
   });
 
   // The relay confirms with EOSE, not with the send's `delivered`. A timeout
@@ -126,8 +140,8 @@ export function createRelaySignaller(
       const event = signEvent(identity, {
         kind: SIGNALLING_KIND,
         created_at: Math.floor(Date.now() / 1000),
-        tags: [["p", to]],
-        content: JSON.stringify(signal),
+        tags: [["p", to.split(":")[0] ?? to]],
+        content: JSON.stringify({ sender: id, signal }),
       });
       const sent = await wire.send(
         { kind: "relay", url: relay },

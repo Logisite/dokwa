@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router";
 import { UpdatePrompt } from "./components/UpdatePrompt.tsx";
 import FieldTest from "./screens/FieldTest.tsx";
 import Landing from "./screens/Landing.tsx";
+import PracticeScreen from "./screens/Practice.tsx";
 import Records from "./screens/Records.tsx";
 import Scan from "./screens/Scan.tsx";
 import Till from "./screens/Till.tsx";
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/till" element={<Till />} />
         <Route path="/till/setup" element={<TillSetup />} />
         <Route path="/records" element={<Records />} />
+        <Route path="/practice" element={<PracticeScreen />} />
         <Route path="/scan" element={<Scan />} />
         <Route path="/wallet" element={<Wallet />} />
         <Route path="/wallet/setup" element={<WalletSetup />} />

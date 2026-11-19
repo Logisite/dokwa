@@ -11,12 +11,6 @@ import { encodeCode, parseCode, type Unsubscribe } from "@dokwa/core";
 import type { Identity } from "@dokwa/keys";
 import type { PeerSignal, PeerSignaller } from "@dokwa/wires";
 
-/** The sender's id rides in the code, because the code's `id` names its target. */
-interface CodePayload {
-  pubkey: string;
-  signal: PeerSignal;
-}
-
 export interface CodeSignaller extends PeerSignaller {
   readonly id: string;
   /** called with the code to hand to the other device when a signal is ready */
@@ -25,15 +19,24 @@ export interface CodeSignaller extends PeerSignaller {
   deliver(code: string): boolean;
 }
 
-export function createCodeSignaller(identity: Identity): CodeSignaller {
+/** The sender's link id rides in the code, because `id` names its target. */
+interface CodePayload {
+  sender: string;
+  signal: PeerSignal;
+}
+
+export function createCodeSignaller(
+  identity: Identity,
+  selfId = identity.pubkey,
+): CodeSignaller {
   const signals = new Set<(from: string, signal: PeerSignal) => void>();
   const codes = new Set<(code: string) => void>();
 
   return {
-    id: identity.pubkey,
+    id: selfId,
 
     async send(to, signal) {
-      const payload: CodePayload = { pubkey: identity.pubkey, signal };
+      const payload: CodePayload = { sender: selfId, signal };
       const code = encodeCode({
         kind: "peer",
         id: to,
@@ -67,14 +70,14 @@ export function createCodeSignaller(identity: Identity): CodeSignaller {
       }
       if (
         !payload ||
-        typeof payload.pubkey !== "string" ||
+        typeof payload.sender !== "string" ||
         !payload.signal ||
         typeof payload.signal.type !== "string"
       ) {
         return false;
       }
       for (const handler of [...signals]) {
-        handler(payload.pubkey, payload.signal);
+        handler(payload.sender, payload.signal);
       }
       return true;
     },

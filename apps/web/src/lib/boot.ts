@@ -72,7 +72,11 @@ export interface RoomWire {
 }
 
 /** One wire for the page. With an identity it also carries a peer signaller. */
-export function createRoomWire(identity?: Identity): RoomWire {
+export function createRoomWire(
+  identity?: Identity,
+  /** caller-chosen per-link id: identity plus a nonce */
+  selfId?: string,
+): RoomWire {
   // A cross-origin probe that 429s or lacks CORS makes the outbox hold every
   // signalling event behind a false "offline". Probe this origin: if the app
   // itself is serving, attempts go out and a real relay failure is reported
@@ -81,10 +85,19 @@ export function createRoomWire(identity?: Identity): RoomWire {
     signal: { probe: httpProbe("/probe.txt") },
     // One code carries the SDP and its candidates. Trickle ICE would emit a
     // second code per candidate and the last one would hide the offer.
-    peer: { iceGathering: "complete" },
+    // A human carrying the offer and answer is inside this clock, so the
+    // default 15 seconds would destroy the peer before the answer arrives.
+    peer: {
+      iceGathering: "complete",
+      connectTimeoutMs: 300_000,
+      // The till's answer arrived with only an mDNS host candidate; five
+      // seconds was not enough for STUN to answer here. Give it time so the
+      // two sides can pair a server-reflexive candidate as well.
+      iceGatheringTimeoutMs: 15_000,
+    },
   });
   const signaller = identity
-    ? createRelaySignaller({ wire, identity })
+    ? createRelaySignaller({ wire, identity, selfId })
     : undefined;
   if (signaller) wire.setPeerSignaller(signaller);
   return {

@@ -50,6 +50,16 @@ export function loadSeed(role: string): LoadedSeed {
   return { seed, created: true };
 }
 
+/**
+ * A caller-chosen link identity. The device key says who; the nonce says which
+ * connection, so a frame queued for an earlier link can never answer this one.
+ */
+export function newLinkId(pubkey: string): string {
+  const bytes = new Uint8Array(6);
+  globalThis.crypto.getRandomValues(bytes);
+  return `${pubkey}:${toHex(bytes)}`;
+}
+
 /** True when this origin already knows the role, without creating one. */
 export function hasSeed(role: string): boolean {
   return globalThis.localStorage.getItem(PREFIX + role) !== null;

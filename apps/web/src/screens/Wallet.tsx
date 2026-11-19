@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { parseCode } from "@dokwa/core";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
@@ -23,20 +23,20 @@ import {
   type CodeSignaller,
 } from "../lib/code-signaller.ts";
 import { openWalletOverPeer } from "../lib/peer.ts";
+import { newLinkId } from "../lib/seed.ts";
 
 function sentence(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
 function tillIdFrom(text: string): string | null {
+  const valid = (value: string) => /^[0-9a-f]{64}(:[0-9a-f]+)?$/i.test(value);
   const trimmed = text.trim();
   if (trimmed.startsWith("dokwa:")) {
     const code = parseCode(trimmed);
-    return code?.kind === "peer" && /^[0-9a-f]{64}$/i.test(code.id)
-      ? code.id
-      : null;
+    return code?.kind === "peer" && valid(code.id) ? code.id : null;
   }
-  return /^[0-9a-f]{64}$/i.test(trimmed) ? trimmed : null;
+  return valid(trimmed) ? trimmed : null;
 }
 
 /**
@@ -48,6 +48,7 @@ export default function Wallet() {
   const navigate = useNavigate();
   const [wallet, setWallet] = useState<WalletHandle | null>(null);
   const [wire, setWire] = useState<RoomWire | null>(null);
+  const wireRef = useRef<RoomWire | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
   const [tillCode, setTillCode] = useState("");
   const [tillId, setTillId] = useState<string | null>(null);
@@ -58,6 +59,8 @@ export default function Wallet() {
   );
   const [outgoingCode, setOutgoingCode] = useState<string | null>(null);
   const [incomingCode, setIncomingCode] = useState("");
+  const [lastSignal, setLastSignal] = useState("none");
+  const sessionLinkId = useRef<string | null>(null);
   const [incoming, setIncoming] = useState("");
   const [sendAmount, setSendAmount] = useState("5");
   const [sent, setSent] = useState<string | null>(null);
@@ -72,6 +75,7 @@ export default function Wallet() {
     let live = true;
     setWallet(next);
     setWire(nextWire);
+    wireRef.current = nextWire;
     void next.wallet
       .balance()
       .then((held) => {
@@ -81,6 +85,7 @@ export default function Wallet() {
     return () => {
       live = false;
       nextWire.close();
+      wireRef.current?.close();
       next.store.close();
     };
   }, []);
@@ -112,17 +117,27 @@ export default function Wallet() {
     }
     setFailure(null);
     try {
+      // Reuse one id within this session so a reconnect drains the old queued
+      // frames onto the new channel. The codec ignores ids it did not issue
+      // (packages/wallet/test/peer.test.ts: "a stale frame with an unknown
+      // request id is ignored, not fatal"). A deliberate New link starts over.
+      const selfId = sessionLinkId.current ?? newLinkId(wallet.identity.pubkey);
+      sessionLinkId.current = selfId;
+      const activeWire = createRoomWire(wallet.identity, selfId);
+      wire?.close();
+      setWire(activeWire);
+      wireRef.current = activeWire;
       if (choice === "relay") {
-        await wire.signaller?.ready;
+        await activeWire.signaller?.ready;
       } else {
-        const signaller = createCodeSignaller(wallet.identity);
-        wire.wire.setPeerSignaller(signaller);
+        const signaller = createCodeSignaller(wallet.identity, selfId);
+        activeWire.wire.setPeerSignaller(signaller);
         signaller.onCode(setOutgoingCode);
         setCodeSignaller(signaller);
       }
       // A hand-carried offer and answer take longer than a relay round trip.
       const link = openWalletOverPeer(
-        wire.wire,
+        activeWire.wire,
         id,
         choice === "code" ? 300_000 : 60_000,
       );
@@ -147,6 +162,15 @@ export default function Wallet() {
     if (!codeSignaller?.deliver(incomingCode.trim())) {
       setFailure("that is not a peer code from the till");
       return;
+    }
+    try {
+      const code = parseCode(incomingCode.trim());
+      const payload = code?.kind === "peer" ? JSON.parse(code.signal) : null;
+      setLastSignal(
+        `${payload?.signal?.type ?? "?"} from ${payload?.sender ?? "?"}`,
+      );
+    } catch {
+      setLastSignal("delivered");
     }
     setIncomingCode("");
   }
@@ -261,6 +285,23 @@ export default function Wallet() {
                 />
                 <Button label="By code" onClick={() => void connect("code")} />
               </HStack>
+              <Button
+                label="New link"
+                variant="ghost"
+                onClick={() => {
+                  sessionLinkId.current = null;
+                  setTillId(null);
+                  setConnected(false);
+                  setOutgoingCode(null);
+                  setLastSignal("none");
+                  setNote("A fresh link starts with the next connect.");
+                }}
+              />
+              <Text type="supporting" textWrap="pretty">
+                Reconnects reuse this link. Old frames drain onto the new
+                channel and the codec ignores request ids it did not issue;
+                packages/wallet/test/peer.test.ts pins that behaviour.
+              </Text>
             </>
           ) : null}
           {mode === "code" && !connected ? (
@@ -356,6 +397,7 @@ export default function Wallet() {
 
       <HStack justify="between" align="center" gap={3}>
         <Text type="supporting">peer: {peerState}</Text>
+        <Text type="supporting">signal: {lastSignal}</Text>
         <Text type="supporting">queued: {pending}</Text>
       </HStack>
     </Page>
