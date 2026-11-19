@@ -6,5 +6,8 @@ export default defineConfig({
     // Under a full workspace run it can exceed vitest's 5s default; this is
     // a budget for the work, not a loosening of any assertion.
     testTimeout: 20_000,
+    // The standing two-worker cap, enforced even without a CLI flag.
+    maxWorkers: 2,
+    minWorkers: 1,
   },
 });
