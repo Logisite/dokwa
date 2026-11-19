@@ -243,23 +243,20 @@ export function openWallet(options: WalletOptions): Wallet {
     proofs: StoredProof[],
     memo?: string,
   ): Promise<string> {
-    // the contract's token row: the standard cashu token string as a cashu:
-    // URI. The encoder produces the cashuB payload; the scheme is ours to
-    // prefix, and every decoder we use accepts it.
-    return (
-      "cashu:" +
-      getEncodedToken({
-        mint: mintName(),
-        unit: await unit(),
-        memo,
-        proofs: proofs.map((p) => ({
-          id: p.id,
-          amount: Amount.from(p.amount),
-          secret: p.secret,
-          C: p.C,
-        })),
-      })
-    );
+    // the contract's token row, as corrected: the string is exactly what
+    // cashu-ts encodes; the cashu: URI wrapper is added by whoever renders a
+    // code or a link, not by the wallet
+    return getEncodedToken({
+      mint: mintName(),
+      unit: await unit(),
+      memo,
+      proofs: proofs.map((p) => ({
+        id: p.id,
+        amount: Amount.from(p.amount),
+        secret: p.secret,
+        C: p.C,
+      })),
+    });
   }
 
   return {
