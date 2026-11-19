@@ -83,6 +83,15 @@ export interface Wallet {
     amount: number,
     memo?: string,
   ): Promise<{ token: string; sent: StoredProof[] }>;
+  /**
+   * NUT-05 cash out: select coins covering the payout plus the fee reserve,
+   * blind the change, melt at the till, hold the change, return the txid.
+   */
+  cashOut(
+    amount: number,
+    address: string,
+    options?: { feeReserve?: number },
+  ): Promise<{ txid: string }>;
   /** whether a token is still good, asked without spending it */
   check(token: string): Promise<TokenCheck>;
 }
@@ -372,6 +381,100 @@ export function openWallet(options: WalletOptions): Wallet {
       await store.putProofs(changeProofs);
       await store.removeProofs(selected.map((p) => p.secret));
       return { token: await toToken(sentProofs, memo), sent: sentProofs };
+    },
+
+    async cashOut(
+      amount: number,
+      address: string,
+      options: { feeReserve?: number } = {},
+    ): Promise<{ txid: string }> {
+      if (!Number.isSafeInteger(amount) || amount <= 0)
+        throw new Error("wallet: a payout is a positive whole number of sats");
+      if (!address || typeof address !== "string")
+        throw new Error("wallet: a payout needs an address to go to");
+      // The chain wallet pays the real broadcast fee. The reserve is the
+      // ceiling the inputs must cover; a wallet that cannot cover it is
+      // refused in a sentence instead of asking the till to pay what it has.
+      const feeReserve = options.feeReserve ?? 250;
+      if (!Number.isSafeInteger(feeReserve) || feeReserve <= 0)
+        throw new Error(
+          "wallet: the fee reserve is a positive whole number of sats",
+        );
+      const held = (await store.allProofs()).sort(
+        (a, b) => b.amount - a.amount,
+      );
+      const selected: StoredProof[] = [];
+      let selectedSum = 0;
+      const needed = amount + feeReserve;
+      for (const proof of held) {
+        if (selectedSum >= needed) break;
+        selected.push(proof);
+        selectedSum += proof.amount;
+      }
+      if (selectedSum < needed)
+        throw new Error(
+          `wallet: a ${amount} sat payout plus a ${feeReserve} sat fee reserve needs ${needed} sats, and this wallet holds ${selectedSum}; the till cannot pay what is not here`,
+        );
+
+      // blind the change now: the till spends the inputs and pays before it
+      // signs these, and this wallet is the only one that knows the secrets
+      const keyset = await activeKeyset();
+      const changeTotal = selectedSum - amount;
+      const wanted = splitAmount(changeTotal, keyset.keys).map((a) =>
+        a.toNumber(),
+      );
+      const blinded = wanted.map((changeAmount) => {
+        const secret = randomSecret();
+        const raw = blindMessage(utf8(secret));
+        return {
+          amount: changeAmount,
+          B_: raw.B_.toHex(true),
+          id: keyset.id,
+          r: raw.r,
+          secret,
+        };
+      });
+      const inputs: Proof[] = selected.map((p) => ({
+        id: p.id,
+        amount: p.amount,
+        secret: p.secret,
+        C: p.C,
+      }));
+      const outputs: BlindedMessage[] = blinded.map(
+        ({ amount: a, B_, id }) => ({
+          amount: a,
+          B_,
+          id,
+        }),
+      );
+      const result = await mint.melt(inputs, outputs, {
+        address,
+        amountSat: amount,
+        feeReserve,
+      });
+      // record-before-pay is the till's rule; after its answer the change
+      // lands here before the spent inputs are dropped
+      const changeProofs = blinded.map((b, i) => {
+        const sig = result.signatures[i]!;
+        const un = constructUnblindedSignature(
+          { C_: pointFromHex(sig.C_), id: sig.id },
+          b.r,
+          utf8(b.secret),
+          keyFor(keyset, b.amount),
+        );
+        return heldProof(
+          keyset,
+          b.amount,
+          b.secret,
+          un.C.toHex(true),
+          sig.dleq,
+          b.r,
+          now(),
+        );
+      });
+      await store.putProofs(changeProofs);
+      await store.removeProofs(selected.map((p) => p.secret));
+      return { txid: result.txid };
     },
 
     async check(token): Promise<TokenCheck> {

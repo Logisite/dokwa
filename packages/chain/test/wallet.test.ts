@@ -4,7 +4,7 @@ import {
   createChainWallet,
   type ChainWallet,
 } from "../src/wallet.ts";
-import { endpointStatus, refusing } from "./live.ts";
+import { endpointStatus, isEndpointFailure, refusing } from "./live.ts";
 
 const seed = new Uint8Array(32).fill(11);
 const otherSeed = new Uint8Array(32).fill(12);
@@ -115,7 +115,14 @@ describe("sync, the ruled exception", () => {
       ).rejects.toThrow(/could not reach/);
       return;
     }
-    const balance = await syncResilient(wallet, "the unfunded wallet", 3, true);
+    let balance;
+    try {
+      balance = await syncResilient(wallet, "the unfunded wallet", 3, true);
+    } catch (error) {
+      if (!isEndpointFailure(error)) throw error;
+      ctx.skip(`the sync could not reach the endpoint: ${String(error)}`);
+      return;
+    }
     expect(balance.confirmedSat).toBe(0);
     expect(balance.totalSat).toBe(0);
   }, 420_000);
