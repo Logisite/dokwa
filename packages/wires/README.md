@@ -69,10 +69,16 @@ chain interpreter; the endpoint is configuration because explorers move.
 bytes in and bytes out, no framing added. The receiver frames; a chunk may be
 split or merged by any other transport and that is still the receiver's job.
 The id is whatever both sides call each other; the room learns it from the
-code handshake and names the peer. Wires never signs, so signalling is an
-injection point: `setPeerSignaller({ send, onSignal })` carries offers,
-answers and ICE over whatever transport the key holder chooses, usually the
-same relay the app already publishes to.
+code handshake and names the peer. It is also **the link identity**: when one
+connection must be distinguished from another, the caller chooses a per-link
+id, for example the peer's public key plus a link nonce carried in the code.
+Wires keys the outbox, the peer record and `onBytes`'s `from` by that string,
+so a stale queued item for an old id can never reach a new channel, and two
+links with the same peer are two destinations. No second field is needed.
+Wires never signs, so signalling is an injection point:
+`setPeerSignaller({ send, onSignal })` carries offers, answers and ICE over
+whatever transport the key holder chooses, usually the same relay the app
+already publishes to.
 
 ## What wires never does
 
