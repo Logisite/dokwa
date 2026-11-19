@@ -13,15 +13,20 @@ const otherSeed = new Uint8Array(32).fill(12);
  * endpoints enforce: the 429 is the endpoint talking, not the code failing,
  * and the retry ceiling is loud, never silent.
  */
-async function syncResilient(wallet: ChainWallet, label: string, attempts = 3) {
+async function syncResilient(
+  wallet: ChainWallet,
+  label: string,
+  attempts = 3,
+  light = false,
+) {
   let last: unknown = null;
   for (let attempt = 0; attempt < attempts; attempt += 1) {
     try {
-      return await wallet.sync();
+      return light ? await wallet.syncLight() : await wallet.sync();
     } catch (error) {
       last = error;
       if (attempt < attempts - 1)
-        await new Promise((resolve) => setTimeout(resolve, 15_000));
+        await new Promise((resolve) => setTimeout(resolve, 65_000));
     }
   }
   throw new Error(
@@ -85,15 +90,18 @@ describe("deposit addresses", () => {
 
 describe("sync, the ruled exception", () => {
   it("syncs a fresh wallet against real signet and reports an honest zero", async () => {
-    // an unfunded seed, so the zero is honest and stays that way
+    // an unfunded seed, so the zero is honest and stays that way. The light
+    // sync refreshes only revealed addresses: it reveals one, then asks the
+    // chain about it, a handful of requests instead of a full scan
     const wallet = createChainWallet({
       seed: new Uint8Array(32).fill(0x5a),
-      endpoint: "https://mempool.space/signet/api",
+      endpoint: "https://blockstream.info/signet/api",
     });
-    const balance = await syncResilient(wallet, "the unfunded wallet");
+    wallet.newDepositAddress();
+    const balance = await syncResilient(wallet, "the unfunded wallet", 3, true);
     expect(balance.confirmedSat).toBe(0);
     expect(balance.totalSat).toBe(0);
-  }, 120_000);
+  }, 420_000);
 
   it("offline is loud: a dead endpoint refuses and nothing is shown as current", async () => {
     const wallet = createChainWallet({ seed, endpoint: "http://127.0.0.1:1" });

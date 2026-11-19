@@ -85,6 +85,8 @@ export interface ChainWallet {
    * reached; the balance it returns afterwards is current, never stale.
    */
   sync(): Promise<ChainBalance>;
+  /** a lighter refresh for revealed addresses only, for frequent calls */
+  syncLight(): Promise<ChainBalance>;
   /** what the last sync saw, without asking the chain again */
   balance(): ChainBalance;
   /** sign a payout; no bytes leave the device here */
@@ -190,7 +192,26 @@ export function createChainWallet(options: ChainWalletOptions): ChainWallet {
     async sync(): Promise<ChainBalance> {
       const esplora = new EsploraClient(endpoint, 1);
       try {
-        const update = await esplora.full_scan(wallet.start_full_scan(), 20, 5);
+        const update = await esplora.full_scan(wallet.start_full_scan(), 20, 2);
+        wallet.apply_update(update);
+        return syncBalance();
+      } catch (error) {
+        throw new Error(
+          `chain: the sync could not reach ${endpoint}; no balance is being shown as current. ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+          { cause: error },
+        );
+      }
+    },
+
+    async syncLight(): Promise<ChainBalance> {
+      const esplora = new EsploraClient(endpoint, 1);
+      try {
+        const update = await esplora.sync(
+          wallet.start_sync_with_revealed_spks(),
+          2,
+        );
         wallet.apply_update(update);
         return syncBalance();
       } catch (error) {

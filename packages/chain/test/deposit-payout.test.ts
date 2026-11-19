@@ -27,7 +27,7 @@ async function syncResilient(wallet: ChainWallet, label: string, attempts = 3) {
     } catch (error) {
       last = error;
       if (attempt < attempts - 1)
-        await new Promise((resolve) => setTimeout(resolve, 15_000));
+        await new Promise((resolve) => setTimeout(resolve, 65_000));
     }
   }
   throw new Error(
@@ -114,16 +114,20 @@ describe("a deposit and a payout, real signet", () => {
     expect(payer.hasTransaction(DEPOSIT_TXID)).toBe(true);
 
     // idempotent by design: real reruns must not broadcast what the wallet
-    // cannot afford, and a spent-down rig says so instead of failing
-    if (balance.trustedSpendableSat < 400) {
+    // cannot afford, and a spent-down rig says so instead of failing. The
+    // smallest p2wpkh output is the dust limit, 330 sats, and the wallet
+    // rightly refuses anything below it
+    const DUST = 330;
+    const FEE_ALLOWANCE = 250;
+    const amount = Math.min(500, balance.trustedSpendableSat - FEE_ALLOWANCE);
+    if (balance.trustedSpendableSat < DUST + FEE_ALLOWANCE || amount < DUST) {
       console.log(
         "RIG NOTE: the rig wallet is spent down to",
         balance.totalSat,
-        "sats; refill it via the faucet and rerun to broadcast again",
+        "sats; a payout would be below dust or unaffordable. Refill it via the faucet and rerun",
       );
       return;
     }
-    const amount = Math.min(500, balance.trustedSpendableSat - 300);
 
     // the receiver: another wallet, another seed, a real address
     const receiver = walletB();
@@ -157,5 +161,5 @@ describe("a deposit and a payout, real signet", () => {
     // and the payer's graph holds it too, minus the fee
     await payer.sync();
     expect(payer.hasTransaction(payout.txid)).toBe(true);
-  }, 120_000);
+  }, 420_000);
 });
