@@ -18,8 +18,13 @@ import {
   splitAmount,
   verifyMintSignatures,
 } from "@cashu/cashu-ts";
-import { secretToY, type BlindedMessage, type Proof } from "@dokwa/keys";
-import type { MintLink } from "./mint-link.ts";
+import {
+  secretToY,
+  type BlindedMessage,
+  type Proof,
+  type BlindedSignature,
+} from "@dokwa/keys";
+import type { MintLink, MintLinkQuote } from "./mint-link.ts";
 import type { StoredProof, WalletStore } from "./types.ts";
 
 export interface WalletOptions {
@@ -49,6 +54,25 @@ export interface Wallet {
   balance(): Promise<number>;
   /** what is held, largest first */
   proofs(): Promise<StoredProof[]>;
+  /**
+   * Ask the till for value: the NUT-04 quote request. The quote's `request`
+   * is what the patron is shown (cash at the till, an instruction), and it
+   * is the call that frames over the peer channel for a cross-device patron.
+   */
+  requestQuote(input: {
+    amount: number;
+    description?: string;
+  }): Promise<MintLinkQuote & { amount: number }>;
+  /**
+   * Claim a quote once the operator has settled it: blind with this
+   * wallet's maths, ask the till to sign, unblind, hold. A quote already
+   * claimed is refused by the till, and this wallet stores nothing on a
+   * refusal.
+   */
+  receiveQuote(
+    quoteId: string,
+    options?: { waitMs?: number; pollMs?: number },
+  ): Promise<number>;
   /** take a token in: verify every proof, swap at the mint, hold the fresh ones */
   receive(token: string): Promise<number>;
   /**
@@ -157,9 +181,10 @@ export function openWallet(options: WalletOptions): Wallet {
     }
   }
 
-  async function swapToFresh(
-    inputs: Proof[],
+  /** Blind the outputs for these totals, sign through the given call, unblind. */
+  async function blindAndUnblind(
     totals: number[],
+    sign: (outputs: BlindedMessage[]) => Promise<BlindedSignature[]>,
   ): Promise<StoredProof[]> {
     const keyset = activeKeyset();
     const wanted = totals.flatMap((total) =>
@@ -181,7 +206,7 @@ export function openWallet(options: WalletOptions): Wallet {
       B_,
       id,
     }));
-    const sigs = await mint.swap(inputs, outputs);
+    const sigs = await sign(outputs);
     if (sigs.length !== blinded.length)
       throw new Error(
         "wallet: the mint returned the wrong number of signatures",
@@ -206,6 +231,13 @@ export function openWallet(options: WalletOptions): Wallet {
     });
   }
 
+  async function swapToFresh(
+    inputs: Proof[],
+    totals: number[],
+  ): Promise<StoredProof[]> {
+    return blindAndUnblind(totals, (outputs) => mint.swap(inputs, outputs));
+  }
+
   function toToken(proofs: StoredProof[], memo?: string): string {
     return getEncodedToken({
       mint: mintName(),
@@ -227,6 +259,55 @@ export function openWallet(options: WalletOptions): Wallet {
 
     async proofs(): Promise<StoredProof[]> {
       return (await store.allProofs()).sort((a, b) => b.amount - a.amount);
+    },
+
+    async requestQuote(input: {
+      amount: number;
+      description?: string;
+    }): Promise<MintLinkQuote> {
+      if (!Number.isSafeInteger(input.amount) || input.amount <= 0)
+        throw new Error("wallet: an amount is a positive whole number");
+      const quote = await mint.createQuote({
+        amount: input.amount,
+        ...(input.description ? { description: input.description } : {}),
+      });
+      return {
+        id: quote.id,
+        amount: quote.amount,
+        request: quote.request,
+        state: quote.state,
+        expiry: quote.expiry,
+      };
+    },
+
+    async receiveQuote(
+      quoteId: string,
+      options: { waitMs?: number; pollMs?: number } = {},
+    ): Promise<number> {
+      const waitMs = options.waitMs ?? 0;
+      const pollMs = options.pollMs ?? 2000;
+      const deadline = now() + waitMs;
+      let quote = await mint.readQuote(quoteId);
+      if (!quote)
+        throw new Error(`wallet: the till does not know quote ${quoteId}`);
+      while (quote.state === "UNPAID" && now() < deadline) {
+        await new Promise((resolve) => setTimeout(resolve, pollMs));
+        quote = (await mint.readQuote(quoteId)) ?? quote;
+      }
+      if (quote.state === "UNPAID")
+        throw new Error("wallet: the quote is not paid yet");
+      if (quote.state !== "PAID")
+        throw new Error(
+          `wallet: the quote is ${quote.state.toLowerCase()}, it cannot be claimed again`,
+        );
+      // the till claims the quote atomically: if two wallets race this, one
+      // gets the signatures and the other is refused, and nothing is stored
+      // on a refusal
+      const fresh = await blindAndUnblind([quote.amount], (outputs) =>
+        mint.mint(quoteId, outputs),
+      );
+      await store.putProofs(fresh);
+      return quote.amount;
     },
 
     async receive(token: string): Promise<number> {
