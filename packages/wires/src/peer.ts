@@ -195,9 +195,33 @@ export class Peers {
     this.unsubscribe = undefined;
     for (const record of this.records.values()) this.destroy(record.id);
     this.records.clear();
+    this.signalQueue.clear();
   }
 
-  private async handleSignal(from: string, signal: PeerSignal): Promise<void> {
+  /**
+   * Signals for one peer are applied one at a time. A relay can deliver two
+   * offers back to back, and both used to pass the duplicate check before
+   * either recorded a remote description; the second then answered a record
+   * already stable and the link died. Serialising per peer fixes the race
+   * without dropping any signal.
+   */
+  private handleSignal(from: string, signal: PeerSignal): Promise<void> {
+    const prior = this.signalQueue.get(from) ?? Promise.resolve();
+    const run = prior
+      .then(() => this.applySignal(from, signal))
+      .catch(() => {
+        // applySignal reports and cleans up its own failures.
+      });
+    this.signalQueue.set(from, run);
+    void run.finally(() => {
+      if (this.signalQueue.get(from) === run) this.signalQueue.delete(from);
+    });
+    return run;
+  }
+
+  private readonly signalQueue = new Map<string, Promise<void>>();
+
+  private async applySignal(from: string, signal: PeerSignal): Promise<void> {
     if (signal.type === "bye") {
       this.destroy(from);
       return;
