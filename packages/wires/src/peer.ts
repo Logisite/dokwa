@@ -204,8 +204,22 @@ export class Peers {
     }
 
     if (signal.type === "offer") {
-      let record = this.records.get(from);
-      if (!record) record = this.createRecord(from);
+      const existing = this.records.get(from);
+      // A signalling transport may replay an offer: a relay on reconnect, a
+      // queued event, a retried frame. Re-applying it rejects in a stable
+      // state and used to tear down a link that was already up. One offer per
+      // record is the contract here (no renegotiation), so a repeated offer
+      // on a record that has one is ignored, not fatal.
+      if (
+        existing &&
+        (existing.remoteSet || existing.channel?.readyState === "open")
+      ) {
+        console.warn(
+          `[wires:peer] ignoring a repeated offer from ${from.slice(0, 8)}`,
+        );
+        return;
+      }
+      const record = existing ?? this.createRecord(from);
       try {
         await record.pc.setRemoteDescription({
           type: "offer",
@@ -220,7 +234,13 @@ export class Peers {
           type: "answer",
           sdp: record.pc.localDescription?.sdp ?? answer.sdp ?? "",
         });
-      } catch {
+      } catch (error) {
+        // Destroying is right for a fresh offer that cannot be applied, but
+        // the reason must be visible rather than swallowed into "peer closed".
+        console.warn(
+          `[wires:peer] offer from ${from.slice(0, 8)} could not be applied:`,
+          (error as Error)?.message,
+        );
         this.destroy(from);
       }
       return;
@@ -230,6 +250,13 @@ export class Peers {
     if (!record) return;
 
     if (signal.type === "answer") {
+      if (record.remoteSet) {
+        // A replayed answer would reject in a stable state; ignore it.
+        console.warn(
+          `[wires:peer] ignoring a repeated answer from ${from.slice(0, 8)}`,
+        );
+        return;
+      }
       try {
         await record.pc.setRemoteDescription({
           type: "answer",
@@ -237,7 +264,11 @@ export class Peers {
         });
         record.remoteSet = true;
         await this.flushCandidates(record);
-      } catch {
+      } catch (error) {
+        console.warn(
+          `[wires:peer] answer from ${from.slice(0, 8)} could not be applied:`,
+          (error as Error)?.message,
+        );
         this.destroy(from);
       }
       return;
