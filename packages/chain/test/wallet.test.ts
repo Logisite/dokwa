@@ -60,7 +60,11 @@ describe("deposit addresses", () => {
 
 describe("sync, the ruled exception", () => {
   it("syncs a fresh wallet against real signet and reports an honest zero", async () => {
-    const wallet = createChainWallet({ seed });
+    // an unfunded seed, so the zero is honest and stays that way
+    const wallet = createChainWallet({
+      seed: new Uint8Array(32).fill(0x5a),
+      endpoint: "https://blockstream.info/signet/api",
+    });
     const balance = await wallet.sync();
     expect(balance.confirmedSat).toBe(0);
     expect(balance.totalSat).toBe(0);
