@@ -57,3 +57,36 @@ describe("deposit addresses", () => {
     ).not.toBe(createChainWallet({ seed }).newDepositAddress().address);
   });
 });
+
+describe("sync, the ruled exception", () => {
+  it("syncs a fresh wallet against real signet and reports an honest zero", async () => {
+    const wallet = createChainWallet({ seed });
+    const balance = await wallet.sync();
+    expect(balance.confirmedSat).toBe(0);
+    expect(balance.totalSat).toBe(0);
+  }, 90_000);
+
+  it("offline is loud: a dead endpoint refuses and nothing is shown as current", async () => {
+    const wallet = createChainWallet({ seed, endpoint: "http://127.0.0.1:1" });
+    await expect(wallet.sync()).rejects.toThrow(/could not reach/);
+  }, 45_000);
+
+  it("a payout with nothing to spend is refused by the wallet itself", () => {
+    const wallet = createChainWallet({ seed });
+    const deposit = wallet.newDepositAddress();
+    // no sync needed: an empty wallet knows it has no UTXOs
+    expect(() =>
+      wallet.preparePayout({ address: deposit.address, amountSat: 1000 }),
+    ).toThrow();
+  });
+
+  it("a payout cannot leave without a Wire, and says so", async () => {
+    const wallet = createChainWallet({ seed });
+    await expect(
+      wallet.sendPayout({
+        address: wallet.newDepositAddress().address,
+        amountSat: 1000,
+      }),
+    ).rejects.toThrow(/through a Wire/);
+  }, 45_000);
+});
