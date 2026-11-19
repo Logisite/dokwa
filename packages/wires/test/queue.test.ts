@@ -26,11 +26,12 @@
 import "file:///home/logisiteau/projects/hacks/dokwa-wt/wires/node_modules/.pnpm/fake-indexeddb@6.2.8/node_modules/fake-indexeddb/auto/index.mjs";
 import { describe, expect, it } from "vitest";
 import { finalizeEvent, generateSecretKey } from "nostr-tools";
-import type { Sent } from "@dokwa/core";
+import type { Destination, Sent } from "@dokwa/core";
 import {
   DexieQueueStore,
   MemoryQueueStore,
   Outbox,
+  destinationKey,
   type DeliveryResult,
   type QueueItem,
 } from "../src/queue.ts";
@@ -268,6 +269,44 @@ describe("the queue's bookkeeping, unit rigs with an honest stub", () => {
     expect(items[0]!.attempts).toBe(1);
     // The retry is scheduled for later, not run in a tight loop.
     expect(items[0]!.nextAttemptAt).toBeGreaterThan(Date.now());
+  });
+
+  it("a stale item for one peer id never reaches another", async () => {
+    // The room's failing case: a fresh link's request id starts at 1, and a
+    // stale queued answer from an earlier session must not resolve it. The
+    // link identity is the Destination id, caller-chosen, so two links to
+    // the same peer are two queues: a composite id with a nonce separates
+    // them without any seam change.
+    const store = new MemoryQueueStore();
+    const seen: Array<{ to: Destination; bytes: string }> = [];
+    let online = false;
+    const outbox = new Outbox({
+      store,
+      deliver: async (to, bytes) => {
+        seen.push({ to: { ...to } as Destination, bytes: new TextDecoder().decode(bytes) });
+        return { status: "delivered" };
+      },
+      isOnline: () => online,
+    });
+    const linkA: Destination = { kind: "peer", id: "tillpub:nonceA" };
+    const linkB: Destination = { kind: "peer", id: "tillpub:nonceB" };
+    expect(destinationKey(linkA)).not.toBe(destinationKey(linkB));
+
+    const a = await outbox.send(linkA, encoder.encode("A"));
+    expect(a).toEqual({ status: "later" });
+    online = true;
+    const b = await outbox.send(linkB, encoder.encode("B"));
+    expect(b).toEqual({ status: "delivered" });
+
+    const peerId = (to: Destination): string =>
+      to.kind === "peer" ? to.id : to.kind;
+    // B's first call reached B's own destination, and nothing else ran.
+    expect(seen.map((item) => peerId(item.to))).toEqual([linkB.id]);
+    expect(seen[0]!.bytes).toBe("B");
+    // The stale item is still queued for A's link, never delivered to B.
+    expect((await outbox.pending()).map((item) => peerId(item.to))).toEqual([
+      linkA.id,
+    ]);
   });
 
   it("a send racing a drain on the same destination delivers once", async () => {
