@@ -14,7 +14,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:layers": "node tools/check-layers.mjs",
-    "check": "pnpm lint && pnpm check:layers"
+    "check": "pnpm lint && pnpm check:layers",
+    "test:live": "pnpm -r --workspace-concurrency=2 --if-present run test:live"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
