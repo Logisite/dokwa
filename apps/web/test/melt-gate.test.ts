@@ -50,9 +50,9 @@ describe("the melt gate: real Wire, real till, real chain payer", () => {
         ctx.skip(`the payer sync could not reach ${ENDPOINT}: ${String(error)}`);
         return;
       }
-      if (before.trustedSpendableSat < PAYOUT) {
+      if (before.trustedSpendableSat < PAYOUT + 250) {
         ctx.skip(
-          `the payer holds ${before.trustedSpendableSat} sats, not enough for a ${PAYOUT} sat payout; refill it before rerunning the gate`,
+          `the payer holds ${before.trustedSpendableSat} sats, not enough for a ${PAYOUT} sat payout and its fee; refill it before rerunning the gate`,
         );
         return;
       }
