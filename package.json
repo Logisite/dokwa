@@ -7,6 +7,7 @@
     "dev": "pnpm --filter @dokwa/web dev",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
+    "test:live": "pnpm -r test:live",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint .",
     "board": "python3 board.py",

@@ -12,8 +12,8 @@
 
 import { describe, expect, it } from "vitest";
 import type { Destination, Pending, Replied, Sent, Wire } from "@dokwa/core";
-import { createChainWallet, type ChainWallet } from "../src/wallet.ts";
-import { endpointStatus, isEndpointFailure } from "./live.ts";
+import { createChainWallet, type ChainWallet } from "../../src/wallet.ts";
+import { endpointStatus, isEndpointFailure } from "../live.ts";
 
 const ENDPOINT = "https://blockstream.info/signet/api";
 const EXPLORER = "https://blockstream.info/signet";

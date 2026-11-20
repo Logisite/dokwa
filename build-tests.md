@@ -115,3 +115,11 @@ Rung 9 passing means the product works in a room: one machine, two roles, real t
 Rung 10 passing means it works in a hand.
 
 Anything less is a stage, honestly named. Rung 8 failing while 9 passes is a real outcome: a till that signs its own tokens and cashes out to the chain, with Lightning not yet there — and that is a product, not a failure.
+
+## 8. Which test command a gate runs
+
+The default suite is deterministic. `pnpm -r --workspace-concurrency=2 test` must pass with no skips except intentional ones; packages with live legs keep them in `test:live` and exclude them from `test`. For crypto that means `packages/chain/test/live` (descriptor, address and signing tests stay in `test`).
+
+`pnpm test:live` runs each package's `test:live` on purpose, before a gate, not through the default command. Its skips are allowed only as named facts about the world: a preflight that could not answer, an endpoint that refused, a funded rig that cannot cover a payout. `NODE_OPTIONS='--no-network-family-autoselection --dns-result-order=ipv4first'` is required on this host, which has no usable IPv6 route, and signet endpoints are configuration (`DOKWA_SIGNET_ENDPOINT`), defaulting to blockstream while mempool's IPv4 is down.
+
+Gate order: the deterministic suite green, then `pnpm test:live` with its log kept, then the browser run at phone size. A red in the default suite is code or a broken fixture. A named skip in the live suite is the world talking, and it is recorded with its URL and reason rather than hidden as a pass.

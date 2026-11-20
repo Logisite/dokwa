@@ -10,8 +10,8 @@
 
 import { describe, expect, it } from "vitest";
 import type { Destination, Pending, Replied, Sent, Wire } from "@dokwa/core";
-import { createChainWallet, type ChainWallet } from "../src/wallet.ts";
-import { endpointStatus, isEndpointFailure, refusing } from "./live.ts";
+import { createChainWallet, type ChainWallet } from "../../src/wallet.ts";
+import { endpointStatus, isEndpointFailure, refusing } from "../live.ts";
 
 // Configuration, not code: mempool's IPv4 is down on this host. The
 // endpoint is a parameter of every call in this rig; point it at the
