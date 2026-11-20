@@ -27,6 +27,13 @@ export type PeerSignal =
 export interface PeerSignaller {
   send(to: string, signal: PeerSignal): Promise<void>;
   onSignal(handler: (from: string, signal: PeerSignal) => void): Unsubscribe;
+  /**
+   * Optional: resolves when this signaller can receive replies, for example
+   * when its relay subscription has answered EOSE. The offer is not published
+   * before this settles, so an answer cannot arrive before the offerer is
+   * listening.
+   */
+  readonly ready?: Promise<void>;
 }
 
 export interface PeerOptions {
@@ -134,6 +141,10 @@ export class Peers {
       throw new Error("RTCPeerConnection is unavailable");
     }
     if (!this.signaller) throw new Error("no peer signaller");
+    // Publish only once the signaller can hear the reply. Without this the
+    // offer can go out before the REQ is live, the answer is missed, and ICE
+    // fails with no remote candidates.
+    if (this.signaller.ready) await this.signaller.ready;
 
     const existing = this.records.get(id);
     if (existing) {
