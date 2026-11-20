@@ -1,0 +1,48 @@
+{
+  "name": "dokwa",
+  "like": "neutral",
+  "mode": "both",
+  "settings": [
+    {
+      "thing": "accent",
+      "value": "#b86f1f",
+      "source": "dial"
+    },
+    {
+      "thing": "neutral",
+      "value": "#7d766a",
+      "source": "dial"
+    },
+    {
+      "thing": "corners",
+      "value": "large",
+      "source": "dial"
+    },
+    {
+      "thing": "text-size",
+      "value": "17",
+      "source": "dial"
+    },
+    {
+      "thing": "--color-background-body",
+      "value": "#faf7f2",
+      "source": "token",
+      "mode": "light"
+    },
+    {
+      "thing": "--color-background-body",
+      "value": "#171512",
+      "source": "token",
+      "mode": "dark"
+    },
+    {
+      "thing": "opacity",
+      "value": "0.65",
+      "source": "property",
+      "on": "button",
+      "state": "disabled"
+    }
+  ],
+  "lifted": [],
+  "palette": "a4f3c0be6e1143a1f474c3621c304432f596ad8877190abf76995ce86e179fdf"
+}

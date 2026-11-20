@@ -1,0 +1,13 @@
+The test till, clean run at 412x915 on the real browser.
+
+1. The till: tip quote 6497a241 settled, 4 sat held (balance 16); covered slip 2e1faa10; badge 48a047953e2706a5
+2. The rotation: old key 000b6797 notarised at 1795125343 and verified; fresh key f1d5bd55; badge 50b5eed095693f43
+3. The 2am key: sealed slip 5477c32d opened from the subject seed: this credential is a bearer token; badge 48d22267c943246d
+4. The race: one quote, two claims: 1 signed, 1 refused; winner balance 18; badge 4183302c6a46ff95
+5. The split: own seed reads "this half is yours", a stranger's seed returns null; badge 7952f4c1cb5c12d0
+6. The audit: no mechanism, named on the board
+7. The stall: no mechanism, named on the board
+8. The door: signet tip 331610 from a real chain request; door slip 7f8d2002; badge 52c4357d654d4772
+9. Two secrets: revocation note 4866d77c; 5 held proofs carry their own blinding factors, not the revocation key; badge b9d7e0e891dea411
+10. The quiet query: no mechanism, named on the board
+11. The anonymous issuer: badge a69e319b signed by c186afc8, unlinkable to the venue key fb585272; badge a69e319b9b7ac26a
