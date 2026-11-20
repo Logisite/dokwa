@@ -78,7 +78,10 @@ links with the same peer are two destinations. No second field is needed.
 Wires never signs, so signalling is an injection point:
 `setPeerSignaller({ send, onSignal })` carries offers, answers and ICE over
 whatever transport the key holder chooses, usually the same relay the app
-already publishes to. In the code path the connect clock runs from the offer
+already publishes to. `peer.iceServers` carries STUN and TURN; a network with
+no usable direct path needs a real TURN entry there, and
+`peer.iceTransportPolicy: "relay"` forces the TURN path so it can be proved
+rather than assumed. In the code path the connect clock runs from the offer
 being generated to the answer being applied, so set `peer.connectTimeoutMs`
 generously (minutes): the human carrying the code is inside that window, and
 the default suits a live relay, not a hand exchange.

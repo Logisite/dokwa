@@ -33,6 +33,11 @@ export interface PeerOptions {
   signaller?: PeerSignaller;
   iceServers?: RTCIceServer[];
   /**
+   * "all" (default) or "relay". Relay forces every candidate through a TURN
+   * server, which is how a TURN path is proved rather than assumed.
+   */
+  iceTransportPolicy?: RTCIceTransportPolicy;
+  /**
    * How long a data channel may take to open. In the code path the clock runs
    * from the offer being generated to the answer being applied, so a code
    * carried by hand needs minutes, not the relay default of seconds.
@@ -68,6 +73,9 @@ interface PeerRecord {
   settled: boolean;
   remoteSet: boolean;
   candidates: RTCIceCandidateInit[];
+  /** The offer this record answered, and the answer it sent. */
+  lastOfferSdp: string;
+  lastAnswerSdp: string;
 }
 
 const DEFAULT_ICE: RTCIceServer[] = [
@@ -230,17 +238,37 @@ export class Peers {
     if (signal.type === "offer") {
       const existing = this.records.get(from);
       // A signalling transport may replay an offer: a relay on reconnect, a
-      // queued event, a retried frame. Re-applying it rejects in a stable
-      // state and used to tear down a link that was already up. One offer per
-      // record is the contract here (no renegotiation), so a repeated offer
-      // on a record that has one is ignored, not fatal.
+      // queued event, a retried frame. An open record ignores repeats. A
+      // connecting record with the same offer resends its answer, because the
+      // first answer may simply have been lost; ignoring it would leave the
+      // caller stuck in connecting forever. A different offer is applied as
+      // a fresh one.
+      if (existing?.channel?.readyState === "open") {
+        console.warn(
+          `[wires:peer] ignoring a repeated offer on an open link from ${from.slice(0, 8)}`,
+        );
+        return;
+      }
       if (
         existing &&
-        (existing.remoteSet || existing.channel?.readyState === "open")
+        existing.remoteSet &&
+        existing.lastAnswerSdp &&
+        existing.lastOfferSdp === signal.sdp
       ) {
         console.warn(
-          `[wires:peer] ignoring a repeated offer from ${from.slice(0, 8)}`,
+          `[wires:peer] resending the answer for a repeated offer from ${from.slice(0, 8)}`,
         );
+        try {
+          await this.signaller?.send(from, {
+            type: "answer",
+            sdp: existing.lastAnswerSdp,
+          });
+        } catch (error) {
+          console.warn(
+            `[wires:peer] could not resend the answer to ${from.slice(0, 8)}:`,
+            (error as Error)?.message,
+          );
+        }
         return;
       }
       const record = existing ?? this.createRecord(from);
@@ -250,14 +278,14 @@ export class Peers {
           sdp: signal.sdp,
         });
         record.remoteSet = true;
+        record.lastOfferSdp = signal.sdp;
         await this.flushCandidates(record);
         const answer = await record.pc.createAnswer();
         await record.pc.setLocalDescription(answer);
         await this.settleIce(record.pc);
-        await this.signaller?.send(from, {
-          type: "answer",
-          sdp: record.pc.localDescription?.sdp ?? answer.sdp ?? "",
-        });
+        const answerSdp = record.pc.localDescription?.sdp ?? answer.sdp ?? "";
+        record.lastAnswerSdp = answerSdp;
+        await this.signaller?.send(from, { type: "answer", sdp: answerSdp });
       } catch (error) {
         // Destroying is right for a fresh offer that cannot be applied, but
         // the reason must be visible rather than swallowed into "peer closed".
@@ -328,6 +356,7 @@ export class Peers {
   private createRecord(id: string): PeerRecord {
     const pc = new RTCPeerConnection({
       iceServers: this.options.iceServers ?? DEFAULT_ICE,
+      iceTransportPolicy: this.options.iceTransportPolicy,
     });
     let resolveReady!: (channel: RTCDataChannel) => void;
     let rejectReady!: (error: Error) => void;
@@ -351,6 +380,8 @@ export class Peers {
       settled: false,
       remoteSet: false,
       candidates: [],
+      lastOfferSdp: "",
+      lastAnswerSdp: "",
     };
     this.records.set(id, record);
     this.emit(id, "connecting");

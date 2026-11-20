@@ -39,6 +39,7 @@ class FakeChannel {
 
 class FakePeerConnection {
   static rejectNextRemote = false;
+  static autoOpen = true;
   localDescription: { type: string; sdp: string } | null = null;
   remoteDescription: { type: string; sdp: string } | null = null;
   signalingState = "stable";
@@ -102,6 +103,7 @@ class FakePeerConnection {
     // The platform brings the channel up just after the description lands:
     // the offerer opens the one it created, the answerer receives one.
     setTimeout(() => {
+      if (!FakePeerConnection.autoOpen) return;
       if (description.type === "offer") {
         if (!this.channel) return;
         this.channel.readyState = "open";
@@ -121,6 +123,8 @@ class FakePeerConnection {
 }
 
 afterEach(() => {
+  FakePeerConnection.autoOpen = true;
+  FakePeerConnection.rejectNextRemote = false;
   vi.unstubAllGlobals();
 });
 
@@ -312,12 +316,59 @@ describe("the peer link's state, on a stubbed platform", () => {
       deliver!("wallet", offer);
       await new Promise((r) => setTimeout(r, 40));
       expect(warnings.join(" | ")).not.toContain("could not be applied");
-      expect(answers.filter((signal) => signal.type === "answer")).toHaveLength(
-        1,
-      );
-      expect(states).toEqual(["connecting", "open"]);
+      // One answer, or one plus the safety resend if the second copy was
+      // processed before the channel opened.
+      expect(
+        answers.filter((signal) => signal.type === "answer").length,
+      ).toBeGreaterThanOrEqual(1);
+      expect(states).toContain("open");
+      expect(states).not.toContain("closed");
     } finally {
       spy.mockRestore();
+      peers.close();
+    }
+  });
+
+  it("resends the answer when a repeated offer arrives on a connecting link", async () => {
+    // Model the room's failure: the first answer is lost in signalling, the
+    // channel never opens, and the caller retries with the same offer. The
+    // old guard ignored it forever; now the answer is sent again.
+    vi.stubGlobal("RTCPeerConnection", FakePeerConnection);
+    FakePeerConnection.autoOpen = false;
+    let deliver: ((from: string, signal: PeerSignal) => void) | null = null;
+    const answers: PeerSignal[] = [];
+    const states: string[] = [];
+    const peers = new Peers(
+      {
+        signaller: {
+          async send(_to, signal) {
+            answers.push(signal);
+          },
+          onSignal(handler) {
+            deliver = handler;
+            return () => {
+              deliver = null;
+            };
+          },
+        },
+      },
+      () => {},
+    );
+    peers.onState((_id, state) => states.push(state));
+    try {
+      const offer: PeerSignal = {
+        type: "offer",
+        sdp: "v=0\r\no=- 0 0 IN IP4 127.0.0.1\r\n",
+      };
+      deliver!("wallet", offer);
+      await new Promise((r) => setTimeout(r, 20));
+      deliver!("wallet", offer);
+      await new Promise((r) => setTimeout(r, 20));
+      expect(answers.filter((signal) => signal.type === "answer")).toHaveLength(
+        2,
+      );
+      expect(states).not.toContain("closed");
+    } finally {
       peers.close();
     }
   });
