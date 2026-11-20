@@ -329,6 +329,40 @@ describe("the peer link's state, on a stubbed platform", () => {
     }
   });
 
+  it("does not publish the offer before the signaller is ready", async () => {
+    vi.stubGlobal("RTCPeerConnection", FakePeerConnection);
+    let releaseReady: () => void = () => {};
+    const ready = new Promise<void>((resolve) => {
+      releaseReady = resolve;
+    });
+    const offers: PeerSignal[] = [];
+    const peers = new Peers(
+      {
+        signaller: {
+          ready,
+          async send(_to, signal) {
+            if (signal.type === "offer") offers.push(signal);
+          },
+          onSignal() {
+            return () => {};
+          },
+        },
+      },
+      () => {},
+    );
+    try {
+      const sending = peers.send("till", encoder.encode("x"));
+      await new Promise((r) => setTimeout(r, 20));
+      expect(offers).toHaveLength(0);
+      releaseReady();
+      const sent = await sending;
+      expect(sent).toEqual({ status: "delivered" });
+      expect(offers).toHaveLength(1);
+    } finally {
+      peers.close();
+    }
+  });
+
   it("resends the answer when a repeated offer arrives on a connecting link", async () => {
     // Model the room's failure: the first answer is lost in signalling, the
     // channel never opens, and the caller retries with the same offer. The
