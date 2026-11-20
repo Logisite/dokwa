@@ -75,7 +75,7 @@ describe("the melt gate: real Wire, real till, real chain payer", () => {
       // real ecash from the real mint: a quote, the operator settles it,
       // the wallet blinds and claims it
       const quote = await wallet.requestQuote({ amount: 1000 });
-      mint.settle(quote.id);
+      await mint.settle(quote.id);
       expect(await wallet.receiveQuote(quote.id)).toBe(1000);
       const spentInputs = (await wallet.proofs()).map((p) => secretToY(p.secret));
 
