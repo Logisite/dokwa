@@ -33,6 +33,11 @@ export interface PeerOptions {
   signaller?: PeerSignaller;
   iceServers?: RTCIceServer[];
   /**
+   * "all" (default) or "relay". Relay forces every candidate through a TURN
+   * server, which is how a TURN path is proved rather than assumed.
+   */
+  iceTransportPolicy?: RTCIceTransportPolicy;
+  /**
    * How long a data channel may take to open. In the code path the clock runs
    * from the offer being generated to the answer being applied, so a code
    * carried by hand needs minutes, not the relay default of seconds.
@@ -328,6 +333,7 @@ export class Peers {
   private createRecord(id: string): PeerRecord {
     const pc = new RTCPeerConnection({
       iceServers: this.options.iceServers ?? DEFAULT_ICE,
+      iceTransportPolicy: this.options.iceTransportPolicy,
     });
     let resolveReady!: (channel: RTCDataChannel) => void;
     let rejectReady!: (error: Error) => void;
