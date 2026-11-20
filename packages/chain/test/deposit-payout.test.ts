@@ -13,7 +13,11 @@ import type { Destination, Pending, Replied, Sent, Wire } from "@dokwa/core";
 import { createChainWallet, type ChainWallet } from "../src/wallet.ts";
 import { endpointStatus, isEndpointFailure, refusing } from "./live.ts";
 
-const ENDPOINT = "https://mempool.space/signet/api";
+// Configuration, not code: mempool's IPv4 is down on this host. The
+// endpoint is a parameter of every call in this rig; point it at the
+// explorer that answers while the other is down.
+const ENDPOINT =
+  process.env.DOKWA_SIGNET_ENDPOINT ?? "https://blockstream.info/signet/api";
 
 /**
  * A sync that retries deliberately against the real rate-limit windows the
