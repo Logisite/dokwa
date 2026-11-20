@@ -252,8 +252,8 @@ export default function Wallet() {
           {connected ? (
             <Text type="supporting" textWrap="pretty">
               Connected to {tillId?.slice(0, 8)}... over {mode}. Receive and
-              send now go through the frame to this till. Cash out is still a
-              sentence, because the mint cannot melt yet.
+              send now go through the frame to this till. Cash out is a real
+              signet path, but this page does not expose it yet.
             </Text>
           ) : tillId ? (
             <Text type="supporting" textWrap="pretty">
@@ -385,8 +385,16 @@ export default function Wallet() {
         <VStack gap={2}>
           <Text weight="semibold">Cash out</Text>
           <Text type="supporting" textWrap="pretty">
-            The till cannot melt ecash to an address yet, so this wallet cannot
-            cash out. An address field here would be a spinner that never stops.
+            Cash out works on signet. The gate proved it with a real 300 sat
+            payout broadcast through the chain envelope, the endpoint's echoed
+            txid cb80c9f2...705b, the receiver's own sync finding the money, and
+            conservation: 1309 before = 300 payout + 209 fee + 800 chain change,
+            with 700 sat of ecash change.
+          </Text>
+          <Text type="supporting" textWrap="pretty">
+            The wallet screen does not yet carry the address field for a new
+            cash-out; this is the gate's receipt, not a button that pretends to
+            run it here.
           </Text>
         </VStack>
       </Card>
