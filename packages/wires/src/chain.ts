@@ -26,6 +26,13 @@ export interface ChainOptions {
   signet?: string;
   timeoutMs?: number;
   fetch?: typeof fetch;
+  /**
+   * Out-of-band diagnostics: the URL and the underlying failure behind a
+   * `failed` answer. The seam's Replied has no field for this and must not
+   * grow one, but a caller diagnosing a live run needs the fetch error
+   * rather than the label `unreachable`.
+   */
+  onError?: (url: string, error: unknown) => void;
 }
 
 const decoder = new TextDecoder();
@@ -59,11 +66,13 @@ export class Chain {
   private readonly endpoint: string;
   private readonly timeoutMs: number;
   private readonly fetchImpl: typeof fetch;
+  private readonly onError?: (url: string, error: unknown) => void;
 
   constructor(options: ChainOptions = {}) {
     this.endpoint = options.signet ?? DEFAULT_SIGNET_ENDPOINT;
     this.timeoutMs = options.timeoutMs ?? 20_000;
     this.fetchImpl = options.fetch ?? fetch;
+    this.onError = options.onError;
   }
 
   async request(bytes: Uint8Array): Promise<Replied> {
@@ -95,11 +104,16 @@ export class Chain {
 
       // 400/404 says the endpoint understood and refused this query. 429 and
       // 5xx say try later; there is no chain queue, so the caller decides.
+      this.onError?.(
+        url,
+        new Error(`HTTP ${response.status} ${response.statusText}`),
+      );
       if (response.status === 429 || response.status >= 500) {
         return { status: "failed", reason: "unreachable" };
       }
       return { status: "failed", reason: "rejected" };
     } catch (error) {
+      this.onError?.(url, error);
       if (error instanceof DOMException && error.name === "AbortError") {
         return { status: "failed", reason: "timeout" };
       }

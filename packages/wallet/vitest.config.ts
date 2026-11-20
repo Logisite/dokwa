@@ -6,5 +6,8 @@ export default defineConfig({
     // few seconds when the whole workspace runs in parallel. This is a
     // budget for the work, not a loosening of any assertion.
     testTimeout: 20_000,
+    // The standing two-worker cap, enforced even without a CLI flag.
+    maxWorkers: 2,
+    minWorkers: 1,
   },
 });

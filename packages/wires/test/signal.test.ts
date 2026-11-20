@@ -1,14 +1,14 @@
 /**
  * One honest answer about signal.
  *
- * The probe is real here too: the default probe is a real request to the
- * real signet endpoint, and the cut is the real 127.0.0.1:1 where nothing
- * listens. The one place a controllable probe appears is testing the change
- * notification itself, which is the Signal's job, not the network's.
+ * Deterministic on purpose: the cut is the real 127.0.0.1:1 where nothing
+ * listens, and the change notification uses a controllable probe because the
+ * Signal's job is the notification, not the network. The real signet probe
+ * lives in signal.live.test.ts and runs on purpose before a gate.
  */
 
 import { describe, expect, it } from "vitest";
-import { createSignal, httpProbe, DEFAULT_PROBE_URL } from "../src/signal.ts";
+import { createSignal, httpProbe } from "../src/signal.ts";
 
 const DEAD_ENDPOINT = "http://127.0.0.1:1";
 
@@ -16,54 +16,7 @@ function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-/**
- * What the endpoint answers right now, asked directly. A number is an HTTP
- * status; an Error means the preflight could not answer at all. The probe is
- * then held to that observation instead of to an assumption about the world.
- */
-async function preflight(
-  url: string,
-  timeoutMs = 8_000,
-): Promise<number | Error> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      cache: "no-store",
-      signal: controller.signal,
-    });
-    return response.status;
-  } catch (error) {
-    return error instanceof Error ? error : new Error(String(error));
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
 describe("the probe, against the real network", () => {
-  it("the default probe reports the endpoint's real answer", async (ctx) => {
-    // The test asserts the observation, not the assumption. A 429 from a
-    // public explorer is the endpoint talking, and the probe must say false;
-    // a 200 must say true. Only a preflight that cannot answer is a skip.
-    const status = await preflight(DEFAULT_PROBE_URL);
-    if (status instanceof Error) {
-      ctx.skip(
-        `preflight could not reach ${DEFAULT_PROBE_URL}: ${status.message}`,
-      );
-      return;
-    }
-    const probe = httpProbe(DEFAULT_PROBE_URL, 5_000);
-    const answered = await probe();
-    const endpointAccepted = status >= 200 && status < 400;
-    console.log(
-      `[signal] preflight ${status} from ${DEFAULT_PROBE_URL}; probe answered ${answered}`,
-    );
-    // This is the assertion that goes red if the probe starts lying: a
-    // refusing endpoint must never be reported as signal.
-    expect(answered).toBe(endpointAccepted);
-  }, 30_000);
-
   it("an endpoint where nothing listens answers false, every time", async () => {
     const probe = httpProbe(DEAD_ENDPOINT, 3_000);
     expect(await probe()).toBe(false);

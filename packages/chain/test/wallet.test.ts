@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  chainDescriptors,
-  createChainWallet,
-  type ChainWallet,
-} from "../src/wallet.ts";
-import { endpointStatus, isEndpointFailure, refusing } from "./live.ts";
+import { chainDescriptors, createChainWallet } from "../src/wallet.ts";
 
 const seed = new Uint8Array(32).fill(11);
 const otherSeed = new Uint8Array(32).fill(12);
@@ -14,26 +9,6 @@ const otherSeed = new Uint8Array(32).fill(12);
  * endpoints enforce: the 429 is the endpoint talking, not the code failing,
  * and the retry ceiling is loud, never silent.
  */
-async function syncResilient(
-  wallet: ChainWallet,
-  label: string,
-  attempts = 3,
-  light = false,
-) {
-  let last: unknown = null;
-  for (let attempt = 0; attempt < attempts; attempt += 1) {
-    try {
-      return light ? await wallet.syncLight() : await wallet.sync();
-    } catch (error) {
-      last = error;
-      if (attempt < attempts - 1)
-        await new Promise((resolve) => setTimeout(resolve, 65_000));
-    }
-  }
-  throw new Error(
-    `chain rig: ${label} could not sync after ${attempts} real attempts: ${String(last)}`,
-  );
-}
 
 describe("descriptors from a seed", () => {
   it("one seed, one wallet, checksummed and real", () => {
@@ -89,44 +64,7 @@ describe("deposit addresses", () => {
   });
 });
 
-describe("sync, the ruled exception", () => {
-  it("syncs a fresh wallet against real signet and reports an honest zero", async (ctx) => {
-    // an unfunded seed, so the zero is honest and stays that way. The light
-    // sync refreshes only revealed addresses: it reveals one, then asks the
-    // chain about it, a handful of requests instead of a full scan
-    const endpoint = "https://blockstream.info/signet/api";
-    const status = await endpointStatus(endpoint);
-    if (status === 0) {
-      ctx.skip(`the preflight for ${endpoint} could not answer at all`);
-      return;
-    }
-    const wallet = createChainWallet({
-      seed: new Uint8Array(32).fill(0x5a),
-      endpoint,
-    });
-    wallet.newDepositAddress();
-    if (refusing(status)) {
-      // the endpoint is refusing; the loud refusal is the correct behaviour
-      console.log(
-        `endpoint ${endpoint} answered ${status}; asserting the loud refusal`,
-      );
-      await expect(
-        syncResilient(wallet, "the unfunded wallet", 1, true),
-      ).rejects.toThrow(/could not reach/);
-      return;
-    }
-    let balance;
-    try {
-      balance = await syncResilient(wallet, "the unfunded wallet", 3, true);
-    } catch (error) {
-      if (!isEndpointFailure(error)) throw error;
-      ctx.skip(`the sync could not reach the endpoint: ${String(error)}`);
-      return;
-    }
-    expect(balance.confirmedSat).toBe(0);
-    expect(balance.totalSat).toBe(0);
-  }, 420_000);
-
+describe("sync, the deterministic part", () => {
   it("offline is loud: a dead endpoint refuses and nothing is shown as current", async () => {
     const wallet = createChainWallet({ seed, endpoint: "http://127.0.0.1:1" });
     await expect(wallet.sync()).rejects.toThrow(/could not reach/);

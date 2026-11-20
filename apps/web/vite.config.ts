@@ -26,6 +26,8 @@ function port(): number {
       return 5175;
     case "room":
       return 5176;
+    case "ui":
+      return 5177;
     default:
       return 5173;
   }
