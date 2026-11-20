@@ -328,7 +328,7 @@ describe("relay destination, real relays", () => {
 
   it(
     "reports a relay that answered and refused as failed, rejected",
-    async () => {
+    async (ctx) => {
       // The refusal is a transport observation, so it is asserted where the
       // OK is read: a Relays instance with a generous window, not the queue
       // with a signal probe in front of it. `later` is the answer when nobody
@@ -352,6 +352,15 @@ describe("relay destination, real relays", () => {
           console.log(
             `[relay] ${REFUSING_RELAY} retry answered ${JSON.stringify(sent)}`,
           );
+        }
+        // The refusal can only be observed if the relay speaks. If it is
+        // unreachable or silent, that is the world, named; if it answers, it
+        // must be a policy no, and saying delivered here would be a lie.
+        if (sent.status === "failed" && sent.reason !== "rejected") {
+          ctx.skip(
+            `the refusing relay could not be reached or did not answer: ${REFUSING_RELAY} (${sent.reason})`,
+          );
+          return;
         }
         // nostr.wine's no is policy: "restricted". Final, not worth a retry.
         expect(sent).toEqual({ status: "failed", reason: "rejected" });

@@ -6,6 +6,9 @@ import { defineConfig } from "vitest/config";
 // the suite's own parallelism.
 export default defineConfig({
   test: {
+    // The machine is shared: never more than two workers, on any invocation.
+    maxWorkers: 2,
+    minWorkers: 1,
     fileParallelism: false,
     sequence: { concurrent: false },
     testTimeout: 240_000,
