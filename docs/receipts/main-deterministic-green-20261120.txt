@@ -1,0 +1,233 @@
+Scope: 9 of 10 workspace projects
+packages/core test$ vitest run
+packages/core test: 
+packages/core test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/core
+packages/core test: 
+packages/core test:  ✓ test/code.test.ts (4 tests) 43ms
+packages/core test: 
+packages/core test:  Test Files  1 passed (1)
+packages/core test:       Tests  4 passed (4)
+packages/core test:    Start at  02:31:41
+packages/core test:    Duration  1.72s (transform 223ms, setup 0ms, collect 204ms, tests 43ms, environment 3ms, prepare 265ms)
+packages/core test: 
+packages/core test: Done
+packages/keys test$ vitest run --passWithNoTests
+packages/wires test$ vitest run --passWithNoTests
+packages/wires test: ▲ [WARNING] Duplicate key "test:live" in object literal [duplicate-object-key]
+packages/wires test: 
+packages/wires test:     ../../package.json:18:4:
+packages/wires test:       18 │     "test:live": "pnpm -r --workspace-concurrency=2 --if-present r...
+packages/wires test:          ╵     ~~~~~~~~~~~
+packages/wires test: 
+packages/wires test:   The original key "test:live" is here:
+packages/wires test: 
+packages/wires test:     ../../package.json:10:4:
+packages/wires test:       10 │     "test:live": "pnpm -r --workspace-concurrency=2 --if-present r...
+packages/wires test:          ╵     ~~~~~~~~~~~
+packages/wires test: 
+packages/keys test: 
+packages/keys test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/keys
+packages/keys test: 
+packages/wires test: 
+packages/wires test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/wires
+packages/wires test: 
+packages/keys test:  ✓ test/identity.test.ts (13 tests) 603ms
+packages/keys test:  ✓ test/mint.test.ts (20 tests) 1650ms
+packages/keys test: 
+packages/keys test:  Test Files  2 passed (2)
+packages/keys test:       Tests  33 passed (33)
+packages/keys test:    Start at  02:31:45
+packages/keys test:    Duration  4.84s (transform 760ms, setup 0ms, collect 1.70s, tests 2.25s, environment 2ms, prepare 1.20s)
+packages/keys test: 
+packages/wires test:  ✓ test/signal.test.ts (5 tests) 2997ms
+packages/wires test:    ✓ the signal's answer and its change > says false while the endpoint is dead and says so on subscribe  506ms
+packages/wires test:    ✓ the signal's answer and its change > announces the change exactly once when the endpoint comes back  1512ms
+packages/wires test:    ✓ the signal's answer and its change > a stopped signal stops probing and keeps its last answer  906ms
+packages/keys test: Done
+packages/chain test$ vitest run --passWithNoTests
+packages/wires test:  ✓ test/queue.test.ts (5 tests) 134ms
+packages/chain test: ▲ [WARNING] Duplicate key "test:live" in object literal [duplicate-object-key]
+packages/chain test: 
+packages/chain test:     ../../package.json:18:4:
+packages/chain test:       18 │     "test:live": "pnpm -r --workspace-concurrency=2 --if-present r...
+packages/chain test:          ╵     ~~~~~~~~~~~
+packages/chain test: 
+packages/chain test:   The original key "test:live" is here:
+packages/chain test: 
+packages/chain test:     ../../package.json:10:4:
+packages/chain test:       10 │     "test:live": "pnpm -r --workspace-concurrency=2 --if-present r...
+packages/chain test:          ╵     ~~~~~~~~~~~
+packages/chain test: 
+packages/chain test: 
+packages/chain test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/chain
+packages/chain test: 
+packages/wires test: stderr | test/peer.test.ts > the peer link's state, on a stubbed platform > a repeated offer does not tear down an open link
+packages/wires test: [wires:peer] ignoring a repeated offer from wallet
+packages/wires test: 
+packages/wires test:  ✓ test/peer.test.ts (6 tests) 221ms
+packages/wires test: 
+packages/wires test:  Test Files  3 passed (3)
+packages/wires test:       Tests  16 passed (16)
+packages/wires test:    Start at  02:31:45
+packages/wires test:    Duration  9.19s (transform 770ms, setup 0ms, collect 1.15s, tests 3.35s, environment 4ms, prepare 1.22s)
+packages/wires test: 
+packages/chain test: (node:171767) ExperimentalWarning: Importing WebAssembly module instances is an experimental feature and might change at any time
+packages/chain test: (Use `node-22 --trace-warnings ...` to show where the warning was created)
+packages/wires test: Done
+packages/lightning test$ vitest run --passWithNoTests
+packages/chain test:  ✓ test/wallet.test.ts (9 tests) 1139ms
+packages/chain test:    ✓ deposit addresses > the same seed gives the same first address, and another seed another  316ms
+packages/chain test: 
+packages/chain test:  Test Files  1 passed (1)
+packages/chain test:       Tests  9 passed (9)
+packages/chain test:    Start at  02:31:53
+packages/chain test:    Duration  2.65s (transform 242ms, setup 0ms, collect 278ms, tests 1.14s, environment 1ms, prepare 325ms)
+packages/chain test: 
+packages/lightning test: 
+packages/lightning test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/lightning
+packages/lightning test: 
+packages/chain test: Done
+packages/mint test$ vitest run --passWithNoTests
+packages/mint test: ▲ [WARNING] Duplicate key "test:live" in object literal [duplicate-object-key]
+packages/mint test: 
+packages/mint test:     ../../package.json:18:4:
+packages/mint test:       18 │     "test:live": "pnpm -r --workspace-concurrency=2 --if-present r...
+packages/mint test:          ╵     ~~~~~~~~~~~
+packages/mint test: 
+packages/mint test:   The original key "test:live" is here:
+packages/mint test: 
+packages/mint test:     ../../package.json:10:4:
+packages/mint test:       10 │     "test:live": "pnpm -r --workspace-concurrency=2 --if-present r...
+packages/mint test:          ╵     ~~~~~~~~~~~
+packages/mint test: 
+packages/mint test: 
+packages/mint test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/mint
+packages/mint test: 
+packages/lightning test: stdout | test/peers.test.ts
+packages/lightning test: Loaded LDK-Java Bindings with LDK v0.2.5-37-g6accd2acaff8f94f and LDK-C-Bindings v0.2.5.0
+packages/lightning test: 
+packages/lightning test: stdout | test/peers.test.ts > the peer byte surface > two real LDK nodes complete their handshake over the Wire
+packages/lightning test: Loaded LDK-Java Bindings with LDK v0.2.5-37-g6accd2acaff8f94f and LDK-C-Bindings v0.2.5.0
+packages/lightning test: 
+packages/lightning test: stdout | test/node.test.ts
+packages/lightning test: Loaded LDK-Java Bindings with LDK v0.2.5-37-g6accd2acaff8f94f and LDK-C-Bindings v0.2.5.0
+packages/lightning test: 
+packages/lightning test: stdout | test/peers.test.ts > the peer byte surface > two real LDK nodes complete their handshake over the Wire
+packages/lightning test: ldk lightning::ln::peer_handler: Finished noise handshake for connection with 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9
+packages/lightning test: ldk lightning::ln::peer_handler: Enqueueing message Init { features: [33, 81, 10, 10, 8, 152, 8, 128], networks: Some([f61eee3b63a380a477a063af32b2bbc97c9ff9f01f2c4225e973988108000000]), remote_network_address: None } to 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9
+packages/lightning test: 
+packages/lightning test: stdout | test/node.test.ts > the node's keys > one seed, one node; another seed, another node
+packages/lightning test: Loaded LDK-Java Bindings with LDK v0.2.5-37-g6accd2acaff8f94f and LDK-C-Bindings v0.2.5.0
+packages/lightning test: 
+packages/lightning test: stdout | test/peers.test.ts > the peer byte surface > two real LDK nodes complete their handshake over the Wire
+packages/lightning test: ldk lightning::ln::peer_handler: Finished noise handshake for connection with 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658
+packages/lightning test: ldk lightning::ln::peer_handler: Enqueueing message Init { features: [33, 81, 10, 10, 8, 152, 8, 128], networks: Some([f61eee3b63a380a477a063af32b2bbc97c9ff9f01f2c4225e973988108000000]), remote_network_address: None } to 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658
+packages/lightning test: ldk lightning::ln::peer_handler: Received peer Init message from 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658: DataLossProtect: required, InitialRoutingSync: not supported, UpfrontShutdownScript: supported, GossipQueries: not supported, VariableLengthOnion: required, StaticRemoteKey: required, PaymentSecret: required, BasicMPP: supported, Wumbo: supported, AnchorsNonzeroFeeHtlcTx: not supported, AnchorsZeroFeeHtlcTx: not supported, RouteBlinding: supported, ShutdownAnySegwit: supported, DualFund: not supported, Taproot: not supported, Quiescence: supported, OnionMessages: not supported, ProvideStorage: supported, ChannelType: required, SCIDPrivacy: supported, ZeroConf: supported, Trampoline: not supported, SimpleClose: not supported, SpliceProduction: supported, SplicePrototype: supported, AnchorZeroFeeCommitmentsStaging: not supported, HtlcHold: not supported, unknown flags: none
+packages/lightning test: ldk lightning::ln::channelmanager: Generating channel_reestablish events for 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658
+packages/lightning test: ldk lightning::ln::peer_handler: Received peer Init message from 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9: DataLossProtect: required, InitialRoutingSync: not supported, UpfrontShutdownScript: supported, GossipQueries: not supported, VariableLengthOnion: required, StaticRemoteKey: required, PaymentSecret: required, BasicMPP: supported, Wumbo: supported, AnchorsNonzeroFeeHtlcTx: not supported, AnchorsZeroFeeHtlcTx: not supported, RouteBlinding: supported, ShutdownAnySegwit: supported, DualFund: not supported, Taproot: not supported, Quiescence: supported, OnionMessages: not supported, ProvideStorage: supported, ChannelType: required, SCIDPrivacy: supported, ZeroConf: supported, Trampoline: not supported, SimpleClose: not supported, SpliceProduction: supported, SplicePrototype: supported, AnchorZeroFeeCommitmentsStaging: not supported, HtlcHold: not supported, unknown flags: none
+packages/lightning test: ldk lightning::ln::channelmanager: Generating channel_reestablish events for 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9
+packages/lightning test: 
+packages/mint test: stdout | test/first-token.test.ts > the first artifact: a token string and the refusal > issues real ecash and refuses its second spend
+packages/mint test: till pubkey  : 2f0ef45a3cd0cf4b726fb859cd320c0a6bf255e51b38d97a156d04667fc8d0c5
+packages/mint test: keyset id    : 01aff7dfdc61ce3d576172b0725248dbcabd70bad8966b740e6598f74225339791
+packages/mint test: denominations: 32 powers of two
+packages/mint test: 
+packages/lightning test: stdout | test/peers.test.ts > the peer byte surface > a message split across two arrivals is framed by LDK, not the carrier
+packages/lightning test: ldk lightning::ln::peer_handler: Finished noise handshake for connection with 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9
+packages/lightning test: ldk lightning::ln::peer_handler: Enqueueing message Init { features: [33, 81, 10, 10, 8, 152, 8, 128], networks: Some([f61eee3b63a380a477a063af32b2bbc97c9ff9f01f2c4225e973988108000000]), remote_network_address: None } to 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9
+packages/lightning test: 
+packages/lightning test: stdout | test/peers.test.ts > the peer byte surface > a message split across two arrivals is framed by LDK, not the carrier
+packages/lightning test: ldk lightning::ln::peer_handler: Finished noise handshake for connection with 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658
+packages/lightning test: ldk lightning::ln::peer_handler: Enqueueing message Init { features: [33, 81, 10, 10, 8, 152, 8, 128], networks: Some([f61eee3b63a380a477a063af32b2bbc97c9ff9f01f2c4225e973988108000000]), remote_network_address: None } to 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658
+packages/lightning test: ldk lightning::ln::peer_handler: Received peer Init message from 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658: DataLossProtect: required, InitialRoutingSync: not supported, UpfrontShutdownScript: supported, GossipQueries: not supported, VariableLengthOnion: required, StaticRemoteKey: required, PaymentSecret: required, BasicMPP: supported, Wumbo: supported, AnchorsNonzeroFeeHtlcTx: not supported, AnchorsZeroFeeHtlcTx: not supported, RouteBlinding: supported, ShutdownAnySegwit: supported, DualFund: not supported, Taproot: not supported, Quiescence: supported, OnionMessages: not supported, ProvideStorage: supported, ChannelType: required, SCIDPrivacy: supported, ZeroConf: supported, Trampoline: not supported, SimpleClose: not supported, SpliceProduction: supported, SplicePrototype: supported, AnchorZeroFeeCommitmentsStaging: not supported, HtlcHold: not supported, unknown flags: none
+packages/lightning test: ldk lightning::ln::channelmanager: Generating channel_reestablish events for 0370ccf6bdaca8b28497b61ade692153690f31584afe320b70767dc3dd0550f658
+packages/lightning test: ldk lightning::ln::peer_handler: Received peer Init message from 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9: DataLossProtect: required, InitialRoutingSync: not supported, UpfrontShutdownScript: supported, GossipQueries: not supported, VariableLengthOnion: required, StaticRemoteKey: required, PaymentSecret: required, BasicMPP: supported, Wumbo: supported, AnchorsNonzeroFeeHtlcTx: not supported, AnchorsZeroFeeHtlcTx: not supported, RouteBlinding: supported, ShutdownAnySegwit: supported, DualFund: not supported, Taproot: not supported, Quiescence: supported, OnionMessages: not supported, ProvideStorage: supported, ChannelType: required, SCIDPrivacy: supported, ZeroConf: supported, Trampoline: not supported, SimpleClose: not supported, SpliceProduction: supported, SplicePrototype: supported, AnchorZeroFeeCommitmentsStaging: not supported, HtlcHold: not supported, unknown flags: none
+packages/lightning test: ldk lightning::ln::channelmanager: Generating channel_reestablish events for 03d06e6b9b6c25858705b4ea2ab3f0de8dceece3b283665b20bc237e47a0e485c9
+packages/lightning test: 
+packages/lightning test:  ✓ test/peers.test.ts (4 tests) 1314ms
+packages/lightning test:    ✓ the peer byte surface > two real LDK nodes complete their handshake over the Wire  797ms
+packages/mint test: stdout | test/first-token.test.ts > the first artifact: a token string and the refusal > issues real ecash and refuses its second spend
+packages/mint test: token        : cashu:cashuBpGFtamRva3dhOnRpbGxhdWNzYXRhdIGiYWlIAa_339xhzj1hcIOjYWEQYXN4U2ZpcnN0LXRva2VuLWNvaW4tMC04Y2M2MWJiYmMwZTViYTk0NmEyM2IyZjk3MGZlNzIyY2ExYTgyNmMyNjQ4YWQ5MWVmZWY4NWI5YzJjNjlhMjEyYWNYIQIb3ST1Z28HZIrbbIPfWDkMva7_6GuAxVPR3Oa-v7TEY6NhYQRhc3hTZmlyc3QtdG9rZW4tY29pbi0xLThjYzYxYmJiYzBlNWJhOTQ2YTIzYjJmOTcwZmU3MjJjYTFhODI2YzI2NDhhZDkxZWZlZjg1YjljMmM2OWEyMTJhY1ghAj2ZDgqzzku9yJXSL3bxnLbTnmhKNFXmU9BkjZhz5EUCo2FhAWFzeFNmaXJzdC10b2tlbi1jb2luLTItOGNjNjFiYmJjMGU1YmE5NDZhMjNiMmY5NzBmZTcyMmNhMWE4MjZjMjY0OGFkOTFlZmVmODViOWMyYzY5YTIxMmFjWCECMJ_sOwBkPrvoSsvn1TA3-Ca3dMZvC6T6cvwK_4ddr4ZhZHR0aGUgZmlyc3QgcmVhbCB0b2tlbg
+packages/mint test: 
+packages/mint test: stdout | test/first-token.test.ts > the first artifact: a token string and the refusal > issues real ecash and refuses its second spend
+packages/mint test: second spend : refused with code 11001 (token already spent)
+packages/mint test: 
+packages/mint test:  ✓ test/first-token.test.ts (1 test) 1779ms
+packages/mint test:    ✓ the first artifact: a token string and the refusal > issues real ecash and refuses its second spend  1772ms
+packages/lightning test: stderr | test/node.test.ts > persistence and the reload > a network graph that does not decode falls back to genesis, out loud
+packages/lightning test: ldk: the stored network graph does not decode; starting from genesis
+packages/lightning test: 
+packages/lightning test:  ✓ test/node.test.ts (6 tests) 1853ms
+packages/lightning test:    ✓ the node's keys > one seed, one node; another seed, another node  877ms
+packages/lightning test:    ✓ persistence and the reload > the store that survives is the real one: two databases over one name  537ms
+packages/lightning test: 
+packages/lightning test:  Test Files  2 passed (2)
+packages/lightning test:       Tests  10 passed (10)
+packages/lightning test:    Start at  02:31:56
+packages/lightning test:    Duration  7.40s (transform 799ms, setup 0ms, collect 7.50s, tests 3.17s, environment 4ms, prepare 814ms)
+packages/lightning test: 
+packages/lightning test: Done
+packages/records test$ vitest run --passWithNoTests
+packages/mint test:  ✓ test/mint.test.ts (10 tests) 3527ms
+packages/mint test:    ✓ the keyset agrees with cashu-ts, byte for byte > createNewMintKeys from the same seed derives the same private keys  669ms
+packages/mint test:    ✓ the keyset agrees with cashu-ts, byte for byte > a blind signature made here verifies under cashu-ts's DLEQ checker  306ms
+packages/mint test:    ✓ the till, against the wallet > issues a quote, settles it, mints the coins, and refuses a second mint  845ms
+packages/mint test:    ✓ the till, against the wallet > the token is a real cashu: URI that cashu-ts reads back  354ms
+packages/mint test:    ✓ the spent list > refuses the second spend of a bundle: whole or nothing  354ms
+packages/mint test: 
+packages/mint test:  Test Files  2 passed (2)
+packages/mint test:       Tests  11 passed (11)
+packages/mint test:    Start at  02:31:58
+packages/mint test:    Duration  6.44s (transform 949ms, setup 0ms, collect 2.17s, tests 5.31s, environment 2ms, prepare 1.18s)
+packages/mint test: 
+packages/mint test: Done
+packages/wallet test$ vitest run --passWithNoTests
+packages/records test: 
+packages/records test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/records
+packages/records test: 
+packages/wallet test: ▲ [WARNING] Duplicate key "test:live" in object literal [duplicate-object-key]
+packages/wallet test: 
+packages/wallet test:     ../../package.json:18:4:
+packages/wallet test:       18 │     "test:live": "pnpm -r --workspace-concurrency=2 --if-present r...
+packages/wallet test:          ╵     ~~~~~~~~~~~
+packages/wallet test: 
+packages/wallet test:   The original key "test:live" is here:
+packages/wallet test: 
+packages/wallet test:     ../../package.json:10:4:
+packages/wallet test:       10 │     "test:live": "pnpm -r --workspace-concurrency=2 --if-present r...
+packages/wallet test:          ╵     ~~~~~~~~~~~
+packages/wallet test: 
+packages/wallet test: 
+packages/wallet test:  RUN  v3.2.7 /home/logisiteau/projects/hacks/dokwa/packages/wallet
+packages/wallet test: 
+packages/records test:  ✓ test/records.test.ts (20 tests) 1879ms
+packages/records test:    ✓ permission slips > round trips for every subject, whatever the parity of their key  1223ms
+packages/records test: 
+packages/records test:  Test Files  1 passed (1)
+packages/records test:       Tests  20 passed (20)
+packages/records test:    Start at  02:32:05
+packages/records test:    Duration  4.14s (transform 508ms, setup 0ms, collect 747ms, tests 1.88s, environment 1ms, prepare 370ms)
+packages/records test: 
+packages/records test: Done
+packages/wallet test:  ✓ test/melt.test.ts (4 tests) 2605ms
+packages/wallet test:    ✓ cash out > the payout leaves, the fee reserve is named, and the change arrives  1205ms
+packages/wallet test:    ✓ cash out > refuses when the wallet cannot cover the payout plus the reserve  464ms
+packages/wallet test:    ✓ cash out > refuses the second melt of the same inputs  615ms
+packages/wallet test:    ✓ cash out > a till with no payer refuses in a sentence  312ms
+packages/wallet test:  ✓ test/wallet.test.ts (9 tests) 4002ms
+packages/wallet test:    ✓ holding > starts empty and stays consistent  430ms
+packages/wallet test:    ✓ receiving > takes a real token in, verifies it, swaps it, and holds the fresh coins  630ms
+packages/wallet test:    ✓ receiving > refuses the same token twice, and the balance does not double  569ms
+packages/wallet test:    ✓ receiving > refuses a token signed by a mint it does not know  346ms
+packages/wallet test:    ✓ sending > sends exact coins and keeps the change  533ms
+packages/wallet test:    ✓ two wallets, one counterparty > a sent token lands in the receiver's purse, once  876ms
+packages/wallet test:  ✓ test/acquisition.test.ts (7 tests) 1150ms
+packages/wallet test:  ✓ test/peer.test.ts (11 tests) 1034ms
+packages/wallet test:    ✓ the wallet over a peer destination > acquires and holds ecash through the frame  334ms
+packages/wallet test: 
+packages/wallet test:  Test Files  4 passed (4)
+packages/wallet test:       Tests  31 passed (31)
+packages/wallet test:    Start at  02:32:07
+packages/wallet test:    Duration  8.69s (transform 477ms, setup 0ms, collect 1.42s, tests 8.79s, environment 3ms, prepare 1.11s)
+packages/wallet test: 
+packages/wallet test: Done
