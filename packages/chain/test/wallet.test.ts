@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  chainDescriptors,
-  createChainWallet,
-} from "../src/wallet.ts";
+import { chainDescriptors, createChainWallet } from "../src/wallet.ts";
 
 const seed = new Uint8Array(32).fill(11);
 const otherSeed = new Uint8Array(32).fill(12);
