@@ -10,8 +10,6 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@astryxdesign/core": "^0.7.16",
-    "@astryxdesign/theme-neutral": "^0.7.16",
     "@bitcoindevkit/bdk-wallet-web": "^0.4.0",
     "@cashu/cashu-ts": "^4.13.1",
     "@dokwa/chain": "workspace:*",
@@ -25,7 +23,6 @@
     "@ngraveio/bc-ur": "^1.1.13",
     "@noble/curves": "^2.4.0",
     "@noble/hashes": "^2.4.0",
-    "@stylexjs/stylex": "^0.19.2",
     "@tanstack/react-query": "^5.108.0",
     "@tanstack/react-virtual": "^3.14.26",
     "barcode-detector": "^3.2.4",
@@ -45,8 +42,6 @@
     "zxing-wasm": "^3.1.7"
   },
   "devDependencies": {
-    "@astryxdesign/build": "^0.7.16",
-    "@astryxdesign/cli": "^0.7.16",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.12",
     "@types/node": "^26.6.6",

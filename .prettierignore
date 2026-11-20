@@ -3,5 +3,3 @@ dist
 board
 pnpm-lock.yaml
 *.md
-# written by `astryx init`; kept byte-for-byte as the CLI emits it
-apps/web/theme.template.ts
