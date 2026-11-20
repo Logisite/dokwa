@@ -1,14 +1,14 @@
 /**
  * One honest answer about signal.
  *
- * The probe is real here too: the default probe is a real request to the
- * real signet endpoint, and the cut is the real 127.0.0.1:1 where nothing
- * listens. The one place a controllable probe appears is testing the change
- * notification itself, which is the Signal's job, not the network's.
+ * Deterministic on purpose: the cut is the real 127.0.0.1:1 where nothing
+ * listens, and the change notification uses a controllable probe because the
+ * Signal's job is the notification, not the network. The real signet probe
+ * lives in signal.live.test.ts and runs on purpose before a gate.
  */
 
 import { describe, expect, it } from "vitest";
-import { createSignal, httpProbe, DEFAULT_PROBE_URL } from "../src/signal.ts";
+import { createSignal, httpProbe } from "../src/signal.ts";
 
 const DEAD_ENDPOINT = "http://127.0.0.1:1";
 
@@ -16,65 +16,7 @@ function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-/**
- * What the endpoint answers right now, asked directly. A number is an HTTP
- * status; an Error means the preflight could not answer at all. The probe is
- * then held to that observation instead of to an assumption about the world.
- */
-async function preflight(
-  url: string,
-  timeoutMs = 8_000,
-): Promise<number | Error> {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      cache: "no-store",
-      signal: controller.signal,
-    });
-    return response.status;
-  } catch (error) {
-    return error instanceof Error ? error : new Error(String(error));
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
 describe("the probe, against the real network", () => {
-  it("the default probe never reports signal for a refusing endpoint", async (ctx) => {
-    // The dangerous direction is optimism: a probe that says true while the
-    // endpoint refuses turns a recoverable moment into a lost sale. That
-    // direction fails hard here. The safe direction is a slow endpoint that
-    // answers one plain fetch but not the probe inside the same cap; that is
-    // the world, named as a skip, not the code lying.
-    const status = await preflight(DEFAULT_PROBE_URL, 5_000);
-    if (status instanceof Error) {
-      ctx.skip(
-        `preflight could not reach ${DEFAULT_PROBE_URL}: ${status.message}`,
-      );
-      return;
-    }
-    const probe = httpProbe(DEFAULT_PROBE_URL, 5_000);
-    const answered = await probe();
-    const endpointAccepted = status >= 200 && status < 400;
-    console.log(
-      `[signal] preflight ${status} from ${DEFAULT_PROBE_URL}; probe answered ${answered}`,
-    );
-    if (answered && !endpointAccepted) {
-      throw new Error(
-        `the probe reported signal for ${DEFAULT_PROBE_URL} while it answered ${status}`,
-      );
-    }
-    if (!answered && endpointAccepted) {
-      ctx.skip(
-        `preflight ${status} from ${DEFAULT_PROBE_URL} but the probe found no answer inside the same 5s cap; the endpoint is slow, not lying`,
-      );
-      return;
-    }
-    expect(answered).toBe(endpointAccepted);
-  }, 30_000);
-
   it("an endpoint where nothing listens answers false, every time", async () => {
     const probe = httpProbe(DEAD_ENDPOINT, 3_000);
     expect(await probe()).toBe(false);

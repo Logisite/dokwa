@@ -131,3 +131,18 @@ metaphor. In one line each:
 - **outbox / queue**: the stored list of sends that have not been delivered
   yet. `later` means "in here".
 - **signal**: whether a real request to a real endpoint succeeds right now.
+
+## Running the tests
+
+`pnpm --filter @dokwa/wires test` is the deterministic suite: peer logic on a
+stubbed platform, signal's answer and change, and the queue's hold, reload and
+drain. It talks to no third party and must be green.
+
+`pnpm --filter @dokwa/wires test:live` is the evidence run: real relays, real
+signet lookups, real probes. Run it on purpose before a gate. A skip is
+allowed only as a named fact about the world, such as an explorer that cannot
+answer; it is never used to hide a code failure. From the repo root,
+`pnpm test:live` runs every package's live legs with the two-worker cap.
+
+Gate order: `pnpm -r --workspace-concurrency=2 test` (deterministic, green),
+then `pnpm test:live` (evidence), then the browser run.
