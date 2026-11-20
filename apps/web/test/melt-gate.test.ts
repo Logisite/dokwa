@@ -47,7 +47,9 @@ describe("the melt gate: real Wire, real till, real chain payer", () => {
       } catch (error) {
         // a rate-limited explorer is a fact about the endpoint, not about
         // the composition. Stand down with the reason, no retry.
-        ctx.skip(`the payer sync could not reach ${ENDPOINT}: ${String(error)}`);
+        ctx.skip(
+          `the payer sync could not reach ${ENDPOINT}: ${String(error)}`,
+        );
         return;
       }
       if (before.trustedSpendableSat < PAYOUT + 250) {
@@ -80,8 +82,6 @@ describe("the melt gate: real Wire, real till, real chain payer", () => {
       // the spent list marks the inputs that cashOut actually consumed.
       // A greedy selection need not spend every proof in the wallet, so
       // compare the before and after sets rather than assuming all of them.
-      const beforeProofs = await wallet.proofs();
-      const beforeSecrets = new Set(beforeProofs.map((p) => p.secret));
 
       const receiver = createChainWallet({
         seed: RECEIVER_SEED,
@@ -102,7 +102,9 @@ describe("the melt gate: real Wire, real till, real chain payer", () => {
         chainRequestBytes({ method: "GET", path: `/tx/${txid}/status` }),
       );
       if (reply.status !== "ok") {
-        ctx.skip(`the status check through the real Chain was refused: ${reply.status}`);
+        ctx.skip(
+          `the status check through the real Chain was refused: ${reply.status}`,
+        );
         return;
       }
       const status = JSON.parse(new TextDecoder().decode(reply.bytes)) as {

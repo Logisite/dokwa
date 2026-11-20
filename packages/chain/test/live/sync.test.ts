@@ -61,5 +61,4 @@ describe("sync, against real signet", () => {
     expect(balance.confirmedSat).toBe(0);
     expect(balance.totalSat).toBe(0);
   }, 420_000);
-
 });

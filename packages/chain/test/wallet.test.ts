@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import {
   chainDescriptors,
   createChainWallet,
-  type ChainWallet,
 } from "../src/wallet.ts";
 
 const seed = new Uint8Array(32).fill(11);
@@ -13,26 +12,6 @@ const otherSeed = new Uint8Array(32).fill(12);
  * endpoints enforce: the 429 is the endpoint talking, not the code failing,
  * and the retry ceiling is loud, never silent.
  */
-async function syncResilient(
-  wallet: ChainWallet,
-  label: string,
-  attempts = 3,
-  light = false,
-) {
-  let last: unknown = null;
-  for (let attempt = 0; attempt < attempts; attempt += 1) {
-    try {
-      return light ? await wallet.syncLight() : await wallet.sync();
-    } catch (error) {
-      last = error;
-      if (attempt < attempts - 1)
-        await new Promise((resolve) => setTimeout(resolve, 65_000));
-    }
-  }
-  throw new Error(
-    `chain rig: ${label} could not sync after ${attempts} real attempts: ${String(last)}`,
-  );
-}
 
 describe("descriptors from a seed", () => {
   it("one seed, one wallet, checksummed and real", () => {
