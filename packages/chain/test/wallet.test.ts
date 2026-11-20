@@ -4,7 +4,6 @@ import {
   createChainWallet,
   type ChainWallet,
 } from "../src/wallet.ts";
-import { endpointStatus, isEndpointFailure, refusing } from "./live.ts";
 
 const seed = new Uint8Array(32).fill(11);
 const otherSeed = new Uint8Array(32).fill(12);
@@ -89,44 +88,7 @@ describe("deposit addresses", () => {
   });
 });
 
-describe("sync, the ruled exception", () => {
-  it("syncs a fresh wallet against real signet and reports an honest zero", async (ctx) => {
-    // an unfunded seed, so the zero is honest and stays that way. The light
-    // sync refreshes only revealed addresses: it reveals one, then asks the
-    // chain about it, a handful of requests instead of a full scan
-    const endpoint = "https://blockstream.info/signet/api";
-    const status = await endpointStatus(endpoint);
-    if (status === 0) {
-      ctx.skip(`the preflight for ${endpoint} could not answer at all`);
-      return;
-    }
-    const wallet = createChainWallet({
-      seed: new Uint8Array(32).fill(0x5a),
-      endpoint,
-    });
-    wallet.newDepositAddress();
-    if (refusing(status)) {
-      // the endpoint is refusing; the loud refusal is the correct behaviour
-      console.log(
-        `endpoint ${endpoint} answered ${status}; asserting the loud refusal`,
-      );
-      await expect(
-        syncResilient(wallet, "the unfunded wallet", 1, true),
-      ).rejects.toThrow(/could not reach/);
-      return;
-    }
-    let balance;
-    try {
-      balance = await syncResilient(wallet, "the unfunded wallet", 3, true);
-    } catch (error) {
-      if (!isEndpointFailure(error)) throw error;
-      ctx.skip(`the sync could not reach the endpoint: ${String(error)}`);
-      return;
-    }
-    expect(balance.confirmedSat).toBe(0);
-    expect(balance.totalSat).toBe(0);
-  }, 420_000);
-
+describe("sync, the deterministic part", () => {
   it("offline is loud: a dead endpoint refuses and nothing is shown as current", async () => {
     const wallet = createChainWallet({ seed, endpoint: "http://127.0.0.1:1" });
     await expect(wallet.sync()).rejects.toThrow(/could not reach/);

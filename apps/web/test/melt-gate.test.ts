@@ -50,9 +50,9 @@ describe("the melt gate: real Wire, real till, real chain payer", () => {
         ctx.skip(`the payer sync could not reach ${ENDPOINT}: ${String(error)}`);
         return;
       }
-      if (before.trustedSpendableSat < PAYOUT) {
+      if (before.trustedSpendableSat < PAYOUT + 250) {
         ctx.skip(
-          `the payer holds ${before.trustedSpendableSat} sats, not enough for a ${PAYOUT} sat payout; refill it before rerunning the gate`,
+          `the payer holds ${before.trustedSpendableSat} sats, not enough for a ${PAYOUT} sat payout and its fee; refill it before rerunning the gate`,
         );
         return;
       }
@@ -75,9 +75,13 @@ describe("the melt gate: real Wire, real till, real chain payer", () => {
       // real ecash from the real mint: a quote, the operator settles it,
       // the wallet blinds and claims it
       const quote = await wallet.requestQuote({ amount: 1000 });
-      mint.settle(quote.id);
+      await mint.settle(quote.id);
       expect(await wallet.receiveQuote(quote.id)).toBe(1000);
-      const spentInputs = (await wallet.proofs()).map((p) => secretToY(p.secret));
+      // the spent list marks the inputs that cashOut actually consumed.
+      // A greedy selection need not spend every proof in the wallet, so
+      // compare the before and after sets rather than assuming all of them.
+      const beforeProofs = await wallet.proofs();
+      const beforeSecrets = new Set(beforeProofs.map((p) => p.secret));
 
       const receiver = createChainWallet({
         seed: RECEIVER_SEED,
@@ -108,8 +112,18 @@ describe("the melt gate: real Wire, real till, real chain payer", () => {
       expect(typeof status.confirmed).toBe("boolean");
 
       // the spent list marks the ecash inputs before any new answer
-      const states = await mint.checkstate(spentInputs);
-      expect(states.every((s) => s.state === "SPENT")).toBe(true);
+      const afterProofs = await wallet.proofs();
+      const afterSecrets = new Set(afterProofs.map((p) => p.secret));
+      const consumed = beforeProofs.filter((p) => !afterSecrets.has(p.secret));
+      expect(consumed.length).toBeGreaterThan(0);
+      const spentStates = await mint.checkstate(
+        consumed.map((p) => secretToY(p.secret)),
+      );
+      expect(spentStates.every((s) => s.state === "SPENT")).toBe(true);
+      const keptStates = await mint.checkstate(
+        afterProofs.map((p) => secretToY(p.secret)),
+      );
+      expect(keptStates.every((s) => s.state === "UNSPENT")).toBe(true);
 
       // the ecash change is 1000 - 300, and the chain payer's own sync
       // shows exactly one payout and its real fee
